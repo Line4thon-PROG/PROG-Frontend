@@ -16,9 +16,14 @@ const InputBox = styled.input`
   height: 2.8vw;
   border-radius: 0.4vw;
   border: 1px solid ${({ hasText }) => (hasText ? '#00c13a' : '#767676')};
-  background: #262626;
+  background: ${({ hasText, isFocused }) =>
+    isFocused ? 'rgba(0, 193, 58, 0.10)' : hasText ? '#111' : '#262626'};
   padding: 0.8vw;
   color: #fff;
+
+  &:focus {
+    background: rgba(0, 193, 58, 0.1);
+  }
 
   ::placeholder {
     color: #999999;
@@ -36,10 +41,15 @@ const InputBox2 = styled.textarea`
   height: 14.8vw;
   border-radius: 0.4vw;
   border: 1px solid ${({ hasText }) => (hasText ? '#00c13a' : '#767676')};
-  background: #262626;
+  background: ${({ hasText, isFocused }) =>
+    isFocused ? 'rgba(0, 193, 58, 0.10)' : hasText ? '#111' : '#262626'};
   padding: 0.8vw;
   resize: none;
   color: #fff;
+
+  &:focus {
+    background: rgba(0, 193, 58, 0.1);
+  }
 
   ::placeholder {
     color: #999999;
@@ -50,12 +60,6 @@ const InputBox2 = styled.textarea`
     line-height: 1.2vw;
     letter-spacing: -0.4px;
     white-space: pre-line;
-  }
-
-  &:focus {
-    outline: none;
-    border-color: #00c13a;
-    box-shadow: 0 0 0.5vw #00c13a;
   }
 `;
 
