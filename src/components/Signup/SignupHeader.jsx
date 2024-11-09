@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import logo from '../../assets/images/Logo.svg';
-import step from '../../assets/images/Step.svg';
+import defaultStepImage from '../../assets/images/Step.svg';
 
 const WholeContainer = styled.div`
   display: flex;
@@ -56,7 +56,7 @@ const Step = styled.img`
   height: 2vw;
 `;
 
-function SignupHeader() {
+function SignupHeader({ step }) {
   return (
     <>
       <WholeContainer>
@@ -67,7 +67,7 @@ function SignupHeader() {
 
         <StepContainer>
           <SignupP>회원가입</SignupP>
-          <Step src={step} />
+          <Step src={step || defaultStepImage} />
         </StepContainer>
       </WholeContainer>
     </>
