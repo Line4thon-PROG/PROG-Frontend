@@ -6,6 +6,7 @@ import Signup from './pages/Signup/Signup';
 import Login from './pages/Login/Login';
 import Genre from './pages/Signup/Genre';
 import Complete from './pages/Signup/Complete';
+import Write from './pages/Write/Write';
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
           <Route path="/Login" element={<Login />} />
           <Route path="/Genre" element={<Genre />} />
           <Route path="/Complete" element={<Complete />} />
+          <Route path="/Write" element={<Write />} />
         </Routes>
       </Router>
     </>
