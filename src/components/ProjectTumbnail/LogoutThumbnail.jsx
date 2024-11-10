@@ -4,8 +4,8 @@ import LogoutThumbnailFrog from "../../assets/images/LogoutThumbnailFrog.svg";
 
 const RecommendContainer = styled.div``;
 const RecommendImage = styled.div`
-  width: 252px;
-  height: 170px;
+  width: 257px;
+  height: 165px;
   background-color: rgba(38, 38, 38, 1);
   display: flex;
   flex-direction: column;
