@@ -2,13 +2,14 @@ import React from "react";
 import styled from "styled-components";
 
 const RecommendContainer = styled.div`
+  cursor: pointer;
   img {
     width: 257px;
     height: 170px;
   }
 `;
 const Title = styled.p`
-  margin-top: 5px;
+  margin-top: 3px;
   font-size: 13px;
 `;
 const GenrenSkill = styled.p`

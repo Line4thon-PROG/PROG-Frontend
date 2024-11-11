@@ -6,10 +6,13 @@ import WriteBtn from "../../assets/images/WriteBtn.svg";
 import ProjectThumbnail from "../../components/ProjectTumbnail/ProjectThumbnail";
 import LogoutThumbnail from "../../components/ProjectTumbnail/LogoutThumbnail";
 import ProjectThumbnailImage from "../../assets/images/ProjectThumbnailImage.svg";
+import FilterIcon from "../../assets/images/FilterIcon.svg";
+import MiddleBlock from "../../assets/images/MiddleBlock.svg";
 
 const SearchContainer = styled.div`
-  margin-top: 40px;
+  margin-top: 30px;
   width: 100%;
+  padding-bottom: 30px;
 `;
 
 const NameandWriteBtnWrapper = styled.div`
@@ -61,14 +64,42 @@ const ProgressContainer = styled.div`
 const ProgressBar = styled.div`
   position: absolute;
   height: 100%;
-  width: 33.3%; /* 초록색 바의 고정된 너비 */
+  width: 33.3%;
   background-color: rgba(0, 193, 58, 1);
-  left: ${(props) =>
-    `calc(${Math.min(props.position, 100 - 33.3)}%)`}; /* 시작과 끝 위치 보정 */
+  left: ${(props) => `calc(${Math.min(props.position, 100 - 33.3)}%)`};
   transition: left 0.3s;
   border-radius: 10px;
 `;
+
+const BannerBox = styled.div`
+  margin-top: 20px;
+  background-color: rgba(209, 209, 209, 1);
+  width: 100%;
+  height: 100px;
+`;
+
+const FilterBox = styled.div`
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  color: rgba(153, 153, 153, 1);
+  font-size: 13px;
+  gap: 8px;
+  cursor: pointer;
+`;
+
+const ProjectWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 53.8vw;
+  flex-wrap: wrap;
+  position: relative;
+`;
+
 function Search() {
+  const navigation = useNavigate();
   // 아래 변수들은 UI 구현을 위한 임의 변수입니다. 실제 사용 X
   const user = { name: "프로그" };
   const isLogin = true;
@@ -128,6 +159,10 @@ function Search() {
       skill: "기술",
     },
   ];
+  // useState 변수 선언
+  const [allProject, setAllProject] = useState([]);
+  const [selectedTag, setSelectedTag] = useState([]);
+  const [filterBtn, setFilterBtn] = useState(false);
 
   // 스크롤 관련
   const scrollRef = useRef(null);
@@ -138,10 +173,8 @@ function Search() {
     const totalScrollableWidth = scrollWidth - clientWidth;
 
     if (totalScrollableWidth > 0) {
-      // 현재 스크롤 위치를 백분율로 계산
       let currentPosition = (scrollLeft / totalScrollableWidth) * 100;
 
-      // currentPosition이 최대 100% - 바의 너비만큼을 초과하지 않도록 보정
       currentPosition = Math.min(currentPosition, 100 - 33.3);
 
       setPosition(currentPosition);
@@ -153,6 +186,11 @@ function Search() {
     scrollElement.addEventListener("scroll", handleScroll);
     return () => scrollElement.removeEventListener("scroll", handleScroll);
   }, []);
+
+  // 필터 선택 버튼
+  function ClickedFilterBtn() {
+    setFilterBtn(true);
+  }
 
   return (
     <div>
@@ -193,6 +231,22 @@ function Search() {
         <ProgressContainer>
           <ProgressBar position={position}></ProgressBar>
         </ProgressContainer>
+        <BannerBox />
+        <FilterBox>
+          <img src={FilterIcon} alt="FilterIcon" />
+          <p>필터를 선택해 보세요</p>
+        </FilterBox>
+        <ProjectWrapper>
+          {project.map((item, index) => (
+            <ProjectThumbnail
+              key={index}
+              imagesrc={item.src}
+              name={item.name}
+              genrelist={item.genre}
+              skilllist={item.skill}
+            />
+          ))}
+        </ProjectWrapper>
       </SearchContainer>
     </div>
   );
