@@ -160,9 +160,10 @@ function Search() {
     },
   ];
   // useState 변수 선언
-  const [selectedTag, setSelectedTag] = useState([]); // 선택된 태그
+  const [selectedTags, setSelectedTags] = useState([]); // 선택된 태그
   const [filterBtn, setFilterBtn] = useState(false); // 필터 버튼
   const [filterModal, setFilterModal] = useState(false); // 필터 모달창
+  const [isApply, setIsApply] = useState(false);
 
   // 필터 모달 오픈/클로즈 함수
   const openFilterModal = () => {
@@ -246,7 +247,14 @@ function Search() {
           <img src={FilterIcon} alt="FilterIcon" />
           <p>필터를 선택해 보세요</p>
         </FilterBox>
-        {filterModal && <FilterModal closeModal={closeFilterModal} />}
+        {filterModal && (
+          <FilterModal
+            closeModal={closeFilterModal}
+            selectedTags={selectedTags}
+            setSelectedTags={setSelectedTags}
+            setIsApply={setIsApply}
+          />
+        )}
         <ProjectWrapper>
           {project.map((item, index) => (
             <ProjectThumbnail

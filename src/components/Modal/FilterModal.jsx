@@ -112,12 +112,16 @@ const SearchContainer = styled.div`
 `;
 
 const SearchBar = styled.input`
-  background-color: rgba(38, 38, 38, 1);
-  border: 1px solid rgba(118, 118, 118, 1);
+  background-color: ${(props) =>
+    props.isFocused ? "rgba(0, 193, 58, 0.1)" : "rgba(38, 38, 38, 1)"};
+  border: ${(props) =>
+    props.isFocused
+      ? "1px solid rgba(0, 193, 58, 0.5)"
+      : "1px solid rgba(118, 118, 118, 1)"};
   border-radius: 8px;
-  color: rgba(153, 153, 153, 1);
+  color: ${(props) => (props.isFocused ? "white" : "rgba(153, 153, 153, 1)")};
   font-size: 12px;
-  font-weight: 700;
+  font-weight: 600;
   padding: 12px 20px;
   width: 100%;
 `;
@@ -129,11 +133,19 @@ const SearchIcon = styled.img`
   width: 20px;
 `;
 
-function FilterModal({ closeModal }) {
+function FilterModal({
+  closeModal,
+  selectedTags,
+  setSelectedTags,
+  setIsApply,
+}) {
   const [activeBtn, setActiveBtn] = useState("GenreBtn");
-  const [selectedTags, setSelectedTags] = useState([]);
+  // const [selectedTags, setSelectedTags] = useState([]);
   const [querySkill, setQuerySkill] = useState("");
   const [searchedSkill, setSearchedSkill] = useState([]);
+  const [queryUniv, setQueryUniv] = useState("");
+  const [searchedUniv, setSearchedUniv] = useState([]);
+  const [focusSearchBar, setFocusSearchBar] = useState(false);
 
   // 어떤 필터를 적용할지 고르는 버튼 동작
   const handleBtnClick = (buttonName) => {
@@ -176,58 +188,91 @@ function FilterModal({ closeModal }) {
   };
 
   // 기술스택버튼 관련
-  const allSkills = [
-    "Django",
-    "React",
-    "Node.js",
-    "Python",
-    "JavaScript",
-    "Java",
-    "Spring",
-    "C++",
-    "Ruby on Rails",
-    "Swift",
-    "Kotlin",
-    "Vue.js",
-    "Angular",
-    "SQL",
-    "MongoDB",
-  ];
 
   const handleSearchSkill = (e) => {
     const skill = e.target.value;
     setQuerySkill(skill);
-
-    if (skill) {
-      const filtered = allSkills.filter((item) =>
-        item.toLowerCase().includes(skill.toLowerCase())
-      );
-      setSearchedSkill(filtered);
+  };
+  // 기술 스택 검색 연동 코드..
+  useEffect(() => {
+    if (querySkill) {
+      const postSkill = async () => {
+        try {
+          const response = await axios.post(
+            `${baseURL}/api/search/stack/input`,
+            {
+              stack_name: querySkill,
+            }
+          );
+          setSearchedSkill(response.data.stack);
+          console.log(response.data.stack);
+        } catch (error) {
+          console.log(error);
+        }
+      };
+      postSkill();
     } else {
       setSearchedSkill([]);
     }
+  }, [querySkill]);
+
+  // 대학버튼관련
+  const allUnivs = [
+    "동국대학교",
+    "한성대학교",
+    "숙명여자대학교",
+    "서울대학교",
+    "연세대학교",
+    "고려대학교",
+    "서강대학교",
+    "성균관대학교",
+    "한양대학교",
+  ];
+
+  const handleSearchUniv = (e) => {
+    const univ = e.target.value;
+    setQueryUniv(univ);
+
+    // 나중에는 지우고, 밑에다 연동 코드 작성
+    // if (univ) {
+    //   const filtered = allUnivs.filter((item) =>
+    //     item.toLowerCase().includes(univ.toLowerCase())
+    //   );
+    //   setSearchedUniv(filtered);
+    // } else {
+    //   setSearchedUniv([]);
+    // }
   };
-  //   useEffect(() => {
-  //     if (querySkill) {
-  //       const postSkill = async () => {
-  //         try {
-  //           const response = await axios.post(
-  //             `${baseURL}/api/search/stack/input`,
-  //             {
-  //               stack_name: querySkill,
-  //             }
-  //           );
-  //           setSearchedSkill(response.data.stack);
-  //           console.log(searchedSkill);
-  //         } catch (error) {
-  //           console.log(error);
-  //         }
-  //       };
-  //       postSkill();
-  //     } else {
-  //       setSearchedSkill([]);
-  //     }
-  //   }, [querySkill]);
+
+  useEffect(() => {
+    if (queryUniv) {
+      const postUniv = async () => {
+        try {
+          const response = await axios.post(
+            `${baseURL}/api/search/university/input`,
+            {
+              university_name: queryUniv,
+            }
+          );
+          setSearchedUniv(response.data.university);
+          console.log(response.data);
+        } catch (error) {
+          console.log(error);
+        }
+      };
+      postUniv();
+    } else {
+      setSearchedUniv([]);
+    }
+  }, [queryUniv]);
+
+  // 검색바 focus 함수 관련
+  const handleFocus = () => {
+    setFocusSearchBar(true);
+  };
+  const handleBlur = () => {
+    setFocusSearchBar(false);
+  };
 
   return (
     <ModalContainer>
@@ -288,17 +333,23 @@ function FilterModal({ closeModal }) {
       )}
       {/* 기술 버튼 선택 시 나오는 화면 */}
       {activeBtn === "SkillBtn" && (
-        <SearchContainer>
-          <SearchBar
-            type="text"
-            name="skillnstack"
-            value={querySkill}
-            onChange={(e) => handleSearchSkill(e)}
-            placeholder="기술 스택을 입력해 주세요"
-          />
-          <SearchIcon src={Search} alt="Search" />
+        <>
+          <SearchContainer>
+            <SearchBar
+              type="text"
+              name="skillnstack"
+              value={querySkill}
+              onChange={(e) => handleSearchSkill(e)}
+              placeholder="기술 스택을 입력해 주세요"
+              onFocus={handleFocus}
+              onBlur={handleBlur}
+              isFocused={focusSearchBar}
+            />
+            <SearchIcon src={Search} alt="Search" />
+          </SearchContainer>
           <DetailGenreBtnWrapper>
-            {searchedSkill.length > 0 &&
+            {searchedSkill &&
+              searchedSkill.length > 0 &&
               searchedSkill.map((skillstack) => (
                 <DetailGenreBtn
                   key={skillstack}
@@ -309,7 +360,37 @@ function FilterModal({ closeModal }) {
                 </DetailGenreBtn>
               ))}
           </DetailGenreBtnWrapper>
-        </SearchContainer>
+        </>
+      )}
+      {/* 대학 버튼 선택 시 나오는 화면 */}
+      {activeBtn === "UnivBtn" && (
+        <>
+          <SearchContainer>
+            <SearchBar
+              type="text"
+              name="university"
+              value={queryUniv}
+              onChange={(e) => handleSearchUniv(e)}
+              placeholder="대학교 명을 입력해 주세요"
+              onFocus={handleFocus}
+              onBlur={handleBlur}
+            />
+            <SearchIcon src={Search} alt="Search" />
+          </SearchContainer>
+          <DetailGenreBtnWrapper>
+            {searchedUniv &&
+              searchedUniv.length > 0 &&
+              searchedUniv.map((university) => (
+                <DetailGenreBtn
+                  key={university}
+                  isSelected={selectedTags.includes(university)}
+                  onClick={() => handleTagClick(university)}
+                >
+                  {university}
+                </DetailGenreBtn>
+              ))}
+          </DetailGenreBtnWrapper>
+        </>
       )}
     </ModalContainer>
   );
