@@ -89,6 +89,16 @@ const FilterBox = styled.div`
   cursor: pointer;
 `;
 
+const SelectedTag = styled.span`
+  background-color: rgba(17, 17, 17, 1);
+  border: 1px solid rgba(0, 193, 58, 1);
+  border-radius: 100px;
+  padding: 8px 14px;
+  color: rgba(0, 193, 58, 1);
+  font-weight: 500;
+  font-size: 13px;
+`;
+
 const ProjectWrapper = styled.div`
   display: flex;
   align-items: center;
@@ -160,13 +170,18 @@ function Search() {
     },
   ];
   // useState 변수 선언
-  const [selectedTags, setSelectedTags] = useState([]); // 선택된 태그
+  const [selectedTags, setSelectedTags] = useState([]); // 선택된 태그 (장르, 기술)
+  const [selectedUniv, setSelectedUniv] = useState(null); // 선택된 대학 (1개만 선택 가능하기에 상태 따로 관리)
+  const [tempSelectedTags, setTempSelectedTags] = useState([]);
+  const [tempSelectedUniv, setTempSelectedUniv] = useState(null);
   const [filterBtn, setFilterBtn] = useState(false); // 필터 버튼
   const [filterModal, setFilterModal] = useState(false); // 필터 모달창
   const [isApply, setIsApply] = useState(false);
 
   // 필터 모달 오픈/클로즈 함수
   const openFilterModal = () => {
+    setTempSelectedTags([...selectedTags]);
+    setTempSelectedUniv(selectedUniv);
     setFilterModal(true);
   };
 
@@ -178,6 +193,13 @@ function Search() {
   const ClickedFilterBtn = () => {
     setFilterBtn(!filterBtn);
     openFilterModal();
+  };
+
+  // 필터 적용 버튼 관련
+  const handleApplyBtn = () => {
+    setSelectedTags([...tempSelectedTags]);
+    setSelectedUniv(tempSelectedUniv);
+    setIsApply(true);
   };
 
   // 스크롤 관련
@@ -245,14 +267,26 @@ function Search() {
         <BannerBox />
         <FilterBox onClick={ClickedFilterBtn}>
           <img src={FilterIcon} alt="FilterIcon" />
-          <p>필터를 선택해 보세요</p>
+          {isApply ? (
+            <>
+              {selectedTags.length > 0 &&
+                selectedTags.map((item, index) => (
+                  <SelectedTag key={index}>{item}</SelectedTag>
+                ))}
+              {selectedUniv && <SelectedTag>{selectedUniv}</SelectedTag>}
+            </>
+          ) : (
+            <p>필터를 선택해 보세요</p>
+          )}
         </FilterBox>
         {filterModal && (
           <FilterModal
             closeModal={closeFilterModal}
-            selectedTags={selectedTags}
-            setSelectedTags={setSelectedTags}
-            setIsApply={setIsApply}
+            selectedTags={tempSelectedTags}
+            setSelectedTags={setTempSelectedTags}
+            selectedUniv={tempSelectedUniv}
+            setSelectedUniv={setTempSelectedUniv}
+            handleApplyBtn={handleApplyBtn}
           />
         )}
         <ProjectWrapper>

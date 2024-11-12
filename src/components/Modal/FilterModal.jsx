@@ -137,7 +137,9 @@ function FilterModal({
   closeModal,
   selectedTags,
   setSelectedTags,
-  setIsApply,
+  selectedUniv,
+  setSelectedUniv,
+  handleApplyBtn,
 }) {
   const [activeBtn, setActiveBtn] = useState("GenreBtn");
   // const [selectedTags, setSelectedTags] = useState([]);
@@ -177,14 +179,18 @@ function FilterModal({
     "기타",
   ];
 
-  const handleTagClick = (tag) => {
-    setSelectedTags((prev) => {
-      if (prev.includes(tag)) {
-        return prev.filter((item) => item !== tag);
-      } else {
-        return [...prev, tag];
-      }
-    });
+  const handleTagClick = (tag, type) => {
+    if (type === "university") {
+      setSelectedUniv(tag);
+    } else {
+      setSelectedTags((prev) => {
+        if (prev.includes(tag)) {
+          return prev.filter((item) => item !== tag);
+        } else {
+          return [...prev, tag];
+        }
+      });
+    }
   };
 
   // 기술스택버튼 관련
@@ -216,32 +222,9 @@ function FilterModal({
     }
   }, [querySkill]);
 
-  // 대학버튼관련
-  const allUnivs = [
-    "동국대학교",
-    "한성대학교",
-    "숙명여자대학교",
-    "서울대학교",
-    "연세대학교",
-    "고려대학교",
-    "서강대학교",
-    "성균관대학교",
-    "한양대학교",
-  ];
-
   const handleSearchUniv = (e) => {
     const univ = e.target.value;
     setQueryUniv(univ);
-
-    // 나중에는 지우고, 밑에다 연동 코드 작성
-    // if (univ) {
-    //   const filtered = allUnivs.filter((item) =>
-    //     item.toLowerCase().includes(univ.toLowerCase())
-    //   );
-    //   setSearchedUniv(filtered);
-    // } else {
-    //   setSearchedUniv([]);
-    // }
   };
 
   useEffect(() => {
@@ -313,7 +296,7 @@ function FilterModal({
           </TypeBtn>
         </TypeBtnWrapper>
         <ApplynCloseWrapper>
-          <ApplyBtn>적용</ApplyBtn>
+          <ApplyBtn onClick={handleApplyBtn}>적용</ApplyBtn>
           <img src={CloseICon} alt="CloseICon" onClick={closeModal} />
         </ApplynCloseWrapper>
       </TypenApplyBtnDiv>
@@ -324,7 +307,7 @@ function FilterModal({
             <DetailGenreBtn
               key={genre}
               isSelected={selectedTags.includes(genre)}
-              onClick={() => handleTagClick(genre)}
+              onClick={() => handleTagClick(genre, "genre")}
             >
               {genre}
             </DetailGenreBtn>
@@ -354,7 +337,7 @@ function FilterModal({
                 <DetailGenreBtn
                   key={skillstack}
                   isSelected={selectedTags.includes(skillstack)}
-                  onClick={() => handleTagClick(skillstack)}
+                  onClick={() => handleTagClick(skillstack, "skill")}
                 >
                   {skillstack}
                 </DetailGenreBtn>
@@ -374,6 +357,7 @@ function FilterModal({
               placeholder="대학교 명을 입력해 주세요"
               onFocus={handleFocus}
               onBlur={handleBlur}
+              isFocused={focusSearchBar}
             />
             <SearchIcon src={Search} alt="Search" />
           </SearchContainer>
@@ -383,8 +367,8 @@ function FilterModal({
               searchedUniv.map((university) => (
                 <DetailGenreBtn
                   key={university}
-                  isSelected={selectedTags.includes(university)}
-                  onClick={() => handleTagClick(university)}
+                  isSelected={selectedUniv === university}
+                  onClick={() => handleTagClick(university, "university")}
                 >
                   {university}
                 </DetailGenreBtn>
