@@ -181,7 +181,11 @@ function FilterModal({
 
   const handleTagClick = (tag, type) => {
     if (type === "university") {
-      setSelectedUniv(tag);
+      if (selectedUniv === tag) {
+        setSelectedUniv("");
+      } else {
+        setSelectedUniv(tag);
+      }
     } else {
       setSelectedTags((prev) => {
         if (prev.includes(tag)) {
