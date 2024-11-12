@@ -210,8 +210,12 @@ function FilterModal({
               stack_name: querySkill,
             }
           );
-          setSearchedSkill(response.data.stack);
-          console.log(response.data.stack);
+          const stack = response.data.stack || [];
+          if (stack.length === 0) {
+            setSearchedSkill(["목록에 존재하지 않는 기술 스택입니다  :("]);
+          } else {
+            setSearchedSkill(stack);
+          }
         } catch (error) {
           console.log(error);
         }
@@ -237,8 +241,12 @@ function FilterModal({
               university_name: queryUniv,
             }
           );
-          setSearchedUniv(response.data.university);
-          console.log(response.data);
+          const university = response.data.university || [];
+          if (university.length === 0) {
+            setSearchedUniv(["목록에 존재하지 않는 대학교 명입니다  :("]);
+          } else {
+            setSearchedUniv(university);
+          }
         } catch (error) {
           console.log(error);
         }
@@ -333,15 +341,19 @@ function FilterModal({
           <DetailGenreBtnWrapper>
             {searchedSkill &&
               searchedSkill.length > 0 &&
-              searchedSkill.map((skillstack) => (
-                <DetailGenreBtn
-                  key={skillstack}
-                  isSelected={selectedTags.includes(skillstack)}
-                  onClick={() => handleTagClick(skillstack, "skill")}
-                >
-                  {skillstack}
-                </DetailGenreBtn>
-              ))}
+              searchedSkill.map((skillstack) =>
+                skillstack === "목록에 존재하지 않는 기술 스택입니다  :(" ? (
+                  <p key="null">{skillstack}</p>
+                ) : (
+                  <DetailGenreBtn
+                    key={skillstack}
+                    isSelected={selectedTags.includes(skillstack)}
+                    onClick={() => handleTagClick(skillstack, "skill")}
+                  >
+                    {skillstack}
+                  </DetailGenreBtn>
+                )
+              )}
           </DetailGenreBtnWrapper>
         </>
       )}
@@ -364,15 +376,19 @@ function FilterModal({
           <DetailGenreBtnWrapper>
             {searchedUniv &&
               searchedUniv.length > 0 &&
-              searchedUniv.map((university) => (
-                <DetailGenreBtn
-                  key={university}
-                  isSelected={selectedUniv === university}
-                  onClick={() => handleTagClick(university, "university")}
-                >
-                  {university}
-                </DetailGenreBtn>
-              ))}
+              searchedUniv.map((university) =>
+                university === "목록에 존재하지 않는 대학교 명입니다  :(" ? (
+                  <p key={"null"}>{university}</p>
+                ) : (
+                  <DetailGenreBtn
+                    key={university}
+                    isSelected={selectedUniv === university}
+                    onClick={() => handleTagClick(university, "university")}
+                  >
+                    {university}
+                  </DetailGenreBtn>
+                )
+              )}
           </DetailGenreBtnWrapper>
         </>
       )}
