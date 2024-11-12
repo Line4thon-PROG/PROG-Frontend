@@ -150,7 +150,7 @@ const PersonInputContainer = styled.div`
 const SearchIcon = styled.img`
   position: absolute;
   right: 1vw;
-  top: 55%;
+  top: 48%;
   transform: translateY(-50%);
   width: 1.2vw;
   height: 1.2vw;
@@ -487,14 +487,23 @@ const FileInput = styled.input`
   display: none;
 `;
 
-const SearchContainer = styled.div`
+const SearchContainer = styled.input`
   width: 21.8vw;
-height: 2.8vw;
-flex-shrink: 0;
-border-radius: 0.4vw;
-border: 1px solid #00C13A;
-background: #111;
-`
+  height: 2.8vw;
+  flex-shrink: 0;
+  border-radius: 0.4vw;
+  border: 1px solid #00c13a;
+  background: #111;
+  margin-top: 1vw;
+  color: var(--Font-01_White, #fff);
+  font-family: Pretendard;
+  font-size: 0.8vw;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 1.2vw;
+  padding: 0.8vw;
+  letter-spacing: -0.4px;
+`;
 
 function Write() {
   const [selectedGenres, setSelectedGenres] = useState([]);
@@ -520,6 +529,18 @@ function Write() {
     IOS: false,
     Android: false,
   });
+
+  const [imageSrcList, setImageSrcList] = useState([]);
+
+  const handleMultipleImageChange = (e) => {
+    const files = Array.from(e.target.files);
+    const newImageSrcList = files.map((file) => URL.createObjectURL(file));
+    setImageSrcList((prevList) => [...prevList, ...newImageSrcList]);
+  };
+
+  const removeImage = (index) => {
+    setImageSrcList((prevList) => prevList.filter((_, i) => i !== index));
+  };
 
   const toggleGenre = (genre) => {
     setSelectedGenres((prevSelectedGenres) =>
@@ -555,6 +576,12 @@ function Write() {
     if (file) {
       setImageSrc(URL.createObjectURL(file));
     }
+  };
+
+  const removeStack = (stack) => {
+    setSelectedStacks((prevSelectedStacks) =>
+      prevSelectedStacks.filter((s) => s !== stack)
+    );
   };
 
   const [isGenreActive, setIsGenreActive] = useState(true);
@@ -716,37 +743,46 @@ function Write() {
             </GenreContainer>
           </RowContainer2>
 
-          {isGenreActive
-            ? // 장르 선택
-              splitGenres.map((row, rowIndex) => (
-                <RowContainer2
-                  key={rowIndex}
-                  style={{
-                    marginTop: rowIndex > 0 ? '0.4vw' : '1.6vw',
-                    gap: '0.4vw',
-                  }}
-                >
-                  {row.map((genre) => (
-                    <Circle
-                      key={genre}
-                      isSelected={selectedGenres.includes(genre)}
-                      onClick={() => toggleGenre(genre)}
-                    >
-                      {genre}
-                    </Circle>
-                  ))}
-                </RowContainer2>
-              ))
-            : 
-            <SearchContainer>
+          {isGenreActive ? (
+            // 장르 선택
+            splitGenres.map((row, rowIndex) => (
+              <RowContainer2
+                key={rowIndex}
+                style={{
+                  marginTop: rowIndex > 0 ? '0.4vw' : '1.6vw',
+                  gap: '0.4vw',
+                }}
+              >
+                {row.map((genre) => (
+                  <Circle
+                    key={genre}
+                    isSelected={selectedGenres.includes(genre)}
+                    onClick={() => toggleGenre(genre)}
+                  >
+                    {genre}
+                  </Circle>
+                ))}
+              </RowContainer2>
+            ))
+          ) : (
+            <>
+              <PersonInputContainer style={{ marginTop: '1vw' }}>
+                <PersonInput
+                  placeholder="기술 스택을 검색해보세요"
+                  value={person}
+                  onChange={(e) => setPerson(e.target.value)}
+                  isFocused={isPersonFocused}
+                  onFocus={handleFocus(setIsPersonFocused)}
+                  onBlur={handleBlur(setIsPersonFocused)}
+                />
+                <SearchIcon src={searchIcon} alt="돋보기 아이콘" />
+              </PersonInputContainer>
 
-            </SearchContainer>
-            // 기술 스택
-              stackRows.map((row, rowIndex) => (
+              {stackRows.map((row, rowIndex) => (
                 <RowContainer2
                   key={rowIndex}
                   style={{
-                    marginTop: rowIndex > 0 ? '0.4vw' : '1.6vw',
+                    marginTop: rowIndex > 0 ? '0.4vw' : '0.9vw',
                     gap: '0.4vw',
                   }}
                 >
@@ -761,6 +797,8 @@ function Write() {
                   ))}
                 </RowContainer2>
               ))}
+            </>
+          )}
         </SelectContainer>
 
         <SelectedContainer>
@@ -768,6 +806,12 @@ function Write() {
             <SelectedGenre key={genre}>
               {genre}
               <Close src={close} onClick={() => removeGenre(genre)} />
+            </SelectedGenre>
+          ))}
+          {selectedStacks.map((stack) => (
+            <SelectedGenre key={stack}>
+              {stack}
+              <Close src={close} onClick={() => removeStack(stack)} />
             </SelectedGenre>
           ))}
         </SelectedContainer>
@@ -815,11 +859,47 @@ function Write() {
 
         <Title style={{ marginTop: '0vw' }}>프로젝트 설명 이미지 첨부</Title>
         <Share>이미지 최대 해상도 : 956 X 537</Share>
-
         <ExplainImageContainer>
-          <ImageBox>
-            <Picture src={picture} />
+          <ImageBox
+            onClick={() => document.getElementById('multiFileInput').click()}
+          >
+            <Picture src={picture} alt="Placeholder" isIcon />
+            <FileInput
+              type="file"
+              id="multiFileInput"
+              accept="image/*"
+              multiple
+              onChange={handleMultipleImageChange}
+            />
           </ImageBox>
+
+          <div
+            style={{
+              display: 'flex',
+              gap: '1vw',
+              marginTop: '1vw',
+              flexWrap: 'wrap',
+            }}
+          >
+            {imageSrcList.map((src, index) => (
+              <div
+                key={index}
+                style={{ position: 'relative', width: '8vw', height: '8vw' }}
+              >
+                <Picture src={src} alt={`Project Image ${index + 1}`} />
+                <Close
+                  src={close}
+                  onClick={() => removeImage(index)}
+                  style={{
+                    position: 'absolute',
+                    top: '0.5vw',
+                    right: '0.5vw',
+                    cursor: 'pointer',
+                  }}
+                />
+              </div>
+            ))}
+          </div>
         </ExplainImageContainer>
 
         <BtnContainer>
