@@ -7,12 +7,14 @@ import ProjectThumbnail from "../../components/ProjectTumbnail/ProjectThumbnail"
 import LogoutThumbnail from "../../components/ProjectTumbnail/LogoutThumbnail";
 import ProjectThumbnailImage from "../../assets/images/ProjectThumbnailImage.svg";
 import FilterIcon from "../../assets/images/FilterIcon.svg";
+import UpScroll from "../../assets/images/UpScroll.svg";
 import FilterModal from "../../components/Modal/FilterModal";
 
 const SearchContainer = styled.div`
   margin-top: 30px;
   width: 100%;
   padding-bottom: 30px;
+  position: relative;
 `;
 
 const NameandWriteBtnWrapper = styled.div`
@@ -106,6 +108,14 @@ const ProjectWrapper = styled.div`
   width: 53.8vw;
   flex-wrap: wrap;
   position: relative;
+`;
+
+const UpScrollImg = styled.img`
+  position: fixed;
+  width: 40px;
+  top: 50vh;
+  left: 73vw;
+  cursor: pointer;
 `;
 
 function Search() {
@@ -202,7 +212,7 @@ function Search() {
     setIsApply(true);
   };
 
-  // 스크롤 관련
+  // 추천 프로젝트 가로 스크롤 관련
   const scrollRef = useRef(null);
   const [position, setPosition] = useState(0);
 
@@ -217,6 +227,11 @@ function Search() {
 
       setPosition(currentPosition);
     }
+  };
+
+  // 위로 올라가는 스크롤
+  const MoveToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   useEffect(() => {
@@ -300,6 +315,7 @@ function Search() {
             />
           ))}
         </ProjectWrapper>
+        <UpScrollImg src={UpScroll} alt="UpScroll" onClick={MoveToTop} />
       </SearchContainer>
     </div>
   );
