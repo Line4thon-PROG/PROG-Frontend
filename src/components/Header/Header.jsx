@@ -1,7 +1,7 @@
-import styled from 'styled-components';
-import logo from '../../assets/images/Logo.svg';
-import search from '../../assets/images/Search.svg';
-import login from '../../assets/images/Login.svg';
+import styled from "styled-components";
+import logo from "../../assets/images/Logo.svg";
+import search from "../../assets/images/Search.svg";
+import login from "../../assets/images/Login.svg";
 
 const HeaderContainer = styled.div`
   padding-left: 4.2vw;
@@ -10,6 +10,7 @@ const HeaderContainer = styled.div`
   padding-bottom: 1.2vw;
   width: 100%;
   height: 4.6vw;
+  position: relative;
 `;
 
 const Container = styled.div`
