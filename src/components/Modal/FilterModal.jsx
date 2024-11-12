@@ -1,6 +1,6 @@
 import { React, useState, useEffect } from "react";
 import styled from "styled-components";
-import GenreIcon from "../../assets/images/GenreIcon.svg";
+import GenreIcon from "../../assets/images/GenreIconProjectPage.svg";
 import UnivIcon from "../../assets/images/UnivIcon.svg";
 import SkillIcon from "../../assets/images/SkillIcon.svg";
 import GreenGenreIcon from "../../assets/images/GreenGenreIcon.svg";
