@@ -1,4 +1,4 @@
-import { React, useState } from "react";
+import { React, useState, useEffect } from "react";
 import styled from "styled-components";
 import GenreIcon from "../../assets/images/GenreIcon.svg";
 import UnivIcon from "../../assets/images/UnivIcon.svg";
@@ -7,18 +7,22 @@ import GreenGenreIcon from "../../assets/images/GreenGenreIcon.svg";
 import GreenUnivIcon from "../../assets/images/GreenUnivIcon.svg";
 import GreenSkillIcon from "../../assets/images/GreenSkillIcon.svg";
 import CloseICon from "../../assets/images/CloseIcon.svg";
+import Search from "../../assets/images/Search.svg";
+import { baseURL } from "../../api/baseURL";
+import axios from "axios";
 
 const ModalContainer = styled.div`
   position: absolute;
   margin-top: 10px;
   width: 53.8vw;
   height: auto;
+  min-height: 230px;
   background-color: rgba(17, 17, 17, 0.8);
   border: 1px solid rgba(153, 153, 153, 1);
   border-radius: 8px;
   backdrop-filter: blur(20px);
   z-index: 100;
-  padding: 20px 30px 25px 30px;
+  padding: 20px 30px 30px 30px;
 `;
 
 const TypeBtnWrapper = styled.div`
@@ -101,9 +105,35 @@ const DetailGenreBtn = styled.button`
   font-size: 12px;
 `;
 
+const SearchContainer = styled.div`
+  position: relative;
+  width: 25vw;
+  margin-top: 35px;
+`;
+
+const SearchBar = styled.input`
+  background-color: rgba(38, 38, 38, 1);
+  border: 1px solid rgba(118, 118, 118, 1);
+  border-radius: 8px;
+  color: rgba(153, 153, 153, 1);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 12px 20px;
+  width: 100%;
+`;
+
+const SearchIcon = styled.img`
+  position: absolute;
+  top: 10px;
+  left: 23vw;
+  width: 20px;
+`;
+
 function FilterModal({ closeModal }) {
   const [activeBtn, setActiveBtn] = useState("GenreBtn");
-  const [selectedGenres, setSelectedGenres] = useState([]);
+  const [selectedTags, setSelectedTags] = useState([]);
+  const [querySkill, setQuerySkill] = useState("");
+  const [searchedSkill, setSearchedSkill] = useState([]);
 
   // 어떤 필터를 적용할지 고르는 버튼 동작
   const handleBtnClick = (buttonName) => {
@@ -135,15 +165,69 @@ function FilterModal({ closeModal }) {
     "기타",
   ];
 
-  const handleGenreClick = (genre) => {
-    setSelectedGenres((prev) => {
-      if (prev.includes(genre)) {
-        return prev.filter((item) => item !== genre);
+  const handleTagClick = (tag) => {
+    setSelectedTags((prev) => {
+      if (prev.includes(tag)) {
+        return prev.filter((item) => item !== tag);
       } else {
-        return [...prev, genre];
+        return [...prev, tag];
       }
     });
   };
+
+  // 기술스택버튼 관련
+  const allSkills = [
+    "Django",
+    "React",
+    "Node.js",
+    "Python",
+    "JavaScript",
+    "Java",
+    "Spring",
+    "C++",
+    "Ruby on Rails",
+    "Swift",
+    "Kotlin",
+    "Vue.js",
+    "Angular",
+    "SQL",
+    "MongoDB",
+  ];
+
+  const handleSearchSkill = (e) => {
+    const skill = e.target.value;
+    setQuerySkill(skill);
+
+    if (skill) {
+      const filtered = allSkills.filter((item) =>
+        item.toLowerCase().includes(skill.toLowerCase())
+      );
+      setSearchedSkill(filtered);
+    } else {
+      setSearchedSkill([]);
+    }
+  };
+  //   useEffect(() => {
+  //     if (querySkill) {
+  //       const postSkill = async () => {
+  //         try {
+  //           const response = await axios.post(
+  //             `${baseURL}/api/search/stack/input`,
+  //             {
+  //               stack_name: querySkill,
+  //             }
+  //           );
+  //           setSearchedSkill(response.data.stack);
+  //           console.log(searchedSkill);
+  //         } catch (error) {
+  //           console.log(error);
+  //         }
+  //       };
+  //       postSkill();
+  //     } else {
+  //       setSearchedSkill([]);
+  //     }
+  //   }, [querySkill]);
 
   return (
     <ModalContainer>
@@ -194,13 +278,38 @@ function FilterModal({ closeModal }) {
           {genreList.map((genre) => (
             <DetailGenreBtn
               key={genre}
-              isSelected={selectedGenres.includes(genre)}
-              onClick={() => handleGenreClick(genre)}
+              isSelected={selectedTags.includes(genre)}
+              onClick={() => handleTagClick(genre)}
             >
               {genre}
             </DetailGenreBtn>
           ))}
         </DetailGenreBtnWrapper>
+      )}
+      {/* 기술 버튼 선택 시 나오는 화면 */}
+      {activeBtn === "SkillBtn" && (
+        <SearchContainer>
+          <SearchBar
+            type="text"
+            name="skillnstack"
+            value={querySkill}
+            onChange={(e) => handleSearchSkill(e)}
+            placeholder="기술 스택을 입력해 주세요"
+          />
+          <SearchIcon src={Search} alt="Search" />
+          <DetailGenreBtnWrapper>
+            {searchedSkill.length > 0 &&
+              searchedSkill.map((skillstack) => (
+                <DetailGenreBtn
+                  key={skillstack}
+                  isSelected={selectedTags.includes(skillstack)}
+                  onClick={() => handleTagClick(skillstack)}
+                >
+                  {skillstack}
+                </DetailGenreBtn>
+              ))}
+          </DetailGenreBtnWrapper>
+        </SearchContainer>
       )}
     </ModalContainer>
   );
