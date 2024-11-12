@@ -7,7 +7,7 @@ import ProjectThumbnail from "../../components/ProjectTumbnail/ProjectThumbnail"
 import LogoutThumbnail from "../../components/ProjectTumbnail/LogoutThumbnail";
 import ProjectThumbnailImage from "../../assets/images/ProjectThumbnailImage.svg";
 import FilterIcon from "../../assets/images/FilterIcon.svg";
-import MiddleBlock from "../../assets/images/MiddleBlock.svg";
+import FilterModal from "../../components/Modal/FilterModal";
 
 const SearchContainer = styled.div`
   margin-top: 30px;
@@ -160,9 +160,24 @@ function Search() {
     },
   ];
   // useState 변수 선언
-  const [allProject, setAllProject] = useState([]);
-  const [selectedTag, setSelectedTag] = useState([]);
-  const [filterBtn, setFilterBtn] = useState(false);
+  const [selectedTag, setSelectedTag] = useState([]); // 선택된 태그
+  const [filterBtn, setFilterBtn] = useState(false); // 필터 버튼
+  const [filterModal, setFilterModal] = useState(false); // 필터 모달창
+
+  // 필터 모달 오픈/클로즈 함수
+  const openFilterModal = () => {
+    setFilterModal(true);
+  };
+
+  const closeFilterModal = () => {
+    setFilterModal(false);
+  };
+
+  // 필터 선택 버튼
+  const ClickedFilterBtn = () => {
+    setFilterBtn(!filterBtn);
+    openFilterModal();
+  };
 
   // 스크롤 관련
   const scrollRef = useRef(null);
@@ -186,11 +201,6 @@ function Search() {
     scrollElement.addEventListener("scroll", handleScroll);
     return () => scrollElement.removeEventListener("scroll", handleScroll);
   }, []);
-
-  // 필터 선택 버튼
-  function ClickedFilterBtn() {
-    setFilterBtn(true);
-  }
 
   return (
     <div>
@@ -232,10 +242,11 @@ function Search() {
           <ProgressBar position={position}></ProgressBar>
         </ProgressContainer>
         <BannerBox />
-        <FilterBox>
+        <FilterBox onClick={ClickedFilterBtn}>
           <img src={FilterIcon} alt="FilterIcon" />
           <p>필터를 선택해 보세요</p>
         </FilterBox>
+        {filterModal && <FilterModal closeModal={closeFilterModal} />}
         <ProjectWrapper>
           {project.map((item, index) => (
             <ProjectThumbnail
