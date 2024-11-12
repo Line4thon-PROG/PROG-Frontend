@@ -13,9 +13,10 @@ import stack from '../../assets/images/Stack.svg';
 import close from '../../assets/images/Close.svg';
 import picture from '../../assets/images/Picture.svg';
 import active from '../../assets/images/ActiveCheck.svg';
-import stackactive from '../../assets/images/StackActive.svg';
+import StackiconActive from '../../assets/images/StackActive.svg';
 import Genreicon from '../../assets/images/Genreicon.svg';
 import Stackicon from '../../assets/images/Stackicon.svg';
+import GenreiconActive from '../../assets/images/GenreActive.svg';
 
 const Container = styled.div`
   display: flex;
@@ -236,15 +237,16 @@ const Circle = styled.div`
   align-items: center;
   gap: 0.5vw;
   border-radius: 5vw;
-  border: 1px solid var(--Font-03_Gray, #505050);
+  border: 1px solid ${({ isSelected }) => (isSelected ? '#00C13A' : '#505050')};
   background: #111;
-  color: var(--Font-05_Gray_Disabled, #999);
+  color: ${({ isSelected }) => (isSelected ? '#00C13A' : '#999')};
   font-family: Pretendard;
   font-size: 0.8vw;
   font-style: normal;
   font-weight: 500;
   line-height: 1.2vw;
   letter-spacing: -0.4px;
+  cursor: pointer;
 `;
 
 const deploymentTypes = [
@@ -308,13 +310,15 @@ const PlusImage = styled.div`
   margin-top: 1vw;
   position: relative;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 
 const Picture = styled.img`
   width: ${({ isIcon }) => (isIcon ? '1.8vw' : '100%')};
   height: ${({ isIcon }) => (isIcon ? '1.8vw' : '100%')};
   object-fit: ${({ isIcon }) => (isIcon ? 'contain' : 'cover')};
-  position: absolute;
 `;
 
 const Line = styled.div`
@@ -323,6 +327,7 @@ const Line = styled.div`
   border-radius: 0.2vw;
   background: #1b1b1b;
   margin-bottom: 1.2vw;
+  margin-top: 4vw;
 `;
 
 const ContentBlank = styled.textarea`
@@ -482,6 +487,15 @@ const FileInput = styled.input`
   display: none;
 `;
 
+const SearchContainer = styled.div`
+  width: 21.8vw;
+height: 2.8vw;
+flex-shrink: 0;
+border-radius: 0.4vw;
+border: 1px solid #00C13A;
+background: #111;
+`
+
 function Write() {
   const [selectedGenres, setSelectedGenres] = useState([]);
   const [title, setTitle] = useState('');
@@ -541,6 +555,25 @@ function Write() {
     if (file) {
       setImageSrc(URL.createObjectURL(file));
     }
+  };
+
+  const [isGenreActive, setIsGenreActive] = useState(true);
+  const [selectedStacks, setSelectedStacks] = useState([]);
+
+  const stackRows = [
+    ['Next.js', 'Spring Boot', 'CSS', 'React', 'Angular', 'Redux', 'Node.js'],
+  ];
+
+  const toggleActiveTab = () => {
+    setIsGenreActive(!isGenreActive);
+  };
+
+  const toggleStack = (stack) => {
+    setSelectedStacks((prevSelectedStacks) =>
+      prevSelectedStacks.includes(stack)
+        ? prevSelectedStacks.filter((s) => s !== stack)
+        : [...prevSelectedStacks, stack]
+    );
   };
 
   return (
@@ -668,31 +701,66 @@ function Write() {
         <Period>프로젝트 태그</Period>
         <SelectContainer>
           <RowContainer2 style={{ gap: '1.4vw' }}>
-            <GenreContainer>
-              <Genre src={Genreicon} /> <GenreP>장르 </GenreP>
+            <GenreContainer onClick={() => setIsGenreActive(true)}>
+              <Genre src={isGenreActive ? GenreiconActive : Genreicon} />
+              <GenreP style={{ color: isGenreActive ? '#00C13A' : '#999' }}>
+                장르
+              </GenreP>
             </GenreContainer>
 
-            <GenreContainer>
-              <Genre src={Stackicon} />
-              <GenreP>기술 스택 </GenreP>
+            <GenreContainer onClick={() => setIsGenreActive(false)}>
+              <Genre src={!isGenreActive ? StackiconActive : Stackicon} />
+              <GenreP style={{ color: !isGenreActive ? '#00C13A' : '#999' }}>
+                기술 스택
+              </GenreP>
             </GenreContainer>
           </RowContainer2>
 
-          {splitGenres.map((row, rowIndex) => (
-            <RowContainer2
-              key={rowIndex}
-              style={{
-                marginTop: rowIndex > 0 ? '0.4vw' : '1.6vw',
-                gap: '0.4vw',
-              }}
-            >
-              {row.map((genre) => (
-                <Circle key={genre} onClick={() => toggleGenre(genre)}>
-                  {genre}
-                </Circle>
+          {isGenreActive
+            ? // 장르 선택
+              splitGenres.map((row, rowIndex) => (
+                <RowContainer2
+                  key={rowIndex}
+                  style={{
+                    marginTop: rowIndex > 0 ? '0.4vw' : '1.6vw',
+                    gap: '0.4vw',
+                  }}
+                >
+                  {row.map((genre) => (
+                    <Circle
+                      key={genre}
+                      isSelected={selectedGenres.includes(genre)}
+                      onClick={() => toggleGenre(genre)}
+                    >
+                      {genre}
+                    </Circle>
+                  ))}
+                </RowContainer2>
+              ))
+            : 
+            <SearchContainer>
+
+            </SearchContainer>
+            // 기술 스택
+              stackRows.map((row, rowIndex) => (
+                <RowContainer2
+                  key={rowIndex}
+                  style={{
+                    marginTop: rowIndex > 0 ? '0.4vw' : '1.6vw',
+                    gap: '0.4vw',
+                  }}
+                >
+                  {row.map((stack) => (
+                    <Circle
+                      key={stack}
+                      isSelected={selectedStacks.includes(stack)}
+                      onClick={() => toggleStack(stack)}
+                    >
+                      {stack}
+                    </Circle>
+                  ))}
+                </RowContainer2>
               ))}
-            </RowContainer2>
-          ))}
         </SelectContainer>
 
         <SelectedContainer>
@@ -710,7 +778,7 @@ function Write() {
           {imageSrc ? (
             <Picture src={imageSrc} alt="Project Thumbnail" />
           ) : (
-            <Picture src={picture} alt="Placeholder" />
+            <Picture src={picture} alt="Placeholder" isIcon />
           )}
           <FileInput
             type="file"
