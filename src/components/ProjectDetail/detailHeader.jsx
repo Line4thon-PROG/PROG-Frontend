@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import * as S from "./detailHeaderStyled"
 import backIcon from "../../assets/images/move_back_arrow.svg";
 import fixIcon from "../../assets/images/fix.svg";
@@ -9,11 +9,11 @@ const detailHeader = () =>{
 
     return (
         <S.container>
-            <Icon src={backIcon}></Icon>;
-            <S.iconbox>
-                <Icon src={fixIcon}></Icon>
-                <Icon src={deleteIcon}></Icon>
-            </S.iconbox>
+            <S.Icon src={backIcon}></S.Icon>
+            <S.IconBox>
+                <S.Icon src={fixIcon}></S.Icon>
+                <S.Icon src={deleteIcon}></S.Icon>
+            </S.IconBox>
         </S.container>
     );
 };
