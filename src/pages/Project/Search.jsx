@@ -110,7 +110,7 @@ const ProjectWrapper = styled.div`
   position: relative;
 `;
 
-const UpScrollImg = styled.img`
+export const UpScrollImg = styled.img`
   position: fixed;
   width: 40px;
   top: 50vh;
