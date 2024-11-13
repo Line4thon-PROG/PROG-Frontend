@@ -4,23 +4,25 @@ import ExamplePicture from "../../assets/images/exampleThumbnail.svg";
 import WebIcon from "../../assets/images/web_icon.svg";
 import AppleIcon from "../../assets/images/apple_icon.svg";
 import AndroidIcon from "../../assets/images/Android.svg";
-import LikeButton from "../../assets/images/like_button.svg";
+// import LikeButton from "../../assets/images/like_button.svg";
 
-const communityBox =() =>{
+const PreviewBox =() =>{
 
     return(
         <S.Container>
             <S.LeftBox>
                 <S.Img src={ExamplePicture}></S.Img>
                 <S.ChoiceBox>
-                    <S.GerneContainer>장르 1</S.GerneContainer>
-                    <S.GerneContainer>장르 2</S.GerneContainer>
-                    <S.StackContainer>기술 스택 1</S.StackContainer>
-                    <S.StackContainer>기술 스택 2</S.StackContainer>
+                    <S.ChoiceLine>
+                        <S.GerneContainer>과학</S.GerneContainer>
+                        <S.GerneContainer>코딩</S.GerneContainer>
+                        <S.StackContainer>React</S.StackContainer>
+                        <S.StackContainer>겁나 긴 기! 술! 스! 택!</S.StackContainer>
+                    </S.ChoiceLine>
                 </S.ChoiceBox>
             </S.LeftBox>
             <S.RightBox>
-                <S.Title>프로젝트 타이틀 이름 한줄</S.Title>
+                <S.Title>프로젝트 타이틀 이름 한줄인줄 알았지?바보들아! 아니거든! 겁나 길거든~~ +_+ 나는 바보다!!</S.Title>
                 <S.SortText>프로젝트 참여자</S.SortText>
                 <S.ContributeList>
                     <S.CWrapper>
@@ -48,10 +50,10 @@ const communityBox =() =>{
                     <S.IOSButton><img src={AppleIcon}></img>iOS</S.IOSButton>
                     <S.AndroidButton><img src={AndroidIcon}></img>Android</S.AndroidButton>
                 </S.LinkBox>
-                <S.LikeButton><img src={LikeButton}></img> 000</S.LikeButton>
+                {/* <S.LikeButton><img src={LikeButton}></img> 000</S.LikeButton> */}
             </S.RightBox>
         </S.Container>
     );
 };
 
-export default communityBox;
+export default PreviewBox;
