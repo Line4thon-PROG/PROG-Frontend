@@ -11,13 +11,13 @@ import ProjectThumbnailImage from "../../assets/images/ProjectThumbnailImage.svg
 import { ProgressBar } from "../Project/Search";
 import { ProgressContainer } from "../Project/Search";
 
-const HomeContainer = styled.div`
+export const HomeContainer = styled.div`
   margin-top: 65px;
   width: 100%;
   padding-bottom: 50px;
 `;
 
-const PhraseContainer = styled.div`
+export const PhraseContainer = styled.div`
   text-align: center;
 
   img {
@@ -28,11 +28,12 @@ const PhraseContainer = styled.div`
     margin-top: 20px;
     color: rgba(153, 153, 153, 1);
     font-size: 14px;
+    line-height: 26px;
   }
 `;
 
 const BtnWrapper = styled.div`
-  margin-top: 50px;
+  margin-top: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -224,7 +225,7 @@ function Home() {
           ))}
         </NewProjectWrapper>
         <ProgressContainer>
-          <ProgressBar position={position}></ProgressBar>
+          <ProgressBar $position={position}></ProgressBar>
         </ProgressContainer>
       </HomeContainer>
     </div>

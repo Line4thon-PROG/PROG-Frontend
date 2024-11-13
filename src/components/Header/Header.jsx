@@ -9,6 +9,7 @@ import logout from '../../assets/images/logout.svg';
 import axios from 'axios';
 import { baseURL } from '../../api/baseURL';
 
+
 const HeaderContainer = styled.div`
   padding-left: 4.2vw;
   padding-right: 4.2vw;
@@ -115,6 +116,7 @@ function Header() {
     } catch (error) {
       console.error('로그아웃 실패:', error);
       alert('로그아웃에 실패했습니다. 다시 시도해주세요.');
+
     }
   };
 
@@ -124,7 +126,7 @@ function Header() {
         <Container>
           <Logo src={logo} alt="logo" />
           <NavContainer>
-            {['홈', '프로젝트', '프로모션', '마이페이지'].map((navItem) => (
+            {["홈", "프로젝트", "프로모션", "마이페이지"].map((navItem) => (
               <Nav
                 key={navItem}
                 isSelected={selectedNav === navItem}
