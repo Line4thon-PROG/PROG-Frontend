@@ -1,15 +1,18 @@
-import './App.css';
-import GlobalStyle from './styles/globalStyle';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Home from './pages/Home/Home';
-import Signup from './pages/Signup/Signup';
-import Login from './pages/Login/Login';
-import Genre from './pages/Signup/Genre';
-import Complete from './pages/Signup/Complete';
-import Write from './pages/Write/Write';
-import Worry from './pages/Write/Worry';
-import Success from './pages/Write/Success';
+import "./App.css";
+import GlobalStyle from "./styles/globalStyle";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Home from "./pages/Home/Home";
+import Signup from "./pages/Signup/Signup";
+import Login from "./pages/Login/Login";
+import Genre from "./pages/Signup/Genre";
+import Complete from "./pages/Signup/Complete";
+import Write from "./pages/Write/Write";
+import Worry from "./pages/Write/Worry";
+import Success from "./pages/Write/Success";
+import Mypage from "./pages/MyPage/Mypage";
 import Search from "./pages/Project/Search";
+import Promotion from "./pages/Promotion/Promotion";
+import FeedbackList from "./pages/Feedback/FeedbackList";
 
 function App() {
   return (
@@ -25,7 +28,6 @@ function App() {
           <Route path="/Write" element={<Write />} />
           <Route path="/Worry" element={<Worry />} />
           <Route path="/Success" element={<Success />} />
-          <Route path="/Search" element={<Search />} />
         </Routes>
       </Router>
     </>
