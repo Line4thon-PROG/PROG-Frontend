@@ -9,6 +9,7 @@ import Complete from './pages/Signup/Complete';
 import Write from './pages/Write/Write';
 import Worry from './pages/Write/Worry';
 import Success from './pages/Write/Success';
+import Mypage from './pages/MyPage/Mypage';
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
           <Route path="/Write" element={<Write />} />
           <Route path="/Worry" element={<Worry />} />
           <Route path="/Success" element={<Success />} />
+          <Route path="/Mypage" element={<Mypage />} />
         </Routes>
       </Router>
     </>
