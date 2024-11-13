@@ -119,7 +119,7 @@ const UpScrollImg = styled.img`
 `;
 
 function Search() {
-  const navigation = useNavigate();
+  const navigate = useNavigate();
   // 아래 변수들은 UI 구현을 위한 임의 변수입니다. 실제 사용 X
   const user = { name: "프로그" };
   const isLogin = true;
@@ -250,7 +250,7 @@ function Search() {
           ) : (
             <p>OOO님이 좋아할 만한 프로젝트</p>
           )}
-          <button>
+          <button onClick={() => navigate(`/Write`)}>
             <img src={WriteBtn} alt="WriteBtn" />
             프로젝트 등록
           </button>
