@@ -11,6 +11,7 @@ import Worry from './pages/Write/Worry';
 import Success from './pages/Write/Success';
 import Mypage from './pages/MyPage/Mypage';
 import Search from "./pages/Project/Search";
+import Promotion from "./pages/Promotion/Promotion";
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
           <Route path="/Success" element={<Success />} />
           <Route path="/Mypage" element={<Mypage />} />
           <Route path="/Search" element={<Search />} />
+          <Route path="/Promotion" element={<Promotion />} />
         </Routes>
       </Router>
     </>
