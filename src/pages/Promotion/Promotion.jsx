@@ -10,7 +10,7 @@ import ModalAdvertisement from "../../assets/images/ModalAdvertisement.svg";
 import PayCompleteModal from "../../components/Modal/PayCompleteModal";
 
 const AdvertisementWrapper = styled.div`
-  margin-top: 40px;
+  margin-top: 55px;
   display: flex;
   align-items: center;
   justify-content: center;
