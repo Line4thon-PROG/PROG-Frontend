@@ -3,6 +3,9 @@ import second from '../../assets/images/Second.svg';
 import styled from 'styled-components';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
+import axios from 'axios';
+import { baseURL } from '../../api/baseURL';
 
 const Container = styled.div`
   display: flex;
@@ -79,14 +82,16 @@ const Button = styled.button`
 
 function Genre() {
   const genreRows = [
-    ['스포츠', '엔터테인먼트', '음식', '음악', '친구'],
+    ['장르1', '장르2', '음식', '음악', '친구'],
     ['가족', '여행', '교육', '건강', '패션', '쇼핑'],
     ['부동산', '환경', '비즈니스', '자기개발', '동물/펫'],
-    ['요리/베이킹', '여가/취미', '사회봉사', '금융/투자'],
+    ['요리/베이킹', '코딩', '힐링', '금융/투자'],
   ];
 
   const [selectedGenres, setSelectedGenres] = useState([]);
   const navigate = useNavigate();
+  const location = useLocation();
+  const userData = location.state;
 
   const toggleGenre = (genre) => {
     setSelectedGenres((prevSelectedGenres) =>
@@ -96,9 +101,30 @@ function Genre() {
     );
   };
 
-  const goNext = () => {
+  const goNext = async () => {
     if (selectedGenres.length > 0) {
-      navigate('/Complete');
+      const requestBody = {
+        ...userData,
+        favorite_genre: selectedGenres,
+      };
+
+      console.log('보낼 데이터:', requestBody);
+
+      try {
+        const response = await axios.post(
+          `${baseURL}/api/accounts/signup/`,
+          requestBody,
+          {
+            headers: { 'Content-Type': 'application/json' },
+          }
+        );
+        console.log('회원가입 성공:', response.data);
+        navigate('/Complete');
+      } catch (error) {
+        console.error('응답 데이터:', error.response?.data);
+      }
+    } else {
+      alert('최소 하나의 장르를 선택해주세요.');
     }
   };
 

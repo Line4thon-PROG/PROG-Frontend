@@ -54,7 +54,7 @@ const RecommendThumbnail = styled.div`
   }
 `;
 
-const ProgressContainer = styled.div`
+export const ProgressContainer = styled.div`
   position: relative;
   width: 100%;
   height: 5px;
@@ -63,12 +63,12 @@ const ProgressContainer = styled.div`
   border-radius: 10px;
 `;
 
-const ProgressBar = styled.div`
+export const ProgressBar = styled.div`
   position: absolute;
   height: 100%;
   width: 33.3%;
   background-color: rgba(0, 193, 58, 1);
-  left: ${(props) => `calc(${Math.min(props.position, 100 - 33.3)}%)`};
+  left: ${(props) => `calc(${Math.min(props.$position, 100 - 33.3)}%)`};
   transition: left 0.3s;
   border-radius: 10px;
 `;
@@ -116,10 +116,11 @@ const UpScrollImg = styled.img`
   top: 50vh;
   left: 73vw;
   cursor: pointer;
+  z-index: 100;
 `;
 
 function Search() {
-  const navigation = useNavigate();
+  const navigate = useNavigate();
   // 아래 변수들은 UI 구현을 위한 임의 변수입니다. 실제 사용 X
   const user = { name: "프로그" };
   const isLogin = true;
@@ -229,16 +230,16 @@ function Search() {
     }
   };
 
-  // 위로 올라가는 스크롤
-  const MoveToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
   useEffect(() => {
     const scrollElement = scrollRef.current;
     scrollElement.addEventListener("scroll", handleScroll);
     return () => scrollElement.removeEventListener("scroll", handleScroll);
   }, []);
+
+  // 위로 올라가는 스크롤
+  const MoveToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   return (
     <div>
@@ -250,7 +251,7 @@ function Search() {
           ) : (
             <p>OOO님이 좋아할 만한 프로젝트</p>
           )}
-          <button>
+          <button onClick={() => navigate(`/Write`)}>
             <img src={WriteBtn} alt="WriteBtn" />
             프로젝트 등록
           </button>
@@ -277,7 +278,7 @@ function Search() {
           )}
         </RecommendThumbnail>
         <ProgressContainer>
-          <ProgressBar position={position}></ProgressBar>
+          <ProgressBar $position={position}></ProgressBar>
         </ProgressContainer>
         <BannerBox />
         <FilterBox onClick={ClickedFilterBtn}>
@@ -315,7 +316,11 @@ function Search() {
             />
           ))}
         </ProjectWrapper>
-        <UpScrollImg src={UpScroll} alt="UpScroll" onClick={MoveToTop} />
+        <UpScrollImg
+          src={UpScroll}
+          alt="UpScroll"
+          onClick={() => MoveToTop()}
+        />
       </SearchContainer>
     </div>
   );

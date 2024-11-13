@@ -2,6 +2,9 @@ import SignupHeader from '../../components/Signup/SignupHeader';
 import styled from 'styled-components';
 import search from '../../assets/images/Search.svg';
 import { useState } from 'react';
+import { baseURL } from '../../api/baseURL';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const WholeContainer = styled.div`
   display: flex;
@@ -20,6 +23,7 @@ const InputBox = styled.input`
     isFocused ? 'rgba(0, 193, 58, 0.10)' : hasText ? '#111' : '#262626'};
   padding: 0.8vw;
   color: #fff;
+  font-size: 0.8vw;
 
   &:focus {
     background: rgba(0, 193, 58, 0.1);
@@ -46,6 +50,8 @@ const InputBox2 = styled.textarea`
   padding: 0.8vw;
   resize: none;
   color: #fff;
+  font-size: 0.8vw;
+  outline: none;
 
   &:focus {
     background: rgba(0, 193, 58, 0.1);
@@ -125,11 +131,13 @@ const NextButton = styled.button`
   margin-top: 2.8vw;
   margin-bottom: 4vw;
   color: #fff;
+  font-size: 0.8vw;
 `;
 
-function InputField({ label, placeholder, hasText, setHasText }) {
+function InputField({ label, placeholder, hasText, setHasText, onChange }) {
   const handleChange = (e) => {
     setHasText(e.target.value.length > 0);
+    if (onChange) onChange(e);
   };
 
   return (
@@ -152,6 +160,15 @@ function Signup() {
   const [universityHasText, setUniversityHasText] = useState(false);
   const [introHasText, setIntroHasText] = useState(false);
 
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [name, setName] = useState('');
+  const [nickname, setNickname] = useState('');
+  const [university, setUniversity] = useState('');
+  const [description, setDescription] = useState('');
+
+  const navigate = useNavigate();
+
   const allFieldsFilled =
     idHasText &&
     passwordHasText &&
@@ -159,6 +176,58 @@ function Signup() {
     nicknameHasText &&
     universityHasText &&
     introHasText;
+
+  const handleNext = () => {
+    if (allFieldsFilled) {
+      const userData = {
+        username,
+        password,
+        name,
+        nickname,
+        user_university: university,
+        description,
+      };
+      navigate('/Genre', { state: userData });
+    } else {
+      alert('모든 필드를 입력해주세요.');
+    }
+  };
+
+  const checkDuplicateId = async () => {
+    try {
+      const response = await axios.post(
+        `${baseURL}/api/accounts/check-duplicate-id/`,
+        {
+          username,
+        }
+      );
+      if (response.data.isDuplicate) {
+        alert('이미 사용 중인 아이디입니다.');
+      } else {
+        alert('사용 가능한 아이디입니다.');
+      }
+    } catch (error) {
+      alert('이미 사용 중인 아이디입니다.');
+    }
+  };
+
+  const checkDuplicateNickname = async () => {
+    try {
+      const response = await axios.post(
+        `${baseURL}/api/accounts/check-duplicate-nickname/`,
+        {
+          nickname,
+        }
+      );
+      if (response.data.isDuplicate) {
+        alert('이미 사용 중인 닉네임입니다.');
+      } else {
+        alert('사용 가능한 닉네임입니다.');
+      }
+    } catch (error) {
+      alert('이미 사용 중인 닉네임입니다.');
+    }
+  };
 
   return (
     <WholeContainer>
@@ -168,9 +237,12 @@ function Signup() {
         <InputBox
           placeholder="영문/숫자, 4-14자"
           hasText={idHasText}
-          onChange={(e) => setIdHasText(e.target.value.length > 0)}
+          onChange={(e) => {
+            setIdHasText(e.target.value.length > 0);
+            setUsername(e.target.value);
+          }}
         />
-        <DuplicateButton>중복확인</DuplicateButton>
+        <DuplicateButton onClick={checkDuplicateId}>중복확인</DuplicateButton>
       </InputBoxContainer>
 
       <InputField
@@ -178,26 +250,40 @@ function Signup() {
         placeholder="영문/숫자, 8-16자"
         hasText={passwordHasText}
         setHasText={setPasswordHasText}
+        onChange={(e) => setPassword(e.target.value)}
       />
       <InputField
         label="이름"
         placeholder="이름을 입력해 주세요"
         hasText={nameHasText}
         setHasText={setNameHasText}
+        onChange={(e) => setName(e.target.value)}
       />
-      <InputField
-        label="닉네임"
-        placeholder="닉네임을 입력해 주세요"
-        hasText={nicknameHasText}
-        setHasText={setNicknameHasText}
-      />
+
+      <InputBoxContainer>
+        <TextP>닉네임</TextP>
+        <InputBox
+          placeholder="닉네임을 입력해 주세요"
+          hasText={nicknameHasText}
+          onChange={(e) => {
+            setNickname(e.target.value);
+            setNicknameHasText(e.target.value.length > 0);
+          }}
+        />
+        <DuplicateButton onClick={checkDuplicateNickname}>
+          중복확인
+        </DuplicateButton>
+      </InputBoxContainer>
 
       <InputBoxContainer>
         <TextP>대학교</TextP>
         <InputBox
           placeholder="대학교를 입력해 주세요"
           hasText={universityHasText}
-          onChange={(e) => setUniversityHasText(e.target.value.length > 0)}
+          onChange={(e) => {
+            setUniversityHasText(e.target.value.length > 0);
+            setUniversity(e.target.value);
+          }}
         />
         <SearchIcon src={search} />
       </InputBoxContainer>
@@ -207,11 +293,16 @@ function Signup() {
         <InputBox2
           placeholder={`간략하게 자기소개를 해보세요\n(Ex. 간단 인사, SNS 주소 등)`}
           hasText={introHasText}
-          onChange={(e) => setIntroHasText(e.target.value.length > 0)}
+          onChange={(e) => {
+            setIntroHasText(e.target.value.length > 0);
+            setDescription(e.target.value);
+          }}
         />
       </InputBoxContainer>
 
-      <NextButton allFieldsFilled={allFieldsFilled}>다음으로</NextButton>
+      <NextButton allFieldsFilled={allFieldsFilled} onClick={handleNext}>
+        다음으로
+      </NextButton>
     </WholeContainer>
   );
 }

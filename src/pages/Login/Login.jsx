@@ -2,6 +2,9 @@ import styled from 'styled-components';
 import logo from '../../assets/images/Logocol.svg';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { baseURL } from '../../api/baseURL';
+import Logout from '../../assets/images/logout.svg';
 
 const Container = styled.div`
   display: flex;
@@ -138,22 +141,17 @@ const Text2 = styled.p`
   cursor: pointer;
 `;
 
-function LoginInputField({ label, placeholder }) {
-  const [hasText, setHasText] = useState(false);
+function LoginInputField({ label, placeholder, value, onChange }) {
   const [isFocused, setIsFocused] = useState(false);
-
-  const handleChange = (e) => {
-    setHasText(e.target.value.length > 0);
-  };
 
   return (
     <InputBoxContainer>
       <TextP>{label}</TextP>
       <InputBox
         placeholder={placeholder}
-        hasText={hasText}
+        value={value}
         isFocused={isFocused}
-        onChange={handleChange}
+        onChange={onChange}
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
       />
@@ -163,10 +161,31 @@ function LoginInputField({ label, placeholder }) {
 
 function Login() {
   const navigate = useNavigate();
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleLogin = async () => {
+    try {
+      const response = await axios.post(`${baseURL}/api/accounts/login/`, {
+        username,
+        password,
+      });
+
+      const access = response.data.access;
+      localStorage.setItem('access', access);
+
+      console.log('로그인 성공:', response.data);
+      navigate('/');
+    } catch (error) {
+      console.error('로그인 실패:', error);
+      alert('로그인에 실패했습니다. 아이디와 비밀번호를 확인해주세요.');
+    }
+  };
 
   const goSignup = () => {
     navigate('/Signup');
   };
+
   return (
     <Container>
       <WholeContainer>
@@ -175,13 +194,20 @@ function Login() {
           <TitleP>더 넓은 우물 밖 세상으로</TitleP>
         </LogoContainer>
 
-        <LoginInputField label="아이디" placeholder="아이디를 입력해 주세요" />
+        <LoginInputField
+          label="아이디"
+          placeholder="아이디를 입력해 주세요"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+        />
         <LoginInputField
           label="비밀번호"
           placeholder="비밀번호를 입력해 주세요"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
         />
 
-        <Button>로그인</Button>
+        <Button onClick={handleLogin}>로그인</Button>
 
         <TextContainer>
           <Text>아직 회원이 아니신가요? </Text>
