@@ -1,7 +1,10 @@
-import styled from "styled-components";
-import logo from "../../assets/images/Logo.svg";
-import search from "../../assets/images/Search.svg";
-import login from "../../assets/images/Login.svg";
+import React, { useState } from 'react';
+import styled from 'styled-components';
+import logo from '../../assets/images/Logo.svg';
+import search from '../../assets/images/Search.svg';
+import login from '../../assets/images/Login.svg';
+import { Navigate, useNavigate } from 'react-router-dom';
+
 
 const HeaderContainer = styled.div`
   padding-left: 4.2vw;
@@ -26,15 +29,34 @@ const Logo = styled.img`
 `;
 
 const NavContainer = styled.div`
-  gap: 1vw;
   display: flex;
   flex-direction: row;
+  gap: 1vw;
 `;
 
 const Nav = styled.div`
   padding: 0.5vw 0.8vw;
   color: #ffffff;
   white-space: nowrap;
+  cursor: pointer;
+  ${({ isSelected }) =>
+    isSelected &&
+    `
+    display: flex;
+    padding: 0.5vw 0.8vw;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    border-radius: 0.4vw;
+    background: #262626;
+    color: #00C13A;
+    font-family: Pretendard;
+    font-size: 0.7vw;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 1vw;
+    letter-spacing: -0.35px;
+  `}
 `;
 
 const ToolContainer = styled.div`
@@ -49,16 +71,32 @@ const Tool = styled.img`
 `;
 
 function Header() {
+  const [selectedNav, setSelectedNav] = useState('홈');
+
+  const navigate = useNavigate();
+
+  const handleNavClick = (navItem) => {
+    setSelectedNav(navItem);
+    if (navItem === '마이페이지') {
+      navigate('/Mypage');
+    }
+  };
+
   return (
     <>
       <HeaderContainer>
         <Container>
           <Logo src={logo} alt="logo" />
           <NavContainer>
-            <Nav>홈</Nav>
-            <Nav>프로젝트</Nav>
-            <Nav>프로모션</Nav>
-            <Nav>마이페이지</Nav>
+            {['홈', '프로젝트', '프로모션', '마이페이지'].map((navItem) => (
+              <Nav
+                key={navItem}
+                isSelected={selectedNav === navItem}
+                onClick={() => handleNavClick(navItem)}
+              >
+                {navItem}
+              </Nav>
+            ))}
           </NavContainer>
           <ToolContainer>
             <Tool src={search} />
