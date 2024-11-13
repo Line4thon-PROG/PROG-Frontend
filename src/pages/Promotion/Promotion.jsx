@@ -7,6 +7,7 @@ import { PhraseContainer } from "../Home/Home";
 import PromotionPhrase from "../../assets/images/PromotionPhrase.svg";
 import BannerAdvertisement from "../../assets/images/BannerAdvertisement.svg";
 import ModalAdvertisement from "../../assets/images/ModalAdvertisement.svg";
+import PayCompleteModal from "../../components/Modal/PayCompleteModal";
 
 const AdvertisementWrapper = styled.div`
   margin-top: 40px;
@@ -49,14 +50,32 @@ const AdvertisementBtn = styled.button`
 function Promotion() {
   const [selectBanner, setSelectBanner] = useState(false);
   const [selectModal, setSelectModal] = useState(false);
+  const [payCompleteModal, setPayCompleteModal] = useState(false);
 
+  // 버튼 클릭 관련
   const handleSelectBannerBtn = () => {
-    setSelectBanner(!selectBanner);
+    if (!selectBanner) {
+      setSelectBanner(true);
+      OpenModal();
+    }
   };
 
   const handleSelectModalBtn = () => {
-    setSelectModal(!selectModal);
+    if (!selectModal) {
+      setSelectModal(true);
+      OpenModal();
+    }
   };
+
+  // 결제 완료 모달 창 관련
+  const OpenModal = () => {
+    setPayCompleteModal(true);
+  };
+
+  const CloseModal = () => {
+    setPayCompleteModal(false);
+  };
+
   return (
     <div>
       <Header />
@@ -88,6 +107,7 @@ function Promotion() {
             <p>월 3만원</p>
           </AdvertisementBtn>
         </AdvertisementWrapper>
+        {payCompleteModal && <PayCompleteModal closeModal={CloseModal} />}
       </PromotionContainer>
     </div>
   );
