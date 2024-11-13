@@ -224,7 +224,7 @@ function Home() {
           ))}
         </NewProjectWrapper>
         <ProgressContainer>
-          <ProgressBar position={position}></ProgressBar>
+          <ProgressBar $position={position}></ProgressBar>
         </ProgressContainer>
       </HomeContainer>
     </div>

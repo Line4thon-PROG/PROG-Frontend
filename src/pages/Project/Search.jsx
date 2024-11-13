@@ -68,7 +68,7 @@ export const ProgressBar = styled.div`
   height: 100%;
   width: 33.3%;
   background-color: rgba(0, 193, 58, 1);
-  left: ${(props) => `calc(${Math.min(props.position, 100 - 33.3)}%)`};
+  left: ${(props) => `calc(${Math.min(props.$position, 100 - 33.3)}%)`};
   transition: left 0.3s;
   border-radius: 10px;
 `;
@@ -116,6 +116,7 @@ const UpScrollImg = styled.img`
   top: 50vh;
   left: 73vw;
   cursor: pointer;
+  z-index: 100;
 `;
 
 function Search() {
@@ -277,7 +278,7 @@ function Search() {
           )}
         </RecommendThumbnail>
         <ProgressContainer>
-          <ProgressBar position={position}></ProgressBar>
+          <ProgressBar $position={position}></ProgressBar>
         </ProgressContainer>
         <BannerBox />
         <FilterBox onClick={ClickedFilterBtn}>
@@ -315,7 +316,11 @@ function Search() {
             />
           ))}
         </ProjectWrapper>
-        <UpScrollImg src={UpScroll} alt="UpScroll" onClick={MoveToTop} />
+        <UpScrollImg
+          src={UpScroll}
+          alt="UpScroll"
+          onClick={() => MoveToTop()}
+        />
       </SearchContainer>
     </div>
   );
