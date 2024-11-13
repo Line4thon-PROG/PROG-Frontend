@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
-import styled from 'styled-components';
-import logo from '../../assets/images/Logo.svg';
-import search from '../../assets/images/Search.svg';
-import login from '../../assets/images/Login.svg';
-import { Navigate, useNavigate } from 'react-router-dom';
-
+import React, { useState } from "react";
+import styled from "styled-components";
+import logo from "../../assets/images/Logo.svg";
+import search from "../../assets/images/Search.svg";
+import login from "../../assets/images/Login.svg";
+import { Navigate, useNavigate } from "react-router-dom";
 
 const HeaderContainer = styled.div`
   padding-left: 4.2vw;
@@ -71,14 +70,14 @@ const Tool = styled.img`
 `;
 
 function Header() {
-  const [selectedNav, setSelectedNav] = useState('홈');
+  const [selectedNav, setSelectedNav] = useState("홈");
 
   const navigate = useNavigate();
 
   const handleNavClick = (navItem) => {
     setSelectedNav(navItem);
-    if (navItem === '마이페이지') {
-      navigate('/Mypage');
+    if (navItem === "마이페이지") {
+      navigate("/Mypage");
     }
   };
 
@@ -88,7 +87,7 @@ function Header() {
         <Container>
           <Logo src={logo} alt="logo" />
           <NavContainer>
-            {['홈', '프로젝트', '프로모션', '마이페이지'].map((navItem) => (
+            {["홈", "프로젝트", "프로모션", "마이페이지"].map((navItem) => (
               <Nav
                 key={navItem}
                 isSelected={selectedNav === navItem}
