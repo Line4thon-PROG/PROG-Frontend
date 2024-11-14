@@ -4,6 +4,7 @@ import OnePoint from "../../assets/images/OnePoint.svg";
 import TwoPoint from "../../assets/images/TwoPoint.svg";
 import ThreePoint from "../../assets/images/ThreePoint.svg";
 import CloseIcon from "../../assets/images/CloseIcon.svg";
+import axios from "axios";
 
 const FeedbackCheckContainer = styled.div`
   background-color: rgba(17, 17, 17, 0.8);
@@ -75,7 +76,8 @@ const GivePointBtn = styled.button`
   font-weight: bolder;
 `;
 
-function FeedbackCheckModal({ CloseModal, setCheckComplete }) {
+function FeedbackCheckModal({ CloseModal, project_id, feedback_id }) {
+  const LoginToken = localStorage.getItem("access") || null;
   const [point, setPoint] = useState(null);
 
   // 포인트 선택
@@ -84,9 +86,28 @@ function FeedbackCheckModal({ CloseModal, setCheckComplete }) {
   };
 
   // 포인트 주기 함수 (추후 post 연동 필요)
+  const PostPoint = async (point) => {
+    try {
+      const response = await axios.post(
+        `/api/project_detail/${project_id}/feedback/${feedback_id}/adopt`,
+        {
+          point: point,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${LoginToken}`,
+          },
+        }
+      );
+      console.log(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const GivePoint = () => {
     if (point) {
-      setCheckComplete(true);
+      PostPoint(point);
       CloseModal();
     }
   };
