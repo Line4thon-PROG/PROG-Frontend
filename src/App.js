@@ -13,6 +13,7 @@ import Mypage from "./pages/MyPage/Mypage";
 import Search from "./pages/Project/Search";
 import Promotion from "./pages/Promotion/Promotion";
 import FeedbackList from "./pages/Feedback/FeedbackList";
+import FeedbackDetail from "./pages/Feedback/FeedbackDetail";
 
 function App() {
   return (
@@ -32,6 +33,7 @@ function App() {
           <Route path="/Search" element={<Search />} />
           <Route path="/Promotion" element={<Promotion />} />
           <Route path="/FeedbackList" element={<FeedbackList />} />
+          <Route path="/FeedbackDetail/:id" element={<FeedbackDetail />} />
         </Routes>
       </Router>
     </>
