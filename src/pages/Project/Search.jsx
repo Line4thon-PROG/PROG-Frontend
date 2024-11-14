@@ -9,6 +9,8 @@ import ProjectThumbnailImage from "../../assets/images/ProjectThumbnailImage.svg
 import FilterIcon from "../../assets/images/FilterIcon.svg";
 import UpScroll from "../../assets/images/UpScroll.svg";
 import FilterModal from "../../components/Modal/FilterModal";
+import axios from "axios";
+import { baseURL } from "../../api/baseURL";
 
 const SearchContainer = styled.div`
   margin-top: 30px;
@@ -120,64 +122,90 @@ export const UpScrollImg = styled.img`
 `;
 
 function Search() {
+  const LoginToken = localStorage.getItem("access") || null;
+  console.log(LoginToken);
   const navigate = useNavigate();
-  // 아래 변수들은 UI 구현을 위한 임의 변수입니다. 실제 사용 X
-  const user = { name: "프로그" };
-  const isLogin = true;
+
+  // 상태 변수
+  const [user, setUser] = useState(null);
+
+  // 닉네임 불러오기
+  const GetNickname = async () => {
+    if (!LoginToken) {
+      console.log("로그인 토큰이 없습니다.");
+      return;
+    }
+    try {
+      const response = await axios.get(`${baseURL}/api/mypage/accountinfo/me`, {
+        headers: {
+          Authorization: `Bearer ${LoginToken}`,
+        },
+      });
+      setUser(response.data.nickname);
+      console.log(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    GetNickname();
+  }, []);
+
   const project = [
     {
       src: ProjectThumbnailImage,
       name: "프로젝트 이름",
-      genre: "장르",
-      skill: "기술",
+      genre: ["장르"],
+      skill: ["기술"],
     },
     {
       src: ProjectThumbnailImage,
       name: "프로젝트 이름",
-      genre: "장르",
-      skill: "기술",
+      genre: ["장르"],
+      skill: ["기술"],
     },
     {
       src: ProjectThumbnailImage,
       name: "프로젝트 이름",
-      genre: "장르",
-      skill: "기술",
+      genre: ["장르"],
+      skill: ["기술"],
     },
     {
       src: ProjectThumbnailImage,
       name: "프로젝트 이름",
-      genre: "장르",
-      skill: "기술",
+      genre: ["장르"],
+      skill: ["기술"],
     },
     {
       src: ProjectThumbnailImage,
       name: "프로젝트 이름",
-      genre: "장르",
-      skill: "기술",
+      genre: ["장르"],
+      skill: ["기술"],
     },
     {
       src: ProjectThumbnailImage,
       name: "프로젝트 이름",
-      genre: "장르",
-      skill: "기술",
+      genre: ["장르"],
+      skill: ["기술"],
     },
     {
       src: ProjectThumbnailImage,
       name: "프로젝트 이름",
-      genre: "장르",
-      skill: "기술",
+      genre: ["장르"],
+      skill: ["기술"],
     },
     {
       src: ProjectThumbnailImage,
       name: "프로젝트 이름",
-      genre: "장르",
-      skill: "기술",
+      genre: ["장르"],
+      skill: ["기술"],
     },
     {
       src: ProjectThumbnailImage,
       name: "프로젝트 이름",
-      genre: "장르",
-      skill: "기술",
+      genre: ["장르"],
+      skill: ["기술"],
     },
   ];
   // useState 변수 선언
@@ -246,8 +274,8 @@ function Search() {
       <Header />
       <SearchContainer>
         <NameandWriteBtnWrapper>
-          {isLogin ? (
-            <p>{user.name}님이 좋아할 만한 프로젝트</p>
+          {LoginToken ? (
+            <p>{user}님이 좋아할 만한 프로젝트</p>
           ) : (
             <p>OOO님이 좋아할 만한 프로젝트</p>
           )}
@@ -257,7 +285,7 @@ function Search() {
           </button>
         </NameandWriteBtnWrapper>
         <RecommendThumbnail ref={scrollRef}>
-          {!isLogin ? (
+          {!LoginToken ? (
             <>
               <LogoutThumbnail />
               <LogoutThumbnail />
