@@ -117,6 +117,7 @@ const SelectedFeedback = styled.div`
   border-radius: 8px;
   width: 50vw;
   height: 100px;
+  cursor: pointer;
 
   p {
     font-size: 12px;
@@ -164,16 +165,6 @@ function FeedbackList() {
   const [user, setUser] = useState(null); // 사용자 닉네임
   const [projectUser, setProjectUser] = useState([]); // 프로젝트 기여자들 닉네임
   const [selectedFeedback, setSelectedFeedback] = useState([]);
-
-  const username = "user1";
-  const projectuser = "user12";
-  const feedbackList = [
-    { nickname: "닉네임", date: "0000.00.00.", content: "이슈 내용 미리보기" },
-    { nickname: "닉네임", date: "0000.00.00.", content: "이슈 내용 미리보기" },
-    { nickname: "닉네임", date: "0000.00.00.", content: "이슈 내용 미리보기" },
-    { nickname: "닉네임", date: "0000.00.00.", content: "이슈 내용 미리보기" },
-    { nickname: "닉네임", date: "0000.00.00.", content: "이슈 내용 미리보기" },
-  ];
 
   // 닉네임 불러오기
   const GetNickname = async () => {
@@ -284,7 +275,14 @@ function FeedbackList() {
           {selectedFeedback && selectedFeedback.length > 0 ? (
             <SelectedFeedbackWrapper>
               {selectedFeedback.map((item) => (
-                <SelectedFeedback key={item.id}>
+                <SelectedFeedback
+                  key={item.id}
+                  onClick={() =>
+                    navigate(`/FeedbackDetail/${project_id}/${item.id}`, {
+                      state: { isUser: isUser },
+                    })
+                  }
+                >
                   <InfonDetailBtnWrapper>
                     <NickNamenDateWrapper>
                       <h5>{item.feedback_writer}</h5>

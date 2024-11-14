@@ -34,7 +34,7 @@ function App() {
           <Route path="/Promotion" element={<Promotion />} />
           <Route path="/FeedbackList/:project_id" element={<FeedbackList />} />
           <Route
-            path="/FeedbackDetail/:feedback_id"
+            path="/FeedbackDetail/:project_id/:feedback_id"
             element={<FeedbackDetail />}
           />
         </Routes>
