@@ -12,15 +12,15 @@ const Container = styled.div`
 `;
 
 function ProjectDetail() {
-    const exampleProjectId = 1; // 예시 project_id를 설정
+    const exampleProjectId = 3; // 예시 project_id 우선 3번으로 진행합니다아
 
     return (
         <Container>
             <Header />
             <DetailHeader />
-            <PreviewBox project_id={exampleProjectId} /> {/* project_id를 PreviewBox에 전달 */}
-            <MainBox />
-            <CommunityBox />
+            <PreviewBox project_id={exampleProjectId} /> 
+            <MainBox project_id={exampleProjectId} />
+            <CommunityBox project_id={exampleProjectId} />
         </Container>
     );
 }

@@ -20,4 +20,5 @@ export const IconBox = styled.div`
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
+    padding-right: 1vw;
 `; 

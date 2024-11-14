@@ -7,7 +7,6 @@ export const instance = axios.create({
     withCredentials: true,
     headers: {
         "Content-Type": "application/json",
-        // `Authorization` 헤더는 필요에 따라 추가될 수 있습니다
     },
     timeout: 10000, // 10초 타임아웃 설정
 });
@@ -17,8 +16,11 @@ instance.interceptors.request.use(
     (config) => {
         const token = process.env.REACT_APP_ACCESS_TOKEN; // 환경변수에 저장된 액세스 토큰을 불러옵니다
         if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
+            config.headers.Authorization = `Bearer ${token}`; // Bearer 뒤에 띄어쓰기 포함
+        } else {
+            console.error("인증 토큰이 설정되지 않았습니다.");
         }
+        console.log("설정된 Authorization 헤더:", config.headers.Authorization); // 설정된 헤더 확인용 콘솔
         return config;
     },
     (error) => Promise.reject(error)
@@ -29,7 +31,7 @@ instance.interceptors.response.use(
     (response) => response,
     (error) => {
         if (error.code === "ECONNABORTED") {
-        console.error("Request timeout");
+            console.error("Request timeout");
         }
         return Promise.reject(error);
     }

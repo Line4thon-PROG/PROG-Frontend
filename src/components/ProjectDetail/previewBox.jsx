@@ -1,21 +1,39 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import * as S from "./previewBoxStyled";
 import ExamplePicture from "../../assets/images/exampleThumbnail.svg";
 import WebIcon from "../../assets/images/web_icon.svg";
 import AppleIcon from "../../assets/images/apple_icon.svg";
 import AndroidIcon from "../../assets/images/Android.svg";
-import { useProjectDetail } from "../../hooks/useProjectDetail"; // useProjectDetail 훅을 import 합니다
+import DefualThumbnail from "../../assets/images/default_thumbnail.svg";
+import ColoredWebIcon from "../../assets/images/colored_web_icon.svg";
+import ColoredAppleIcon from "../../assets/images/colored_apple_icon.svg";
+import ColoredAndroidIcon from "../../assets/images/colored_android_icon.svg";
+import { useProjectDetail } from "../../hooks/useProjectDetail";
 
 const PreviewBox = ({ project_id }) => {
     const { projectDetail, error } = useProjectDetail(project_id);
 
+    const [webIcon, setWebIcon] = useState(WebIcon);
+    const [iosIcon, setIosIcon] = useState(AppleIcon);
+    const [androidIcon, setAndroidIcon] = useState(AndroidIcon);
+
     useEffect(() => {
-        console.log("PreviewBox useEffect 실행됨"); // 실행 확인용 로그
-        console.log("Project Detail Data:", projectDetail); // 데이터 확인용 로그
-        console.log("Error:", error); // 에러 확인용 로그
+        console.log("Project Detail Data:", projectDetail); 
+        console.log("Error:", error); 
     }, [projectDetail, error]);
 
-    const thumbnailUrl = projectDetail?.project_thumbnail || ExamplePicture;
+    const thumbnailUrl = projectDetail?.project_thumbnail || DefualThumbnail;
+    const webLink = projectDetail?.web_link;
+    const iosLink = projectDetail?.ios_link;
+    const androidLink = projectDetail?.android_link;
+
+    const availableLinks = [webLink, iosLink, androidLink].filter(link => link && link !== "");
+
+    const openLink = (link) => {
+        if (link && link !== "") {
+            window.open(link, "_blank");
+        }
+    };
 
     return (
         <S.Container>
@@ -26,11 +44,9 @@ const PreviewBox = ({ project_id }) => {
                     onError={(e) => {
                         console.log("이미지 로드 실패, 대체 이미지로 설정합니다.");
                         e.target.onerror = null;
-                        e.target.src = ExamplePicture;
+                        e.target.src = DefualThumbnail;
                     }}
                 />
-
-
                 <S.ChoiceBox>
                     <S.ChoiceLine>
                         {projectDetail?.project_genre.map((genre, index) => (
@@ -58,20 +74,40 @@ const PreviewBox = ({ project_id }) => {
                 <S.ProjectLength>{projectDetail?.period}</S.ProjectLength>
                 <S.SortText>프로젝트 확인</S.SortText>
                 <S.LinkBox>
-                    <S.WebButton>
-                        <img src={WebIcon} alt="Web Icon" />
-                        Web
-                    </S.WebButton>
-                    <S.IOSButton>
-                        <img src={AppleIcon} alt="iOS Icon" />
-                        iOS
-                    </S.IOSButton>
-                    <S.AndroidButton>
-                        <img src={AndroidIcon} alt="Android Icon" />
-                        Android
-                    </S.AndroidButton>
+                    {webLink && (
+                        <S.WebButton
+                            onClick={() => openLink(webLink)}
+                            onMouseEnter={() => setWebIcon(ColoredWebIcon)}
+                            onMouseLeave={() => setWebIcon(WebIcon)}
+                            style={{ width: availableLinks.length === 1 ? "100%" : availableLinks.length === 2 ? "45%" : "30%" }}
+                        >
+                            <img src={webIcon} alt="Web Icon" className="icon" />
+                            Web
+                        </S.WebButton>
+                    )}
+                    {iosLink && (
+                        <S.IOSButton
+                            onClick={() => openLink(iosLink)}
+                            onMouseEnter={() => setIosIcon(ColoredAppleIcon)}
+                            onMouseLeave={() => setIosIcon(AppleIcon)}
+                            style={{ width: availableLinks.length === 1 ? "100%" : availableLinks.length === 2 ? "45%" : "30%" }}
+                        >
+                            <img src={iosIcon} alt="iOS Icon" className="icon"/>
+                            iOS
+                        </S.IOSButton>
+                    )}
+                    {androidLink && (
+                        <S.AndroidButton
+                            onClick={() => openLink(androidLink)}
+                            onMouseEnter={() => setAndroidIcon(ColoredAndroidIcon)}
+                            onMouseLeave={() => setAndroidIcon(AndroidIcon)}
+                            style={{ width: availableLinks.length === 1 ? "100%" : availableLinks.length === 2 ? "45%" : "30%" }}
+                        >
+                            <img src={androidIcon} alt="Android Icon" className="icon" />
+                            Android
+                        </S.AndroidButton>
+                    )}
                 </S.LinkBox>
-                {/* <S.LikeButton><img src={LikeButton}></img> 000</S.LikeButton> */}
             </S.RightBox>
         </S.Container>
     );

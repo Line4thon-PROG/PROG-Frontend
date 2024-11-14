@@ -58,7 +58,7 @@ export const StackContainer = styled.div`
 `;
 
 export const RightBox = styled.div`
-    width: 45%;
+    width: 50%;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
@@ -130,8 +130,14 @@ export const WebButton = styled.button`
     color: #999999;
     background-color: #262626;
     border-radius: 0.5vw;
-    img{
-        width: 16%;
+    gap: 0.1vw;
+    .icon {
+        width: 1.5vw;
+        height: 1.5vw; // 높이도 함께 지정하여 이미지 크기를 고정합니다.
+    }
+    &:hover {
+        background-color: rgba(0, 193, 58, 0.1);
+        color: #00C13A;
     }
 `;
 
@@ -144,8 +150,13 @@ export const IOSButton = styled.button`
     color: #999999; 
     background-color: #262626;
     border-radius: 0.5vw;
-    img{
-        width: 16%;
+    .icon {
+        width: 1.5vw;
+        height: 1.5vw; // 높이도 함께 지정하여 이미지 크기를 고정합니다.
+    }
+    &:hover {
+        background-color: rgba(0, 193, 58, 0.1);
+        color: #00C13A;
     }
 `;
 
@@ -158,22 +169,12 @@ export const AndroidButton = styled.button`
     color: #999999;
     background-color: #262626;
     border-radius: 0.5vw;
-    img{
-        width: 16%;
+    .icon {
+        width: 1.5vw;
+        height: 1.5vw; // 높이도 함께 지정하여 이미지 크기를 고정합니다.
     }
-`;
-
-export const LikeButton = styled.button`
-    width: 100%;
-    height: 3vw;
-    color: white;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 0.3vw;
-    margin-top: 0.3vw;
-    img{
-        width: 36px;
-        height: 36px; 
+    &:hover {
+        background-color: rgba(0, 193, 58, 0.1);
+        color: #00C13A;
     }
 `;
