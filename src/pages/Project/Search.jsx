@@ -427,9 +427,11 @@ function Search() {
             </>
           )}
         </RecommendThumbnail>
-        <ProgressContainer>
-          <ProgressBar $position={position}></ProgressBar>
-        </ProgressContainer>
+        {recommendProject && recommendProject.length > 3 && (
+          <ProgressContainer>
+            <ProgressBar $position={position}></ProgressBar>
+          </ProgressContainer>
+        )}
         <BannerBox>
           <img src={Banner1} alt="Banner1" />
           <img src={Banner2} alt="Banner2" />

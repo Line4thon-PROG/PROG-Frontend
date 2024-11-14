@@ -193,9 +193,11 @@ function Home() {
               />
             ))}
         </NewProjectWrapper>
-        <ProgressContainer>
-          <ProgressBar $position={position}></ProgressBar>
-        </ProgressContainer>
+        {project && project.length > 3 && (
+          <ProgressContainer>
+            <ProgressBar $position={position}></ProgressBar>
+          </ProgressContainer>
+        )}
       </HomeContainer>
     </div>
   );
