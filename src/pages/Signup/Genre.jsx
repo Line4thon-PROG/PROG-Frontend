@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { baseURL } from '../../api/baseURL';
+import { useEffect } from 'react';
 
 const Container = styled.div`
   display: flex;
@@ -81,17 +82,38 @@ const Button = styled.button`
 `;
 
 function Genre() {
-  const genreRows = [
-    ['장르1', '장르2', '음식', '음악', '친구'],
-    ['가족', '여행', '교육', '건강', '패션', '쇼핑'],
-    ['부동산', '환경', '비즈니스', '자기개발', '동물/펫'],
-    ['요리/베이킹', '코딩', '힐링', '금융/투자'],
-  ];
-
+  const [genreRows, setGenreRows] = useState([]);
   const [selectedGenres, setSelectedGenres] = useState([]);
   const navigate = useNavigate();
   const location = useLocation();
   const userData = location.state;
+
+  //장르 목록 불러오기
+  useEffect(() => {
+    const fetchGenres = async () => {
+      try {
+        const response = await axios.get(`${baseURL}/api/search/genre`);
+        console.log('데이터:', response.data);
+        const genres = response.data.genre;
+
+        if (Array.isArray(genres) && genres.length > 0) {
+          const rows = [];
+          const itemsPerRow = 4;
+          for (let i = 0; i < genres.length; i += itemsPerRow) {
+            rows.push(genres.slice(i, i + itemsPerRow));
+          }
+          setGenreRows(rows);
+          console.log('장르 목록:', rows);
+        } else {
+          console.error('예상치 못한 데이터 형식:', genres);
+        }
+      } catch (error) {
+        console.error('장르 목록을 가져오는데 실패했습니다:', error);
+      }
+    };
+
+    fetchGenres();
+  }, []);
 
   const toggleGenre = (genre) => {
     setSelectedGenres((prevSelectedGenres) =>
@@ -133,19 +155,23 @@ function Genre() {
       <SignupHeader step={second} />
       <ChoiceContainer>
         <ChoiceP>선호하는 장르를 선택해 주세요</ChoiceP>
-        {genreRows.map((row, rowIndex) => (
-          <RowContainer key={rowIndex}>
-            {row.map((genre, index) => (
-              <Circle
-                key={index}
-                isSelected={selectedGenres.includes(genre)}
-                onClick={() => toggleGenre(genre)}
-              >
-                {genre}
-              </Circle>
-            ))}
-          </RowContainer>
-        ))}
+        {genreRows.length > 0 ? (
+          genreRows.map((row, rowIndex) => (
+            <RowContainer key={rowIndex}>
+              {row.map((genre, index) => (
+                <Circle
+                  key={index}
+                  isSelected={selectedGenres.includes(genre)}
+                  onClick={() => toggleGenre(genre)}
+                >
+                  {genre}
+                </Circle>
+              ))}
+            </RowContainer>
+          ))
+        ) : (
+          <p>로딩 중...</p>
+        )}
       </ChoiceContainer>
       <Button isActive={selectedGenres.length > 0} onClick={goNext}>
         완료하기

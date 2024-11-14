@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { baseURL } from '../../api/baseURL';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { useEffect } from 'react';
 
 const WholeContainer = styled.div`
   display: flex;
@@ -134,6 +135,25 @@ const NextButton = styled.button`
   font-size: 0.8vw;
 `;
 
+const DropdownMenu = styled.div`
+  width: 21.8vw;
+  border: 1px solid #767676;
+  background: #333;
+  border-radius: 0.4vw;
+  position: absolute;
+  top: 5vw;
+  z-index: 10;
+`;
+
+const DropdownItem = styled.div`
+  padding: 0.8vw 1vw;
+  color: #fff;
+  cursor: pointer;
+  &:hover {
+    background: #444;
+  }
+`;
+
 function InputField({ label, placeholder, hasText, setHasText, onChange }) {
   const handleChange = (e) => {
     setHasText(e.target.value.length > 0);
@@ -166,6 +186,29 @@ function Signup() {
   const [nickname, setNickname] = useState('');
   const [university, setUniversity] = useState('');
   const [description, setDescription] = useState('');
+  const [universityList, setUniversityList] = useState([]);
+  const [showUniversityList, setShowUniversityList] = useState(false);
+
+  //대학교 목록 불러오기
+  useEffect(() => {
+    const fetchUniversities = async () => {
+      try {
+        const response = await axios.get(`${baseURL}/api/search/university`);
+        console.log('데이터:', response.data);
+
+        setUniversityList(response.data.university);
+      } catch (error) {
+        console.error('대학교 목록을 불러오는데 실패했습니다:', error);
+      }
+    };
+    fetchUniversities();
+  }, []);
+
+  const handleUniversityClick = (uni) => {
+    setUniversity(uni);
+    setUniversityHasText(true);
+    setShowUniversityList(false);
+  };
 
   const navigate = useNavigate();
 
@@ -280,12 +323,28 @@ function Signup() {
         <InputBox
           placeholder="대학교를 입력해 주세요"
           hasText={universityHasText}
+          value={university}
           onChange={(e) => {
-            setUniversityHasText(e.target.value.length > 0);
             setUniversity(e.target.value);
+            setUniversityHasText(e.target.value.length > 0);
           }}
         />
-        <SearchIcon src={search} />
+        <SearchIcon
+          src={search}
+          onClick={() => setShowUniversityList(!showUniversityList)}
+        />
+        {showUniversityList && (
+          <DropdownMenu>
+            {universityList.map((uni, index) => (
+              <DropdownItem
+                key={index}
+                onClick={() => handleUniversityClick(uni)}
+              >
+                {uni}
+              </DropdownItem>
+            ))}
+          </DropdownMenu>
+        )}
       </InputBoxContainer>
 
       <InputBoxContainer>
