@@ -1,14 +1,13 @@
-import React, { useState } from 'react';
-import styled from 'styled-components';
-import logo from '../../assets/images/Logo.svg';
-import search from '../../assets/images/Search.svg';
-import login from '../../assets/images/Login.svg';
-import { Navigate, useNavigate } from 'react-router-dom';
-import { useEffect } from 'react';
-import logout from '../../assets/images/logout.svg';
-import axios from 'axios';
-import { baseURL } from '../../api/baseURL';
-
+import React, { useState } from "react";
+import styled from "styled-components";
+import logo from "../../assets/images/Logo.svg";
+import search from "../../assets/images/Search.svg";
+import login from "../../assets/images/Login.svg";
+import { Navigate, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+import logout from "../../assets/images/logout.svg";
+import axios from "axios";
+import { baseURL } from "../../api/baseURL";
 
 const HeaderContainer = styled.div`
   padding-left: 4.2vw;
@@ -76,12 +75,12 @@ const Tool = styled.img`
 `;
 
 function Header() {
-  const [selectedNav, setSelectedNav] = useState('홈');
+  const [selectedNav, setSelectedNav] = useState("홈");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const token = localStorage.getItem('access');
+    const token = localStorage.getItem("access");
     if (token) {
       setIsLoggedIn(true);
     }
@@ -89,34 +88,33 @@ function Header() {
 
   const handleNavClick = (navItem) => {
     setSelectedNav(navItem);
-    if (navItem === '마이페이지') {
-      navigate('/Mypage');
-    } else if (navItem === '홈') {
-      navigate('/');
+    if (navItem === "마이페이지") {
+      navigate("/Mypage");
+    } else if (navItem === "홈") {
+      navigate("/");
     }
   };
 
   const handleLogin = () => {
-    navigate('/login');
+    navigate("/login");
   };
 
   const handleLogout = async () => {
     try {
       const response = await axios.get(`${baseURL}/api/accounts/logout/`, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('access')}`,
+          Authorization: `Bearer ${localStorage.getItem("access")}`,
         },
       });
       console.log(response.data);
 
-      localStorage.removeItem('access');
+      localStorage.removeItem("access");
       setIsLoggedIn(false);
-      alert('로그아웃이 완료되었습니다.');
-      navigate('/');
+      alert("로그아웃이 완료되었습니다.");
+      navigate("/");
     } catch (error) {
-      console.error('로그아웃 실패:', error);
-      alert('로그아웃에 실패했습니다. 다시 시도해주세요.');
-
+      console.error("로그아웃 실패:", error);
+      alert("로그아웃에 실패했습니다. 다시 시도해주세요.");
     }
   };
 

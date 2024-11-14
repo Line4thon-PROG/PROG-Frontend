@@ -20,6 +20,9 @@ import GenreiconActive from '../../assets/images/GenreActive.svg';
 import { useEffect } from 'react';
 import axios from 'axios';
 import { baseURL } from '../../api/baseURL';
+import { useNavigate } from 'react-router-dom';
+import Image1 from '../../assets/images/1.png';
+import Image2 from '../../assets/images/2.png';
 
 const Container = styled.div`
   display: flex;
@@ -379,9 +382,9 @@ const ExplainImageContainer = styled.div`
   flex-direction: column;
   display: flex;
   width: 100%;
-  height: 8.65vw;
+  height: auto;
   padding: 1vw;
-  justify-content: center;
+  /* justify-content: center; */
   align-items: center;
   flex-shrink: 0;
   border-radius: 0.6vw;
@@ -412,6 +415,7 @@ const ImageBox = styled.div`
   display: flex;
   width: 47.8vw;
   height: 6.65vw;
+  object-fit: cover;
   justify-content: center;
   align-items: center;
   flex-shrink: 0;
@@ -576,6 +580,11 @@ const RoleInput = styled.input`
   letter-spacing: -0.35px;
 `;
 
+const ExplainImage = styled.img`
+  width: 47.8vw;
+  height: 26.85vw;
+`;
+
 function Write() {
   const [selectedGenres, setSelectedGenres] = useState([]);
   const [title, setTitle] = useState('');
@@ -604,6 +613,99 @@ function Write() {
   const [stackList, setStackList] = useState([]);
   const [selectedParticipants, setSelectedParticipants] = useState([]);
   const [roles, setRoles] = useState({});
+  const navigate = useNavigate();
+
+  const handleSubmit = async () => {
+    const token = localStorage.getItem('access'); // 토큰 가져오기
+
+    // JSON 데이터 준비
+    const jsonData = {
+      collaborator: selectedParticipants.map((participant) => ({
+        role: roles[participant.id] || '',
+        is_leader: participant.id === selectedParticipants[0]?.id,
+        account_id: participant.id,
+        nickname: participant.nickname,
+      })),
+      project_platform: Object.keys(activeTypes)
+        .filter((key) => activeTypes[key])
+        .map((platform) => (platform === 'WEB' ? 'Web' : platform)), // Web으로 변환
+      project_stack: selectedStacks,
+      project_genre: selectedGenres,
+      project_university: ['대학교1'],
+      project_name: title,
+      simple_description: summary,
+      detail_description: content,
+      period: period,
+      ...(webAddress && activeTypes.WEB ? { web_link: webAddress } : {}),
+      ...(iosAddress && activeTypes.IOS ? { ios_link: iosAddress } : {}),
+      ...(androidAddress && activeTypes.Android
+        ? { android_link: androidAddress }
+        : {}),
+    };
+
+    // JSON 데이터 콘솔 출력
+    console.log('JSON Request Body:', JSON.stringify(jsonData, null, 2));
+
+    try {
+      // JSON 데이터 전송
+      const jsonResponse = await axios.post(
+        `${baseURL}/api/project/`,
+        jsonData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+      console.log('프로젝트 JSON 데이터 전송 성공:', jsonResponse.data);
+    } catch (error) {
+      console.error('프로젝트 JSON 데이터 전송 실패:', error);
+      alert('프로젝트 등록에 실패했습니다. 다시 시도해 주세요.');
+      return;
+    }
+
+    // FormData 객체 생성 - 이미지 전송
+    const formData = new FormData();
+    if (imageSrc) {
+      formData.append('project_thumbnail', imageSrc); // 대표 이미지
+    }
+    imageSrcList.forEach((file, index) => {
+      formData.append('image', file); // 설명 이미지들
+    });
+
+    // FormData 내용 콘솔 출력 (이미지 파일 미리보기 포함)
+    for (const [key, value] of formData.entries()) {
+      if (value instanceof File) {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          console.log(`FormData Entry: ${key}`, reader.result); // Base64로 이미지 출력
+        };
+        reader.readAsDataURL(value);
+      } else {
+        console.log(`FormData Entry: ${key}:`, value);
+      }
+    }
+
+    // try {
+    //   // 이미지 전송
+    //   const imageResponse = await axios.post(
+    //     `${baseURL}/api/project/`,
+    //     formData,
+    //     {
+    //       headers: {
+    //         Authorization: `Bearer ${token}`,
+    //         'Content-Type': 'multipart/form-data',
+    //       },
+    //     }
+    //   );
+    //   console.log('프로젝트 이미지 전송 성공:', imageResponse.data);
+    //   navigate('/Success');
+    // } catch (error) {
+    //   console.error('프로젝트 이미지 전송 실패:', error);
+    //   alert('프로젝트 이미지 등록에 실패했습니다. 다시 시도해 주세요.');
+    // }
+  };
 
   //참여자 검색
   const searchParticipants = async () => {
@@ -613,9 +715,9 @@ function Write() {
         `${baseURL}/api/accounts/finduser`,
         { username: person },
         {
-          // headers: {
-          //   Authorization: `Bearer ${token}`,
-          // },
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
       setParticipantList(response.data);
@@ -633,9 +735,9 @@ function Write() {
         `${baseURL}/api/search/stack/input`,
         { stackName: stackSearch },
         {
-          // headers: {
-          //   Authorization: `Bearer ${token}`,
-          // },
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
       setStackList(response.data);
@@ -656,7 +758,7 @@ function Write() {
   const handleMultipleImageChange = (e) => {
     const files = Array.from(e.target.files);
     const newImageSrcList = files.map((file) => URL.createObjectURL(file));
-    setImageSrcList((prevList) => [...prevList, ...newImageSrcList]);
+    setImageSrcList((prevList) => [...newImageSrcList, ...prevList]);
   };
 
   const removeImage = (index) => {
@@ -725,22 +827,21 @@ function Write() {
   };
 
   const addParticipant = () => {
-    // 중복 추가 방지
     if (!selectedParticipants.some((p) => p.id === participantList.id)) {
       setSelectedParticipants([...selectedParticipants, participantList]);
     }
   };
 
-  // 장르 및 기술 스택 목록을 가져오는 useEffect
+  // 장르 및 기술 스택 가져오기
   useEffect(() => {
     const token = localStorage.getItem('access');
 
     const fetchGenres = async () => {
       try {
         const response = await axios.get(`${baseURL}/api/search/genre`, {
-          // headers: {
-          //   Authorization: `Bearer ${token}`,
-          // },
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         });
         const genres = response.data.genre;
         const rows = [];
@@ -757,9 +858,9 @@ function Write() {
     const fetchStacks = async () => {
       try {
         const response = await axios.get(`${baseURL}/api/search/stack`, {
-          // headers: {
-          //   Authorization: `Bearer ${token}`,
-          // },
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         });
         const stacks = response.data.stack;
         const rows = [];
@@ -1060,10 +1161,23 @@ function Write() {
         <Title style={{ marginTop: '0vw' }}>프로젝트 설명 이미지 첨부</Title>
         <Share>이미지 최대 해상도 : 956 X 537</Share>
         <ExplainImageContainer>
+          {imageSrcList.map((src, index) => (
+            <ExplainImage
+              key={index}
+              src={src}
+              alt={`Project Image ${index + 1}`}
+            />
+          ))}
+
+          {/* 이미지 업로드 버튼이 맨 아래에 위치 */}
           <ImageBox
             onClick={() => document.getElementById('multiFileInput').click()}
           >
-            <Picture src={picture} alt="Placeholder" isIcon />
+            <img
+              src={picture}
+              alt="Placeholder"
+              style={{ width: '1.8vw', height: '1.8vw' }}
+            />
             <FileInput
               type="file"
               id="multiFileInput"
@@ -1072,38 +1186,10 @@ function Write() {
               onChange={handleMultipleImageChange}
             />
           </ImageBox>
-
-          <div
-            style={{
-              display: 'flex',
-              gap: '1vw',
-              marginTop: '1vw',
-              flexWrap: 'wrap',
-            }}
-          >
-            {imageSrcList.map((src, index) => (
-              <div
-                key={index}
-                style={{ position: 'relative', width: '8vw', height: '8vw' }}
-              >
-                <Picture src={src} alt={`Project Image ${index + 1}`} />
-                <Close
-                  src={close}
-                  onClick={() => removeImage(index)}
-                  style={{
-                    position: 'absolute',
-                    top: '0.5vw',
-                    right: '0.5vw',
-                    cursor: 'pointer',
-                  }}
-                />
-              </div>
-            ))}
-          </div>
         </ExplainImageContainer>
 
         <BtnContainer>
-          <Btn>다음</Btn>
+          <Btn onClick={handleSubmit}>다음</Btn>
         </BtnContainer>
       </Container>
     </>

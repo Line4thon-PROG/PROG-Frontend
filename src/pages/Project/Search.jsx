@@ -9,6 +9,12 @@ import ProjectThumbnailImage from "../../assets/images/ProjectThumbnailImage.svg
 import FilterIcon from "../../assets/images/FilterIcon.svg";
 import UpScroll from "../../assets/images/UpScroll.svg";
 import FilterModal from "../../components/Modal/FilterModal";
+import Banner1 from "../../assets/images/Banner1.svg";
+import Banner2 from "../../assets/images/Banner2.svg";
+import Banner3 from "../../assets/images/Banner3.svg";
+import Banner4 from "../../assets/images/Banner4.svg";
+import axios from "axios";
+import { baseURL } from "../../api/baseURL";
 
 const SearchContainer = styled.div`
   margin-top: 30px;
@@ -41,7 +47,7 @@ const RecommendThumbnail = styled.div`
   margin-top: 15px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   gap: 18px;
   width: 53.8vw;
   overflow-x: auto;
@@ -75,9 +81,23 @@ export const ProgressBar = styled.div`
 
 const BannerBox = styled.div`
   margin-top: 20px;
-  background-color: rgba(209, 209, 209, 1);
-  width: 100%;
-  height: 100px;
+  background: none;
+  width: 53.8vw;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  overflow-x: auto;
+
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+
+  ::-webkit-scrollbar {
+    display: none;
+  }
+
+  img {
+    width: 53.8vw;
+  }
 `;
 
 const FilterBox = styled.div`
@@ -108,9 +128,14 @@ const ProjectWrapper = styled.div`
   width: 53.8vw;
   flex-wrap: wrap;
   position: relative;
+  margin-top: 15px;
+
+  p {
+    font-size: 12px;
+  }
 `;
 
-const UpScrollImg = styled.img`
+export const UpScrollImg = styled.img`
   position: fixed;
   width: 40px;
   top: 50vh;
@@ -120,74 +145,196 @@ const UpScrollImg = styled.img`
 `;
 
 function Search() {
+  const LoginToken = localStorage.getItem("access") || null;
+  console.log(LoginToken);
   const navigate = useNavigate();
-  // 아래 변수들은 UI 구현을 위한 임의 변수입니다. 실제 사용 X
-  const user = { name: "프로그" };
-  const isLogin = true;
-  const project = [
-    {
-      src: ProjectThumbnailImage,
-      name: "프로젝트 이름",
-      genre: "장르",
-      skill: "기술",
-    },
-    {
-      src: ProjectThumbnailImage,
-      name: "프로젝트 이름",
-      genre: "장르",
-      skill: "기술",
-    },
-    {
-      src: ProjectThumbnailImage,
-      name: "프로젝트 이름",
-      genre: "장르",
-      skill: "기술",
-    },
-    {
-      src: ProjectThumbnailImage,
-      name: "프로젝트 이름",
-      genre: "장르",
-      skill: "기술",
-    },
-    {
-      src: ProjectThumbnailImage,
-      name: "프로젝트 이름",
-      genre: "장르",
-      skill: "기술",
-    },
-    {
-      src: ProjectThumbnailImage,
-      name: "프로젝트 이름",
-      genre: "장르",
-      skill: "기술",
-    },
-    {
-      src: ProjectThumbnailImage,
-      name: "프로젝트 이름",
-      genre: "장르",
-      skill: "기술",
-    },
-    {
-      src: ProjectThumbnailImage,
-      name: "프로젝트 이름",
-      genre: "장르",
-      skill: "기술",
-    },
-    {
-      src: ProjectThumbnailImage,
-      name: "프로젝트 이름",
-      genre: "장르",
-      skill: "기술",
-    },
-  ];
-  // useState 변수 선언
-  const [selectedTags, setSelectedTags] = useState([]); // 선택된 태그 (장르, 기술)
+
+  // 상태 변수
+  const [user, setUser] = useState(null); // 닉네임
+  const [recommendProject, setRecommendProject] = useState([]);
+  const [selectedTags, setSelectedTags] = useState([]); // 선택된 태그 (장르)
+  const [selectedSkills, setSelectedSkills] = useState([]);
   const [selectedUniv, setSelectedUniv] = useState(null); // 선택된 대학 (1개만 선택 가능하기에 상태 따로 관리)
   const [tempSelectedTags, setTempSelectedTags] = useState([]);
   const [tempSelectedUniv, setTempSelectedUniv] = useState(null);
+  const [tempSelectedSkills, setTempSelectedSkills] = useState([]);
   const [filterBtn, setFilterBtn] = useState(false); // 필터 버튼
   const [filterModal, setFilterModal] = useState(false); // 필터 모달창
   const [isApply, setIsApply] = useState(false);
+  const [allProject, setAllProject] = useState([]);
+  const [filteredGenrePj, setFilteredGenrePj] = useState([]);
+  const [filteredSkillPj, setFilteredSkillPj] = useState([]);
+  const [filteredUnivPj, setFilteredUnivPj] = useState([]);
+  const [allFilteredPj, setAllFilteredPj] = useState([]);
+
+  // 닉네임 불러오기
+  const GetNickname = async () => {
+    if (!LoginToken) {
+      console.log("로그인 토큰이 없습니다.");
+      return;
+    }
+    try {
+      const response = await axios.get(`${baseURL}/api/mypage/accountinfo/me`, {
+        headers: {
+          Authorization: `Bearer ${LoginToken}`,
+        },
+      });
+      setUser(response.data.nickname);
+      console.log(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    GetNickname();
+  }, []);
+
+  // 추천 프로젝트 불러오기
+  const GetRecommendProject = async () => {
+    if (!LoginToken) {
+      console.log("로그인 토큰이 없습니다.");
+      return;
+    }
+    try {
+      const response = await axios.get(`${baseURL}/api/project/recommend`, {
+        headers: {
+          Authorization: `Bearer ${LoginToken}`,
+        },
+      });
+      setRecommendProject(response.data);
+      console.log(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    GetRecommendProject();
+  }, []);
+
+  // 전체 프로젝트 불러오기
+  const GetAllProject = async () => {
+    try {
+      const response = await axios.get(`${baseURL}/api/project/`, {
+        headers: {
+          Authorization: `Bearer ${LoginToken}`,
+        },
+      });
+      setAllProject(response.data);
+      console.log(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    GetAllProject();
+  }, []);
+
+  //장르 필터링
+  const GetGenreProject = async () => {
+    if (selectedTags && selectedTags.length > 0) {
+      try {
+        const response = await axios.post(
+          `${baseURL}/api/project/filter_by_genre`,
+          {
+            genre: selectedTags,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${LoginToken}`,
+            },
+          }
+        );
+        setFilteredGenrePj(response.data);
+        console.log(response.data);
+      } catch (error) {
+        console.log(error);
+      }
+    } else {
+      return;
+    }
+  };
+
+  useEffect(() => {
+    GetGenreProject();
+  }, [selectedTags]);
+
+  // 기술스택 필터링
+  const GetSkillProject = async () => {
+    if (selectedSkills && selectedSkills.length > 0) {
+      try {
+        const response = await axios.post(
+          `${baseURL}/api/project/filter_by_stack`,
+          {
+            stack: selectedSkills,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${LoginToken}`,
+            },
+          }
+        );
+        setFilteredSkillPj(response.data);
+        console.log(response.data);
+      } catch (error) {
+        console.log(error);
+      }
+    } else {
+      return;
+    }
+  };
+
+  useEffect(() => {
+    GetSkillProject();
+  }, [selectedSkills]);
+
+  // 대학교 필터링
+  const GetUnivProject = async () => {
+    if (selectedUniv) {
+      try {
+        const response = await axios.post(
+          `${baseURL}/api/project/filter_by_university`,
+          {
+            university: [selectedUniv],
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${LoginToken}`,
+            },
+          }
+        );
+        setFilteredUnivPj(response.data);
+        console.log(response.data);
+      } catch (error) {
+        console.log(error);
+      }
+    } else {
+      return;
+    }
+  };
+
+  useEffect(() => {
+    GetUnivProject();
+  }, selectedUniv);
+
+  // 필터링 된 결과 합치기
+  useEffect(() => {
+    const combined = [
+      ...(filteredGenrePj && filteredGenrePj.length > 0 ? filteredGenrePj : []),
+      ...(filteredSkillPj && filteredSkillPj.length > 0 ? filteredSkillPj : []),
+      ...(filteredUnivPj && filteredUnivPj.length > 0 ? filteredUnivPj : []),
+    ];
+
+    const uniqueCombined = combined.filter(
+      (project, index, self) =>
+        index === self.findIndex((p) => p.id === project.id)
+    );
+
+    setAllFilteredPj(uniqueCombined);
+    console.log(allFilteredPj);
+  }, [filteredGenrePj, filteredSkillPj, filteredUnivPj]);
 
   // 필터 모달 오픈/클로즈 함수
   const openFilterModal = () => {
@@ -209,6 +356,7 @@ function Search() {
   // 필터 적용 버튼 관련
   const handleApplyBtn = () => {
     setSelectedTags([...tempSelectedTags]);
+    setSelectedSkills([...tempSelectedSkills]);
     setSelectedUniv(tempSelectedUniv);
     setIsApply(true);
   };
@@ -246,8 +394,8 @@ function Search() {
       <Header />
       <SearchContainer>
         <NameandWriteBtnWrapper>
-          {isLogin ? (
-            <p>{user.name}님이 좋아할 만한 프로젝트</p>
+          {LoginToken ? (
+            <p>{user}님이 좋아할 만한 프로젝트</p>
           ) : (
             <p>OOO님이 좋아할 만한 프로젝트</p>
           )}
@@ -257,7 +405,7 @@ function Search() {
           </button>
         </NameandWriteBtnWrapper>
         <RecommendThumbnail ref={scrollRef}>
-          {!isLogin ? (
+          {!LoginToken ? (
             <>
               <LogoutThumbnail />
               <LogoutThumbnail />
@@ -265,28 +413,39 @@ function Search() {
             </>
           ) : (
             <>
-              {project.map((item, index) => (
-                <ProjectThumbnail
-                  key={index}
-                  imagesrc={item.src}
-                  name={item.name}
-                  genrelist={item.genre}
-                  skilllist={item.skill}
-                />
-              ))}
+              {recommendProject &&
+                recommendProject.length > 0 &&
+                recommendProject.map((item) => (
+                  <ProjectThumbnail
+                    key={item.id}
+                    imagesrc={item.project_thumbnail}
+                    name={item.project_name}
+                    genrelist={item.project_genre}
+                    skilllist={item.project_stack}
+                  />
+                ))}
             </>
           )}
         </RecommendThumbnail>
         <ProgressContainer>
           <ProgressBar $position={position}></ProgressBar>
         </ProgressContainer>
-        <BannerBox />
+        <BannerBox>
+          <img src={Banner1} alt="Banner1" />
+          <img src={Banner2} alt="Banner2" />
+          <img src={Banner3} alt="Banner3" />
+          <img src={Banner4} alt="Banner4" />
+        </BannerBox>
         <FilterBox onClick={ClickedFilterBtn}>
           <img src={FilterIcon} alt="FilterIcon" />
           {isApply ? (
             <>
               {selectedTags.length > 0 &&
                 selectedTags.map((item, index) => (
+                  <SelectedTag key={index}>{item}</SelectedTag>
+                ))}
+              {selectedSkills.length > 0 &&
+                selectedSkills.map((item, index) => (
                   <SelectedTag key={index}>{item}</SelectedTag>
                 ))}
               {selectedUniv && <SelectedTag>{selectedUniv}</SelectedTag>}
@@ -300,22 +459,47 @@ function Search() {
             closeModal={closeFilterModal}
             selectedTags={tempSelectedTags}
             setSelectedTags={setTempSelectedTags}
+            selectedSkills={tempSelectedSkills}
+            setSelectedSkills={setTempSelectedSkills}
             selectedUniv={tempSelectedUniv}
             setSelectedUniv={setTempSelectedUniv}
             handleApplyBtn={handleApplyBtn}
           />
         )}
         <ProjectWrapper>
-          {project.map((item, index) => (
-            <ProjectThumbnail
-              key={index}
-              imagesrc={item.src}
-              name={item.name}
-              genrelist={item.genre}
-              skilllist={item.skill}
-            />
-          ))}
+          {/* 필터 선택 시 */}
+          {selectedTags.length > 0 ||
+          selectedSkills.length > 0 ||
+          selectedUniv ? (
+            allFilteredPj && allFilteredPj.length > 0 ? (
+              allFilteredPj.map((item, index) => (
+                <ProjectThumbnail
+                  key={index}
+                  imagesrc={item.project_thumbnail}
+                  name={item.project_name}
+                  genrelist={item.project_genre}
+                  skilllist={item.project_stack}
+                />
+              ))
+            ) : (
+              <p>선택된 필터에 해당하는 프로젝트가 없습니다.</p>
+            )
+          ) : /* 필터가 없을 시 */
+          allProject && allProject.length > 0 ? (
+            allProject.map((item, index) => (
+              <ProjectThumbnail
+                key={index}
+                imagesrc={item.project_thumbnail}
+                name={item.project_name}
+                genrelist={item.project_genre}
+                skilllist={item.project_stack}
+              />
+            ))
+          ) : (
+            <p>프로젝트가 없습니다.</p>
+          )}
         </ProjectWrapper>
+
         <UpScrollImg
           src={UpScroll}
           alt="UpScroll"
