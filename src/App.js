@@ -14,6 +14,7 @@ import Search from "./pages/Project/Search";
 import Promotion from "./pages/Promotion/Promotion";
 import FeedbackList from "./pages/Feedback/FeedbackList";
 import FeedbackDetail from "./pages/Feedback/FeedbackDetail";
+import ProjectDetail from "./pages/ProjectDetail/projectDetailPage";
 
 function App() {
   return (
@@ -37,6 +38,7 @@ function App() {
             path="/FeedbackDetail/:feedback_id"
             element={<FeedbackDetail />}
           />
+          <Route path="/DetailPage" element={<ProjectDetail />} />
         </Routes>
       </Router>
     </>
