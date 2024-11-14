@@ -17,6 +17,9 @@ import StackiconActive from '../../assets/images/StackActive.svg';
 import Genreicon from '../../assets/images/Genreicon.svg';
 import Stackicon from '../../assets/images/Stackicon.svg';
 import GenreiconActive from '../../assets/images/GenreActive.svg';
+import { useEffect } from 'react';
+import axios from 'axios';
+import { baseURL } from '../../api/baseURL';
 
 const Container = styled.div`
   display: flex;
@@ -373,6 +376,7 @@ const ContentBlank = styled.textarea`
 `;
 
 const ExplainImageContainer = styled.div`
+  flex-direction: column;
   display: flex;
   width: 100%;
   height: 8.65vw;
@@ -505,6 +509,73 @@ const SearchContainer = styled.input`
   letter-spacing: -0.4px;
 `;
 
+const ParticipantContainer = styled.div`
+  display: flex;
+  padding: 0.7vw 4.1vw 0.7vw 0.7vw;
+  align-items: center;
+  width: 21.8vw;
+  height: 2.4vw;
+  margin-top: 0.6vw;
+  align-self: stretch;
+  border-radius: 0.4vw;
+  background: #333;
+  color: #fff;
+  text-align: center;
+  font-family: Pretendard;
+  font-size: 0.7vw;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 1vw;
+  letter-spacing: -0.35px;
+`;
+
+const SearchBoxContainer = styled.div`
+  width: 24.4vw;
+  height: 2.4vw;
+  color: #fff;
+  text-align: center;
+  font-family: Pretendard;
+  font-size: 0.7vw;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 1vw;
+  padding: 0.7vw;
+  border-radius: 0.4vw;
+  border: 1px solid rgba(0, 193, 58, 0.5);
+  letter-spacing: -0.35px;
+  margin-top: 0.45vw;
+  justify-content: space-between;
+  align-items: flex-start;
+  display: flex;
+`;
+
+const ColumnContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const AddButton = styled.button`
+  color: #00c13a;
+  text-align: center;
+  font-family: Pretendard;
+  font-size: 0.7vw;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 1vw;
+  letter-spacing: -0.35px;
+`;
+
+const RoleInput = styled.input`
+  color: #fff;
+  font-family: Pretendard;
+  font-size: 0.7vw;
+  font-style: normal;
+  font-weight: 400;
+  margin-left: 0.2vw;
+  line-height: 1vw;
+  letter-spacing: -0.35px;
+`;
+
 function Write() {
   const [selectedGenres, setSelectedGenres] = useState([]);
   const [title, setTitle] = useState('');
@@ -523,6 +594,56 @@ function Write() {
   const [isWebAddressFocused, setIsWebAddressFocused] = useState(false);
   const [isIosAddressFocused, setIsIosAddressFocused] = useState(false);
   const [isAndroidAddressFocused, setIsAndroidAddressFocused] = useState(false);
+  const [genreRows, setGenreRows] = useState([]);
+  const [stackRows, setStackRows] = useState([]);
+  const [isGenreActive, setIsGenreActive] = useState(true);
+  const [selectedStacks, setSelectedStacks] = useState([]);
+  const [participantList, setParticipantList] = useState([]);
+  const [stackSearch, setStackSearch] = useState('');
+  const [isStackFocused, setIsStackFocused] = useState(false);
+  const [stackList, setStackList] = useState([]);
+  const [selectedParticipants, setSelectedParticipants] = useState([]);
+  const [roles, setRoles] = useState({});
+
+  //참여자 검색
+  const searchParticipants = async () => {
+    try {
+      const token = localStorage.getItem('access');
+      const response = await axios.post(
+        `${baseURL}/api/accounts/finduser`,
+        { username: person },
+        {
+          // headers: {
+          //   Authorization: `Bearer ${token}`,
+          // },
+        }
+      );
+      setParticipantList(response.data);
+      console.log(response.data);
+    } catch (error) {
+      console.error('참여자 검색 실패:', error);
+    }
+  };
+
+  // 기술 스택 검색 기능
+  const searchStacks = async () => {
+    try {
+      const token = localStorage.getItem('access');
+      const response = await axios.post(
+        `${baseURL}/api/search/stack/input`,
+        { stackName: stackSearch },
+        {
+          // headers: {
+          //   Authorization: `Bearer ${token}`,
+          // },
+        }
+      );
+      setStackList(response.data);
+      console.log('스택 검색', response.data);
+    } catch (error) {
+      console.error('스택 검색 실패:', error);
+    }
+  };
 
   const [activeTypes, setActiveTypes] = useState({
     WEB: false,
@@ -584,13 +705,6 @@ function Write() {
     );
   };
 
-  const [isGenreActive, setIsGenreActive] = useState(true);
-  const [selectedStacks, setSelectedStacks] = useState([]);
-
-  const stackRows = [
-    ['Next.js', 'Spring Boot', 'CSS', 'React', 'Angular', 'Redux', 'Node.js'],
-  ];
-
   const toggleActiveTab = () => {
     setIsGenreActive(!isGenreActive);
   };
@@ -602,6 +716,66 @@ function Write() {
         : [...prevSelectedStacks, stack]
     );
   };
+
+  const handleRoleChange = (participantId, role) => {
+    setRoles((prevRoles) => ({
+      ...prevRoles,
+      [participantId]: role,
+    }));
+  };
+
+  const addParticipant = () => {
+    // 중복 추가 방지
+    if (!selectedParticipants.some((p) => p.id === participantList.id)) {
+      setSelectedParticipants([...selectedParticipants, participantList]);
+    }
+  };
+
+  // 장르 및 기술 스택 목록을 가져오는 useEffect
+  useEffect(() => {
+    const token = localStorage.getItem('access');
+
+    const fetchGenres = async () => {
+      try {
+        const response = await axios.get(`${baseURL}/api/search/genre`, {
+          // headers: {
+          //   Authorization: `Bearer ${token}`,
+          // },
+        });
+        const genres = response.data.genre;
+        const rows = [];
+        const itemsPerRow = 6;
+        for (let i = 0; i < genres.length; i += itemsPerRow) {
+          rows.push(genres.slice(i, i + itemsPerRow));
+        }
+        setGenreRows(rows);
+      } catch (error) {
+        console.error('장르 목록을 가져오는데 실패했습니다:', error);
+      }
+    };
+
+    const fetchStacks = async () => {
+      try {
+        const response = await axios.get(`${baseURL}/api/search/stack`, {
+          // headers: {
+          //   Authorization: `Bearer ${token}`,
+          // },
+        });
+        const stacks = response.data.stack;
+        const rows = [];
+        const itemsPerRow = 6;
+        for (let i = 0; i < stacks.length; i += itemsPerRow) {
+          rows.push(stacks.slice(i, i + itemsPerRow));
+        }
+        setStackRows(rows);
+      } catch (error) {
+        console.error('기술 스택 목록을 가져오는데 실패했습니다:', error);
+      }
+    };
+
+    fetchGenres();
+    fetchStacks();
+  }, []);
 
   return (
     <>
@@ -631,19 +805,45 @@ function Write() {
         </TitleInputContainer>
         <Person>프로젝트 참여자</Person>
         <RowContainer>
-          <PersonInputContainer>
-            <PersonInput
-              placeholder="참여자 아이디를 입력해주세요"
-              value={person}
-              onChange={(e) => setPerson(e.target.value)}
-              isFocused={isPersonFocused}
-              onFocus={handleFocus(setIsPersonFocused)}
-              onBlur={handleBlur(setIsPersonFocused)}
-            />
-            <SearchIcon src={searchIcon} alt="돋보기 아이콘" />
-          </PersonInputContainer>
+          <ColumnContainer>
+            <PersonInputContainer>
+              <PersonInput
+                placeholder="참여자 아이디를 입력해주세요"
+                value={person}
+                onChange={(e) => setPerson(e.target.value)}
+                isFocused={isPersonFocused}
+                onFocus={handleFocus(setIsPersonFocused)}
+                onBlur={handleBlur(setIsPersonFocused)}
+              />
+              <SearchIcon
+                src={searchIcon}
+                alt="돋보기 아이콘"
+                onClick={searchParticipants}
+              />
+            </PersonInputContainer>
+            <SearchBoxContainer>
+              {participantList.nickname} | {participantList.university}
+              <AddButton onClick={addParticipant}>추가</AddButton>
+            </SearchBoxContainer>
+          </ColumnContainer>
+
           <ListContainer>
             <Participant>참여자 목록</Participant>
+            <ul>
+              {selectedParticipants.map((participant) => (
+                <ParticipantContainer key={participant.id}>
+                  {participant.nickname} | {participant.university} |
+                  <RoleInput
+                    type="text"
+                    placeholder="역할을 입력해 주세요"
+                    value={roles[participant.id] || ''}
+                    onChange={(e) =>
+                      handleRoleChange(participant.id, e.target.value)
+                    }
+                  />
+                </ParticipantContainer>
+              ))}
+            </ul>
           </ListContainer>
         </RowContainer>
 
@@ -745,7 +945,7 @@ function Write() {
 
           {isGenreActive ? (
             // 장르 선택
-            splitGenres.map((row, rowIndex) => (
+            genreRows.map((row, rowIndex) => (
               <RowContainer2
                 key={rowIndex}
                 style={{
@@ -769,11 +969,11 @@ function Write() {
               <PersonInputContainer style={{ marginTop: '1vw' }}>
                 <PersonInput
                   placeholder="기술 스택을 검색해보세요"
-                  value={person}
-                  onChange={(e) => setPerson(e.target.value)}
-                  isFocused={isPersonFocused}
-                  onFocus={handleFocus(setIsPersonFocused)}
-                  onBlur={handleBlur(setIsPersonFocused)}
+                  value={stackSearch}
+                  onChange={(e) => setStackSearch(e.target.value)}
+                  isFocused={isStackFocused}
+                  onFocus={handleFocus(setIsStackFocused)}
+                  onBlur={handleBlur(setIsStackFocused)}
                 />
                 <SearchIcon src={searchIcon} alt="돋보기 아이콘" />
               </PersonInputContainer>
