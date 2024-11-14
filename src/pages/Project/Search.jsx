@@ -438,7 +438,9 @@ function Search() {
         </BannerBox>
         <FilterBox onClick={ClickedFilterBtn}>
           <img src={FilterIcon} alt="FilterIcon" />
-          {isApply ? (
+          {selectedTags.length > 0 ||
+          selectedSkills.length > 0 ||
+          selectedUniv ? (
             <>
               {selectedTags.length > 0 &&
                 selectedTags.map((item, index) => (
