@@ -111,9 +111,6 @@ function Mypage() {
           style={{ marginTop: '3vw', justifyContent: 'space-between' }}
         >
           <ProfileP>닉네임 | OOO대학교 | 이용자 아이디</ProfileP>
-          <EditButton>
-            <Pencil src={pencil} />내 정보 수정하기
-          </EditButton>
         </RowContainer>
 
         <Intro>자기소개</Intro>
