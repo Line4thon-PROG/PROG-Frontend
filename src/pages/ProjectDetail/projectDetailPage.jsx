@@ -11,16 +11,18 @@ const Container = styled.div`
     flex-direction: column;
 `;
 
-function Home() {
+function ProjectDetail() {
+    const exampleProjectId = 1; // 예시 project_id를 설정
+
     return (
         <Container>
-            <Header/>
-            <DetailHeader/>
-            <PreviewBox />
+            <Header />
+            <DetailHeader />
+            <PreviewBox project_id={exampleProjectId} /> {/* project_id를 PreviewBox에 전달 */}
             <MainBox />
             <CommunityBox />
         </Container>
     );
 }
 
-export default Home;
+export default ProjectDetail;
