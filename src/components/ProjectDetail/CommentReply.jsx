@@ -37,7 +37,7 @@ const CommentReplyInput = ({ parentCommentId }) => {
     // Function to handle posting the reply
     const postReply = async () => {
         if (!replyText.trim()) {
-            console.log("대댓글 내용이 없습니다.");
+            console.log("대댓글 내용이 없습니다. 대댓글을 입력하세요");
             return;
         }
 
