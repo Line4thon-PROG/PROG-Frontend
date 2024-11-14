@@ -10,6 +10,8 @@ import HomeFrogImg from "../../assets/images/HomeFrogImg.svg";
 import ProjectThumbnailImage from "../../assets/images/ProjectThumbnailImage.svg";
 import { ProgressBar } from "../Project/Search";
 import { ProgressContainer } from "../Project/Search";
+import axios from "axios";
+import { baseURL } from "../../api/baseURL";
 
 export const HomeContainer = styled.div`
   margin-top: 65px;
@@ -102,65 +104,31 @@ const NewProjectWrapper = styled.div`
 `;
 
 function Home() {
+  const LoginToken = localStorage.getItem("access") || null;
+  console.log(LoginToken);
   const navigate = useNavigate();
 
-  // 실제로 사용되지 않는 임의 변수입니다.
-  const project = [
-    {
-      src: ProjectThumbnailImage,
-      name: "프로젝트 이름",
-      genre: "장르",
-      skill: "기술",
-    },
-    {
-      src: ProjectThumbnailImage,
-      name: "프로젝트 이름",
-      genre: "장르",
-      skill: "기술",
-    },
-    {
-      src: ProjectThumbnailImage,
-      name: "프로젝트 이름",
-      genre: "장르",
-      skill: "기술",
-    },
-    {
-      src: ProjectThumbnailImage,
-      name: "프로젝트 이름",
-      genre: "장르",
-      skill: "기술",
-    },
-    {
-      src: ProjectThumbnailImage,
-      name: "프로젝트 이름",
-      genre: "장르",
-      skill: "기술",
-    },
-    {
-      src: ProjectThumbnailImage,
-      name: "프로젝트 이름",
-      genre: "장르",
-      skill: "기술",
-    },
-    {
-      src: ProjectThumbnailImage,
-      name: "프로젝트 이름",
-      genre: "장르",
-      skill: "기술",
-    },
-    {
-      src: ProjectThumbnailImage,
-      name: "프로젝트 이름",
-      genre: "장르",
-      skill: "기술",
-    },
-    {
-      src: ProjectThumbnailImage,
-      name: "프로젝트 이름",
-      genre: "장르",
-      skill: "기술",
-    },
-  ];
+  // 상태 변수
+  const [project, setProject] = useState([]);
+
+  // 최근 프로젝트 불러오기
+  const GetNewProject = async () => {
+    try {
+      const response = await axios.get(`${baseURL}/api/project/home`, {
+        headers: {
+          Authorization: `Bearer ${LoginToken}`,
+        },
+      });
+      setProject(response.data);
+      console.log(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    GetNewProject();
+  }, []);
 
   // 이번 주 새 프로젝트 가로 스크롤 관련
   const scrollRef = useRef(null);
@@ -184,7 +152,6 @@ function Home() {
     scrollElement.addEventListener("scroll", handleScroll);
     return () => scrollElement.removeEventListener("scroll", handleScroll);
   }, []);
-
   return (
     <div>
       <Header />
@@ -214,15 +181,17 @@ function Home() {
           <h2>이번 주에 새로 올라온 프로젝트</h2>
         </NewProjectContainer>
         <NewProjectWrapper ref={scrollRef}>
-          {project.map((item, index) => (
-            <ProjectThumbnail
-              key={index}
-              imagesrc={item.src}
-              name={item.name}
-              genrelist={item.genre}
-              skilllist={item.skill}
-            />
-          ))}
+          {project &&
+            project.length > 0 &&
+            project.map((item) => (
+              <ProjectThumbnail
+                key={item.id}
+                imagesrc={item.project_thumbnail}
+                name={item.project_name}
+                genrelist={item.project_genre}
+                skilllist={item.project_stack}
+              />
+            ))}
         </NewProjectWrapper>
         <ProgressContainer>
           <ProgressBar $position={position}></ProgressBar>

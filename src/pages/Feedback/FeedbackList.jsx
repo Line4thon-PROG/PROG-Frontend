@@ -117,7 +117,7 @@ const SelectedFeedback = styled.div`
   height: 100px;
 
   p {
-    font-size: 11px;
+    font-size: 12px;
     font-weight: 200;
   }
 `;
@@ -144,10 +144,10 @@ const NickNamenDateWrapper = styled.div`
   gap: 5px;
   margin-bottom: 12px;
 
-  h8 {
+  h5 {
     font-size: 12px;
   }
-  h9 {
+  h6 {
     color: rgba(153, 153, 153, 1);
     font-size: 12px;
   }
@@ -199,8 +199,8 @@ function FeedbackList() {
                 <SelectedFeedback key={index}>
                   <InfonDetailBtnWrapper>
                     <NickNamenDateWrapper>
-                      <h8>{item.nickname}</h8>
-                      <h9>{item.date}</h9>
+                      <h5>{item.nickname}</h5>
+                      <h6>{item.date}</h6>
                     </NickNamenDateWrapper>
                     <button>
                       상세보기

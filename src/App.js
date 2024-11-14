@@ -13,6 +13,7 @@ import Mypage from "./pages/MyPage/Mypage";
 import Search from "./pages/Project/Search";
 import Promotion from "./pages/Promotion/Promotion";
 import FeedbackList from "./pages/Feedback/FeedbackList";
+import FeedbackDetail from "./pages/Feedback/FeedbackDetail";
 import ProjectDetail from "./pages/ProjectDetail/projectDetailPage";
 
 function App() {
@@ -29,7 +30,11 @@ function App() {
           <Route path="/Write" element={<Write />} />
           <Route path="/Worry" element={<Worry />} />
           <Route path="/Success" element={<Success />} />
+          <Route path="/Mypage" element={<Mypage />} />
           <Route path="/Search" element={<Search />} />
+          <Route path="/Promotion" element={<Promotion />} />
+          <Route path="/FeedbackList" element={<FeedbackList />} />
+          <Route path="/FeedbackDetail/:id" element={<FeedbackDetail />} />
           <Route path="/DetailPage" element={<ProjectDetail />} />
         </Routes>
       </Router>

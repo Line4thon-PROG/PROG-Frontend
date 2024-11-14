@@ -24,7 +24,8 @@ function ProjectThumbnail({ imagesrc, name, genrelist, skilllist }) {
       <img src={imagesrc} alt="ProjectThumbnailImage" />
       <Title>{name}</Title>
       <GenrenSkill>
-        {genrelist} | {skilllist}
+        {genrelist && genrelist.length && genrelist.join(" | ")} |{" "}
+        {skilllist && skilllist.length && skilllist.join(" | ")}
       </GenrenSkill>
     </RecommendContainer>
   );
