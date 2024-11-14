@@ -43,7 +43,7 @@ const RecommendThumbnail = styled.div`
   margin-top: 15px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   gap: 18px;
   width: 53.8vw;
   overflow-x: auto;
@@ -127,7 +127,15 @@ function Search() {
   const navigate = useNavigate();
 
   // 상태 변수
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(null); // 닉네임
+  const [recommendProject, setRecommendProject] = useState([]);
+  const [selectedTags, setSelectedTags] = useState([]); // 선택된 태그 (장르, 기술)
+  const [selectedUniv, setSelectedUniv] = useState(null); // 선택된 대학 (1개만 선택 가능하기에 상태 따로 관리)
+  const [tempSelectedTags, setTempSelectedTags] = useState([]);
+  const [tempSelectedUniv, setTempSelectedUniv] = useState(null);
+  const [filterBtn, setFilterBtn] = useState(false); // 필터 버튼
+  const [filterModal, setFilterModal] = useState(false); // 필터 모달창
+  const [isApply, setIsApply] = useState(false);
 
   // 닉네임 불러오기
   const GetNickname = async () => {
@@ -150,6 +158,29 @@ function Search() {
 
   useEffect(() => {
     GetNickname();
+  }, []);
+
+  // 추천 프로젝트 불러오기
+  const GetRecommendProject = async () => {
+    if (!LoginToken) {
+      console.log("로그인 토큰이 없습니다.");
+      return;
+    }
+    try {
+      const response = await axios.get(`${baseURL}/api/project/recommend`, {
+        headers: {
+          Authorization: `Bearer ${LoginToken}`,
+        },
+      });
+      setRecommendProject(response.data);
+      console.log(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    GetRecommendProject();
   }, []);
 
   const project = [
@@ -208,14 +239,6 @@ function Search() {
       skill: ["기술"],
     },
   ];
-  // useState 변수 선언
-  const [selectedTags, setSelectedTags] = useState([]); // 선택된 태그 (장르, 기술)
-  const [selectedUniv, setSelectedUniv] = useState(null); // 선택된 대학 (1개만 선택 가능하기에 상태 따로 관리)
-  const [tempSelectedTags, setTempSelectedTags] = useState([]);
-  const [tempSelectedUniv, setTempSelectedUniv] = useState(null);
-  const [filterBtn, setFilterBtn] = useState(false); // 필터 버튼
-  const [filterModal, setFilterModal] = useState(false); // 필터 모달창
-  const [isApply, setIsApply] = useState(false);
 
   // 필터 모달 오픈/클로즈 함수
   const openFilterModal = () => {
@@ -293,15 +316,17 @@ function Search() {
             </>
           ) : (
             <>
-              {project.map((item, index) => (
-                <ProjectThumbnail
-                  key={index}
-                  imagesrc={item.src}
-                  name={item.name}
-                  genrelist={item.genre}
-                  skilllist={item.skill}
-                />
-              ))}
+              {recommendProject &&
+                recommendProject.length > 0 &&
+                recommendProject.map((item) => (
+                  <ProjectThumbnail
+                    key={item.id}
+                    imagesrc={item.project_thumbnail}
+                    name={item.project_name}
+                    genrelist={item.project_genre}
+                    skilllist={item.project_stack}
+                  />
+                ))}
             </>
           )}
         </RecommendThumbnail>
