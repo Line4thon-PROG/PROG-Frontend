@@ -8,6 +8,9 @@ import { ProgressBar } from "../Project/Search";
 import { ProgressContainer } from "../Project/Search";
 import UpScroll from "../../assets/images/UpScroll.svg";
 import { UpScrollImg } from "../Project/Search";
+import FeedbackCheckIcon from "../../assets/images/FeedbackCheckIcon.svg";
+import FeedbackCheckModal from "../../components/Modal/FeedbackCheckModal";
+import CompleteCheckIcon from "../../assets/images/CompleteCheckIcon.svg";
 
 const BackImg = styled.img`
   width: 1.8vw;
@@ -26,6 +29,7 @@ const ProjectDetailContainer = styled.div`
   border: none;
   border-radius: 12px;
   padding: 20px 30px;
+  position: relative;
 `;
 
 const NickName = styled.p`
@@ -95,10 +99,47 @@ const CommentBox = styled.div`
   }
 `;
 
+const FeedbackCheckBtn = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 193, 58, 1);
+  font-weight: bolder;
+  gap: 5px;
+  position: absolute;
+  padding: 5px 8px;
+  font-size: 11px;
+  border-radius: 8px;
+  top: 20px;
+  right: 30px;
+`;
+const CompleteCheckBtn = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bolder;
+  gap: 5px;
+  position: absolute;
+  padding: 5px 8px;
+  font-size: 11px;
+  border-radius: 8px;
+  top: 20px;
+  right: 30px;
+  background-color: rgba(202, 202, 202, 1);
+  border: none;
+  color: rgba(118, 118, 118, 1);
+`;
+
 function FeedbackDetail() {
   const navigate = useNavigate();
 
+  // 상태관리변수
+  const [clickFeedbackCheckBtn, setClickFeedbackCheckBtn] = useState(false);
+  const [feedbackCheckModal, setFeedbackCheckModal] = useState(false);
+  const [checkComplete, setCheckComplete] = useState(false);
+
   // 임의 디테일 info
+  const isUser = true;
   const detailinfo = {
     id: 7,
     feedback_writer: "민기1",
@@ -165,6 +206,19 @@ function FeedbackDetail() {
     feedback_description: "이건 정말 잘못된 것 같군요. 프로젝트를 접으십시오",
   };
 
+  // 보상 모달 관련
+  const handleFeedbackCheckBtn = () => {
+    setClickFeedbackCheckBtn(true);
+    FeedbackCheckModalOpen();
+  };
+
+  const FeedbackCheckModalOpen = () => {
+    setFeedbackCheckModal(true);
+  };
+  const FeedbackCheckModalClose = () => {
+    setFeedbackCheckModal(false);
+  };
+
   // 가로 스크롤 관련
   const [positions, setPositions] = useState(
     detailinfo.discussion.map(() => 0)
@@ -212,6 +266,29 @@ function FeedbackDetail() {
       <ProjectDetailContainer>
         <NickName>{detailinfo.feedback_writer}</NickName>
         <StringDate>{detailinfo.upload_date}</StringDate>
+        {isUser &&
+          (checkComplete ? (
+            <>
+              <CompleteCheckBtn onClick={handleFeedbackCheckBtn}>
+                <img src={CompleteCheckIcon} alt="CompleteCheckIcon" />
+                피드백 채택완료
+              </CompleteCheckBtn>
+            </>
+          ) : (
+            <>
+              <FeedbackCheckBtn onClick={handleFeedbackCheckBtn}>
+                <img src={FeedbackCheckIcon} alt="FeedbackCheckIcon" />
+                피드백 채택하기
+              </FeedbackCheckBtn>
+
+              {feedbackCheckModal && (
+                <FeedbackCheckModal
+                  CloseModal={FeedbackCheckModalClose}
+                  setCheckComplete={setCheckComplete}
+                />
+              )}
+            </>
+          ))}
         <Problem>{`프로젝트 이슈(오류) 부분`}</Problem>
         {detailinfo.discussion.map((item, index) => (
           <IssueBox key={index}>
