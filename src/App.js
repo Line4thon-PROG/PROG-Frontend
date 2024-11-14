@@ -33,8 +33,11 @@ function App() {
           <Route path="/Mypage" element={<Mypage />} />
           <Route path="/Search" element={<Search />} />
           <Route path="/Promotion" element={<Promotion />} />
-          <Route path="/FeedbackList" element={<FeedbackList />} />
-          <Route path="/FeedbackDetail/:id" element={<FeedbackDetail />} />
+          <Route path="/FeedbackList/:project_id" element={<FeedbackList />} />
+          <Route
+            path="/FeedbackDetail/:feedback_id"
+            element={<FeedbackDetail />}
+          />
           <Route path="/DetailPage" element={<ProjectDetail />} />
         </Routes>
       </Router>
