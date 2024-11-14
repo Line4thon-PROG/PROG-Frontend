@@ -133,23 +133,15 @@ function Home() {
   // 이번 주 새 프로젝트 가로 스크롤 관련
   const scrollRef = useRef(null);
   const [position, setPosition] = useState(0);
-  const [progressWidth, setProgressWidth] = useState(0);
 
-  // 추천 프로젝트 가로 스크롤 관련
   const handleScroll = () => {
     const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
     const totalScrollableWidth = scrollWidth - clientWidth;
 
     if (totalScrollableWidth > 0) {
       let currentPosition = (scrollLeft / totalScrollableWidth) * 100;
-      currentPosition = Math.min(
-        currentPosition,
-        100 - (clientWidth / scrollWidth) * 100
-      );
 
-      // 프로그레스바의 너비 계산
-      const calculatedWidth = (clientWidth / scrollWidth) * 100;
-      setProgressWidth(calculatedWidth);
+      currentPosition = Math.min(currentPosition, 100 - 33.3);
 
       setPosition(currentPosition);
     }
@@ -160,7 +152,6 @@ function Home() {
     scrollElement.addEventListener("scroll", handleScroll);
     return () => scrollElement.removeEventListener("scroll", handleScroll);
   }, []);
-
   return (
     <div>
       <Header />
@@ -203,10 +194,7 @@ function Home() {
             ))}
         </NewProjectWrapper>
         <ProgressContainer>
-          <ProgressBar
-            $position={position}
-            style={{ width: `${progressWidth}%` }}
-          ></ProgressBar>
+          <ProgressBar $position={position}></ProgressBar>
         </ProgressContainer>
       </HomeContainer>
     </div>
