@@ -390,7 +390,8 @@ const Btn = styled.button`
   justify-content: center;
   align-items: center;
   border-radius: 0.4vw;
-  background: var(--Font-05_Gray_Disabled, #999);
+  background: ${({ allFieldsFilled }) =>
+    allFieldsFilled ? '#00C13A' : '#999'};
   color: var(--Font-01_White, #fff);
   font-family: Pretendard;
   font-size: 0.8vw;
@@ -398,6 +399,8 @@ const Btn = styled.button`
   font-weight: 600;
   line-height: 1.2vw;
   letter-spacing: -0.4px;
+  cursor: ${({ allFieldsFilled }) =>
+    allFieldsFilled ? 'pointer' : 'not-allowed'};
 `;
 
 const ImageBox = styled.div`
@@ -586,8 +589,21 @@ function Write() {
   const [roles, setRoles] = useState({});
   const navigate = useNavigate();
 
+  const allFieldsFilled =
+    title.trim() &&
+    summary.trim() &&
+    period.trim() &&
+    content.trim() &&
+    selectedGenres.length > 0 &&
+    selectedStacks.length > 0 &&
+    selectedParticipants.length > 0;
+
   const handleSubmit = async () => {
     const token = localStorage.getItem('access');
+
+    const universities = Array.from(
+      new Set(selectedParticipants.map((participant) => participant.university))
+    );
 
     const jsonData = {
       collaborator: selectedParticipants.map((participant) => ({
@@ -601,7 +617,7 @@ function Write() {
         .map((platform) => (platform === 'WEB' ? 'Web' : platform)),
       project_stack: selectedStacks,
       project_genre: selectedGenres,
-      project_university: ['대학교1'],
+      project_university: universities,
       project_name: title,
       simple_description: summary,
       detail_description: content,
@@ -627,6 +643,7 @@ function Write() {
         }
       );
       console.log('프로젝트 JSON 데이터 전송 성공:', jsonResponse.data);
+      navigate('/worry');
     } catch (error) {
       console.error('프로젝트 JSON 데이터 전송 실패:', error);
       alert('프로젝트 등록에 실패했습니다. 다시 시도해 주세요.');
@@ -1124,7 +1141,6 @@ function Write() {
             />
           ))}
 
-          {/* 이미지 업로드 버튼이 맨 아래에 위치 */}
           <ImageBox
             onClick={() => document.getElementById('multiFileInput').click()}
           >
@@ -1144,7 +1160,13 @@ function Write() {
         </ExplainImageContainer>
 
         <BtnContainer>
-          <Btn onClick={handleSubmit}>다음</Btn>
+          <Btn
+            allFieldsFilled={allFieldsFilled}
+            onClick={handleSubmit}
+            disabled={!allFieldsFilled}
+          >
+            다음
+          </Btn>
         </BtnContainer>
       </Container>
     </>
