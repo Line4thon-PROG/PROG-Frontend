@@ -17,6 +17,8 @@ import FeedbackDetail from "./pages/Feedback/FeedbackDetail";
 import FeedbackWrite from "./pages/Feedback/FeedbackWrite";
 import FeedbackComplete from "./pages/Feedback/FeedbackComplete";
 import ProjectDetail from "./pages/ProjectDetail/projectDetailPage";
+import FeedbackAIPage from "./pages/FeedBackAI/FeedbackAIPage";
+import AIReportDetailPage from "./pages/FeedBackAI/AIReportDetailPage";
 
 function App() {
   return (
@@ -45,7 +47,9 @@ function App() {
             element={<FeedbackDetail />}
           />
           <Route path="/DetailPage/:project_id" element={<ProjectDetail />} />
-        </Routes>
+          <Route path="/FBAI/:project_id" element={<FeedbackAIPage />} />        
+          <Route path="/AIDetail/:project_id/:ai_summary_id" element={<AIReportDetailPage />} />
+        </Routes>  
       </Router>
     </>
   );
