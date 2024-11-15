@@ -16,7 +16,7 @@ import { baseURL } from "../../api/baseURL";
 export const HomeContainer = styled.div`
   margin-top: 65px;
   width: 100%;
-  padding-bottom: 50px;
+  padding-bottom: 70px;
 `;
 
 export const PhraseContainer = styled.div`
@@ -90,7 +90,7 @@ const NewProjectWrapper = styled.div`
   margin-top: 15px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   gap: 18px;
   width: 53.8vw;
   overflow-x: auto;
