@@ -3,10 +3,9 @@ import * as S from "./communityBoxStyled";
 import PostComment from "../../assets/images/postcomment_icon.svg";
 import CommentReply from "./CommentReply";
 import { useProjectComment } from "../../hooks/useProjectComment";
-import { instance } from "../../api/instance"; // axios 인스턴스 import
 
 const CommunityBox = ({ project_id }) => {
-    const { comments, error } = useProjectComment(project_id);
+    const { comments, submitComment, error } = useProjectComment(project_id);
     const [newComment, setNewComment] = useState(""); // 댓글 입력 값 상태
     const [activeCommentId, setActiveCommentId] = useState(null);
 
@@ -14,26 +13,15 @@ const CommunityBox = ({ project_id }) => {
         console.log("댓글을 불러오는 중 에러가 발생했습니다");
     }
 
-    // 댓글 등록 함수
-    const postComment = async () => {
+    // 댓글 등록 함수 호출
+    const handlePostComment = () => {
         if (!newComment.trim()) {
             console.log("댓글 내용이 비어있습니다."); // 댓글 내용이 없는 경우
             return;
         }
 
-        try {
-            const response = await instance.post(`/api/project_detail/${project_id}/comment`, {
-                comment: newComment,
-            });
-
-            console.log("댓글 등록 성공:", response.data); // 성공 시 응답 데이터 출력
-            setNewComment(""); // 댓글 입력 필드 초기화
-        } catch (error) {
-            console.error("댓글을 등록하는 중 오류가 발생했습니다:", error);
-            console.log("요청 URL:", `/api/project_detail/${project_id}/comment`);
-            console.log("요청 데이터:", { comment: newComment });
-            console.log("에러 응답 데이터:", error.response?.data);
-        }
+        submitComment(newComment);
+        setNewComment(""); // 댓글 입력 필드 초기화
     };
 
     const handleReplyClick = (commentId) => {
@@ -42,9 +30,9 @@ const CommunityBox = ({ project_id }) => {
 
     return (
         <S.Container>
-            {/* 댓글 입력 및 아이콘 클릭 시 postComment 호출 */}
+            {/* 댓글 입력 및 아이콘 클릭 시 handlePostComment 호출 */}
             <S.InputComment>
-                <S.CommentIcon src={PostComment} onClick={postComment} />
+                <S.CommentIcon src={PostComment} onClick={handlePostComment} />
                 <S.CommentInput
                     placeholder="댓글을 입력해 보세요!"
                     value={newComment}
