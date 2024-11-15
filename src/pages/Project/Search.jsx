@@ -251,7 +251,7 @@ function Search() {
     GetGenreProject();
   }, [selectedTags]);
 
-  // 기술스택 필터링
+  // 스택 필터링
   const GetSkillProject = async () => {
     if (selectedSkills && selectedSkills.length > 0) {
       try {
