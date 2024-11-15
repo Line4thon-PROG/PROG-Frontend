@@ -230,6 +230,7 @@ function Signup() {
         user_university: university,
         description,
       };
+      localStorage.setItem('nickname', nickname);
       navigate('/Genre', { state: userData });
     } else {
       alert('모든 필드를 입력해주세요.');
