@@ -12,7 +12,7 @@ const Container = styled.div`
 `;
 
 function ProjectDetail() {
-    const exampleProjectId = 3; // 예시 project_id 우선 3번으로 진행합니다아
+    const exampleProjectId = 1; // 예시 project_id 우선 3번으로 진행합니다아
 
     return (
         <Container>

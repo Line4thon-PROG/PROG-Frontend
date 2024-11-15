@@ -15,6 +15,7 @@ import Promotion from "./pages/Promotion/Promotion";
 import FeedbackList from "./pages/Feedback/FeedbackList";
 import FeedbackDetail from "./pages/Feedback/FeedbackDetail";
 import ProjectDetail from "./pages/ProjectDetail/projectDetailPage";
+import FeedbackAIPage from "./pages/FeedBackAI/FeedbackAIPage";
 
 function App() {
   return (
@@ -39,6 +40,7 @@ function App() {
             element={<FeedbackDetail />}
           />
           <Route path="/DetailPage" element={<ProjectDetail />} />
+          <Route path="/FBAI" element= {<FeedbackAIPage />} />
         </Routes>
       </Router>
     </>
