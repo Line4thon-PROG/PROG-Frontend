@@ -359,6 +359,7 @@ function Search() {
     setSelectedSkills([...tempSelectedSkills]);
     setSelectedUniv(tempSelectedUniv);
     setIsApply(true);
+    closeFilterModal();
   };
 
   // 추천 프로젝트 가로 스크롤 관련
