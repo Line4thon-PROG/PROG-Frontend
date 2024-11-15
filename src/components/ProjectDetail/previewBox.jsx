@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import * as S from "./previewBoxStyled";
-import ExamplePicture from "../../assets/images/exampleThumbnail.svg";
+import { useParams } from "react-router-dom";
+import ContributerList from "./ContributerList"; 
 import WebIcon from "../../assets/images/web_icon.svg";
 import AppleIcon from "../../assets/images/apple_icon.svg";
 import AndroidIcon from "../../assets/images/Android.svg";
@@ -10,8 +11,10 @@ import ColoredAppleIcon from "../../assets/images/colored_apple_icon.svg";
 import ColoredAndroidIcon from "../../assets/images/colored_android_icon.svg";
 import { useProjectDetail } from "../../hooks/useProjectDetail";
 
-const PreviewBox = ({ project_id }) => {
+const PreviewBox = () => {
+    const { project_id } = useParams(); 
     const { projectDetail, error } = useProjectDetail(project_id);
+    const [isPopupOpen, setIsPopupOpen] = useState(false); 
 
     const [webIcon, setWebIcon] = useState(WebIcon);
     const [iosIcon, setIosIcon] = useState(AppleIcon);
@@ -35,81 +38,110 @@ const PreviewBox = ({ project_id }) => {
         }
     };
 
+    // Helper function to split array into chunks of specified size
+    const chunkArray = (array, size) => {
+        const chunks = [];
+        for (let i = 0; i < array.length; i += size) {
+            chunks.push(array.slice(i, i + size));
+        }
+        return chunks;
+    };
+
+    const collaboratorChunks = projectDetail?.collaborator ? chunkArray(projectDetail.collaborator, 2) : [];
+
     return (
-        <S.Container>
-            <S.LeftBox>
-                <S.Img
-                    src={thumbnailUrl}
-                    alt="Project Thumbnail"
-                    onError={(e) => {
-                        console.log("이미지 로드 실패, 대체 이미지로 설정합니다.");
-                        e.target.onerror = null;
-                        e.target.src = DefualThumbnail;
-                    }}
-                />
-                <S.ChoiceBox>
-                    <S.ChoiceLine>
-                        {projectDetail?.project_genre.map((genre, index) => (
-                            <S.GerneContainer key={index}>{genre}</S.GerneContainer>
+        <>
+            <S.Container>
+                <S.LeftBox>
+                    <S.Img
+                        src={thumbnailUrl}
+                        alt="Project Thumbnail"
+                        onError={(e) => {
+                            console.log("이미지 로드 실패, 대체 이미지로 설정합니다.");
+                            e.target.onerror = null;
+                            e.target.src = DefualThumbnail;
+                        }}
+                    />
+                    <S.ChoiceBox>
+                        <S.ChoiceLine>
+                            {projectDetail?.project_genre.map((genre, index) => (
+                                <S.GerneContainer key={index}>{genre}</S.GerneContainer>
+                            ))}
+                        </S.ChoiceLine>
+                        <S.ChoiceLine>
+                            {projectDetail?.project_stack.map((stack, index) => (
+                                <S.StackContainer key={index}>{stack}</S.StackContainer>
+                            ))}
+                        </S.ChoiceLine>
+                    </S.ChoiceBox>
+                </S.LeftBox>
+                <S.RightBox>
+                    <S.Title>{projectDetail?.project_name || "프로젝트 이름"}</S.Title>
+                    <S.SortText>프로젝트 참여자</S.SortText>
+                    <S.ContributeList>
+                        {collaboratorChunks.map((chunk, rowIndex) => (
+                            <S.CWrapper key={rowIndex}>
+                                {chunk.map((collab, index) => (
+                                    <React.Fragment key={collab.account_id}>
+                                        <S.Contributer>
+                                            {collab.nickname} ({collab.role})
+                                        </S.Contributer>
+                                        {index < chunk.length - 1 && <S.Divide>|</S.Divide>}
+                                    </React.Fragment>
+                                ))}
+                            </S.CWrapper>
                         ))}
-                        {projectDetail?.project_stack.map((stack, index) => (
-                            <S.StackContainer key={index}>{stack}</S.StackContainer>
-                        ))}
-                    </S.ChoiceLine>
-                </S.ChoiceBox>
-            </S.LeftBox>
-            <S.RightBox>
-                <S.Title>{projectDetail?.project_name || "프로젝트 이름"}</S.Title>
-                <S.SortText>프로젝트 참여자</S.SortText>
-                <S.ContributeList>
-                    {projectDetail?.collaborator.map((collab, index) => (
-                        <S.CWrapper key={index}>
-                            <S.Contributer>{collab.nickname} ({collab.role})</S.Contributer>
-                            {index < projectDetail.collaborator.length - 1 && <S.Divide>|</S.Divide>}
-                        </S.CWrapper>
-                    ))}
-                    <S.ContributerDetail>상세 보기 &gt;</S.ContributerDetail>
-                </S.ContributeList>
-                <S.SortText>프로젝트 기간</S.SortText>
-                <S.ProjectLength>{projectDetail?.period}</S.ProjectLength>
-                <S.SortText>프로젝트 확인</S.SortText>
-                <S.LinkBox>
-                    {webLink && (
-                        <S.WebButton
-                            onClick={() => openLink(webLink)}
-                            onMouseEnter={() => setWebIcon(ColoredWebIcon)}
-                            onMouseLeave={() => setWebIcon(WebIcon)}
-                            style={{ width: availableLinks.length === 1 ? "100%" : availableLinks.length === 2 ? "45%" : "30%" }}
-                        >
-                            <img src={webIcon} alt="Web Icon" className="icon" />
-                            Web
-                        </S.WebButton>
-                    )}
-                    {iosLink && (
-                        <S.IOSButton
-                            onClick={() => openLink(iosLink)}
-                            onMouseEnter={() => setIosIcon(ColoredAppleIcon)}
-                            onMouseLeave={() => setIosIcon(AppleIcon)}
-                            style={{ width: availableLinks.length === 1 ? "100%" : availableLinks.length === 2 ? "45%" : "30%" }}
-                        >
-                            <img src={iosIcon} alt="iOS Icon" className="icon"/>
-                            iOS
-                        </S.IOSButton>
-                    )}
-                    {androidLink && (
-                        <S.AndroidButton
-                            onClick={() => openLink(androidLink)}
-                            onMouseEnter={() => setAndroidIcon(ColoredAndroidIcon)}
-                            onMouseLeave={() => setAndroidIcon(AndroidIcon)}
-                            style={{ width: availableLinks.length === 1 ? "100%" : availableLinks.length === 2 ? "45%" : "30%" }}
-                        >
-                            <img src={androidIcon} alt="Android Icon" className="icon" />
-                            Android
-                        </S.AndroidButton>
-                    )}
-                </S.LinkBox>
-            </S.RightBox>
-        </S.Container>
+                        <S.ContributerDetail onClick={() => setIsPopupOpen(true)}>
+                            상세 보기 &gt;
+                        </S.ContributerDetail>
+                        {isPopupOpen && (
+                            <ContributerList
+                                project_id={project_id}
+                                onClose={() => setIsPopupOpen(false)} 
+                            />
+                        )}
+                    </S.ContributeList>
+                    <S.SortText>프로젝트 기간</S.SortText>
+                    <S.ProjectLength>{projectDetail?.period}</S.ProjectLength>
+                    <S.SortText>프로젝트 확인</S.SortText>
+                    <S.LinkBox>
+                        {webLink && (
+                            <S.WebButton
+                                onClick={() => openLink(webLink)}
+                                onMouseEnter={() => setWebIcon(ColoredWebIcon)}
+                                onMouseLeave={() => setWebIcon(WebIcon)}
+                                style={{ width: availableLinks.length === 1 ? "100%" : availableLinks.length === 2 ? "45%" : "30%" }}
+                            >
+                                <img src={webIcon} alt="Web Icon" className="icon" />
+                                Web
+                            </S.WebButton>
+                        )}
+                        {iosLink && (
+                            <S.IOSButton
+                                onClick={() => openLink(iosLink)}
+                                onMouseEnter={() => setIosIcon(ColoredAppleIcon)}
+                                onMouseLeave={() => setIosIcon(AppleIcon)}
+                                style={{ width: availableLinks.length === 1 ? "100%" : availableLinks.length === 2 ? "45%" : "30%" }}
+                            >
+                                <img src={iosIcon} alt="iOS Icon" className="icon"/>
+                                iOS
+                            </S.IOSButton>
+                        )}
+                        {androidLink && (
+                            <S.AndroidButton
+                                onClick={() => openLink(androidLink)}
+                                onMouseEnter={() => setAndroidIcon(ColoredAndroidIcon)}
+                                onMouseLeave={() => setAndroidIcon(AndroidIcon)}
+                                style={{ width: availableLinks.length === 1 ? "100%" : availableLinks.length === 2 ? "45%" : "30%" }}
+                            >
+                                <img src={androidIcon} alt="Android Icon" className="icon" />
+                                Android
+                            </S.AndroidButton>
+                        )}
+                    </S.LinkBox>
+                </S.RightBox>
+            </S.Container>
+        </>
     );
 };
 

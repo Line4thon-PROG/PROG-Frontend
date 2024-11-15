@@ -39,6 +39,7 @@ export const ChoiceLine = styled.div`
     justify-content: flex-start;
     align-items: center;
     gap: 0.3vw;
+    padding-bottom: 0.3vw;
 `;
 
 export const GerneContainer = styled.div`

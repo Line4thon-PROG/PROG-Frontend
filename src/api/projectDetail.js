@@ -13,3 +13,14 @@ export const getProjectDetail = async (project_id) => {
         throw error;
     }
 };
+
+export const deleteProject = async (project_id) => {
+    try {
+        const response = await instance.delete(`/api/project_detail/${project_id}`);
+        console.log("프로젝트 삭제 성공:", response.data.message); // 성공 메시지 출력
+        return response.data;
+    } catch (error) {
+        console.error("프로젝트 삭제 중 에러 발생:", error);
+        throw error;
+    }
+};

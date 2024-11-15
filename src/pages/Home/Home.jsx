@@ -7,6 +7,7 @@ import MainPhrase from "../../assets/images/MainPhrase.svg";
 import WriteBtn from "../../assets/images/WriteBtn.svg";
 import FolderICon from "../../assets/images/FolderIcon.svg";
 import HomeFrogImg from "../../assets/images/HomeFrogImg.svg";
+import Footer from "../../components/Footer/Footer";
 import ProjectThumbnailImage from "../../assets/images/ProjectThumbnailImage.svg";
 import { ProgressBar } from "../Project/Search";
 import { ProgressContainer } from "../Project/Search";
@@ -228,6 +229,7 @@ function Home() {
           </ProgressContainer>
         )}
       </HomeContainer>
+      <Footer />
     </div>
   );
 }

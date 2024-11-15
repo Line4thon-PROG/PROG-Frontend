@@ -6,7 +6,7 @@ import Header from '../../components/Header/Header';
 import PreviewBox from '../../components/ProjectDetail/previewBox';
 import MainBox from '../../components/ProjectDetail/mainBox';
 import CommunityBox from '../../components/ProjectDetail/communityBox';
-
+import Footer from "../../components/Footer/Footer";
 const Container = styled.div`
     display: flex;
     margin: 0 auto;
@@ -18,11 +18,12 @@ function ProjectDetail() {
 
     return (
         <Container>
-            <Header />
+            <Header project_id={project_id}/>
             <DetailHeader />
             <PreviewBox project_id={project_id} /> 
             <MainBox project_id={project_id} />
             <CommunityBox project_id={project_id} />
+            <Footer />
         </Container>
     );
 }

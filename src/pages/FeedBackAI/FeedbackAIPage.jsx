@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import AIHeader from '../../components/FeedbackAI/AIHeader';
 import FeedBackAI from '../../components/FeedbackAI/FeedBackAI';
 import Header from '../../components/Header/Header';
+import Footer from '../../components/Footer/Footer';
 import { useParams } from 'react-router-dom'; // URL 파라미터 추출을 위한 useParams import
 
 const Container = styled.div`
@@ -18,6 +19,7 @@ function FeedbackAIPage() {
             <Header />
             <AIHeader />
             <FeedBackAI project_id={project_id}></FeedBackAI> {/* 추출된 project_id를 전달 */}
+            <Footer />
         </Container>
     );
 }
