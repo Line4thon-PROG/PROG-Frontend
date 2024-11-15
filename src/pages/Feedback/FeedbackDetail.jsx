@@ -134,44 +134,17 @@ const CompleteCheckBtn = styled.button`
 
 function FeedbackDetail() {
   const navigate = useNavigate();
-  const location = useLocation();
   const LoginToken = localStorage.getItem("access") || null;
   const { project_id } = useParams();
   const { feedback_id } = useParams();
-  // const { isUser } = location.state;
-  // console.log(isUser);
 
   // 상태관리변수
   const [clickFeedbackCheckBtn, setClickFeedbackCheckBtn] = useState(false);
   const [feedbackCheckModal, setFeedbackCheckModal] = useState(false);
   const [feedbackInfo, setFeedbackInfo] = useState({});
-  const [user, setUser] = useState(null); // 사용자 닉네임
-  const [projectUser, setProjectUser] = useState([]); // 프로젝트 기여자들 닉네임
+  const [isUser, setIsUser] = useState(false);
 
-  // 닉네임 불러오기
-  const GetNickname = async () => {
-    if (!LoginToken) {
-      console.log("로그인 토큰이 없습니다.");
-      return;
-    }
-    try {
-      const response = await axios.get(`${baseURL}/api/mypage/accountinfo/me`, {
-        headers: {
-          Authorization: `Bearer ${LoginToken}`,
-        },
-      });
-      setUser(response.data.nickname);
-      console.log(response.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  useEffect(() => {
-    GetNickname();
-  }, []);
-
-  // 프로젝트 기여자 불러오기
+  // 프로젝트 게시자인지
   const GetProjectUsername = async () => {
     if (!LoginToken) {
       console.log("로그인 토큰이 없습니다.");
@@ -186,8 +159,8 @@ function FeedbackDetail() {
           },
         }
       );
-      setProjectUser(response.data.collaborator);
-      console.log(response.data.collaborator);
+      setIsUser(response.data.can_update_and_delete);
+      console.log(response.data.can_update_and_delete);
     } catch (error) {
       console.log(error);
     }
@@ -196,11 +169,6 @@ function FeedbackDetail() {
   useEffect(() => {
     GetProjectUsername();
   }, []);
-
-  // 게시자인지 관람자인지 구분하는 변수
-  const isUser =
-    projectUser && projectUser.length > 0 && projectUser[0].nickname === user;
-  console.log(isUser);
 
   // 피드백 디테일 불러오기
   const GetFeedbackInfo = async () => {
