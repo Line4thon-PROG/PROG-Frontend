@@ -162,7 +162,7 @@ function FeedbackList() {
   const { project_id } = useParams();
 
   // 상태 변수들
-  const [isUser, setIsUser] = useState(false);
+  const [isUser, setIsUser] = useState(null);
   const [selectedFeedback, setSelectedFeedback] = useState([]);
 
   // 프로젝트 게시자인지
@@ -198,14 +198,15 @@ function FeedbackList() {
       return;
     }
     try {
-      const response = await axios.get(
-        `${baseURL}/api/project_detail/${project_id}/feedback?is_adopted=true`,
-        {
-          headers: {
-            Authorization: `Bearer ${LoginToken}`,
-          },
-        }
-      );
+      // const apiUrl = isUser
+      //   ? `${baseURL}/api/project_detail/${project_id}/feedback`
+      //   : `${baseURL}/api/project_detail/${project_id}/feedback?is_adopted=true`;
+      const apiUrl = `${baseURL}/api/project_detail/${project_id}/feedback?is_adopted=true`;
+      const response = await axios.get(apiUrl, {
+        headers: {
+          Authorization: `Bearer ${LoginToken}`,
+        },
+      });
       setSelectedFeedback(response.data);
       console.log(response.data);
     } catch (error) {
@@ -215,7 +216,7 @@ function FeedbackList() {
 
   useEffect(() => {
     GetSelectedFeedback();
-  }, []);
+  }, [isUser]);
 
   return (
     <div>
