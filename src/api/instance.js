@@ -3,37 +3,49 @@ import { baseURL } from "./baseURL";
 
 // Axios 인스턴스 생성
 export const instance = axios.create({
-    baseURL: baseURL,
-    withCredentials: true,
+    baseURL: baseURL, // 기본 API URL
+    withCredentials: true, // 인증 쿠키를 포함
     headers: {
         "Content-Type": "application/json",
     },
-    timeout: 10000,
+    timeout: 10000, // 요청 제한 시간 (10초)
 });
 
 // 요청 인터셉터 설정
 instance.interceptors.request.use(
     (config) => {
         // localStorage에서 access 토큰을 가져와 Authorization 헤더에 추가
-        const token = localStorage.getItem('access');
+        const token = localStorage.getItem("access");
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
             console.log("설정된 Authorization 헤더:", config.headers.Authorization);
         } else {
-            console.error("인증 토큰이 설정되지 않았습니다.");
+            console.warn("인증 토큰이 설정되지 않았습니다.");
         }
         return config;
     },
-    (error) => Promise.reject(error)
+    (error) => {
+        console.error("요청 인터셉터 에러:", error);
+        return Promise.reject(error);
+    }
 );
 
 // 응답 인터셉터 설정
 instance.interceptors.response.use(
-    (response) => response,
+    (response) => response, // 성공적인 응답은 그대로 반환
     (error) => {
-        if (error.code === "ECONNABORTED") {
-            console.error("Request timeout");
+        if (error.response) {
+            console.error("API 응답 에러:", error.response.status, error.response.data);
+        } else if (error.request) {
+            console.error("서버 응답 없음:", error.request);
+        } else {
+            console.error("요청 설정 중 에러 발생:", error.message);
         }
-        return Promise.reject(error);
+
+        if (error.code === "ECONNABORTED") {
+            console.error("요청 시간이 초과되었습니다.");
+        }
+
+        return Promise.reject(error); // 에러를 호출한 코드로 전달
     }
 );

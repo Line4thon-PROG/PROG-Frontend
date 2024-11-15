@@ -1,4 +1,6 @@
-import styled from 'styled-components';
+import React from "react";
+import { useParams } from "react-router-dom";
+import styled from "styled-components";
 import DetailHeader from "../../components/ProjectDetail/detailHeader";
 import Header from '../../components/Header/Header';
 import PreviewBox from '../../components/ProjectDetail/previewBox';
@@ -12,15 +14,15 @@ const Container = styled.div`
 `;
 
 function ProjectDetail() {
-    const exampleProjectId = 1; // 예시 project_id 우선 3번으로 진행합니다아
+    const { project_id } = useParams(); // URL에서 project_id를 가져옵니다.
 
     return (
         <Container>
             <Header />
             <DetailHeader />
-            <PreviewBox project_id={exampleProjectId} /> 
-            <MainBox project_id={exampleProjectId} />
-            <CommunityBox project_id={exampleProjectId} />
+            <PreviewBox project_id={project_id} /> 
+            <MainBox project_id={project_id} />
+            <CommunityBox project_id={project_id} />
         </Container>
     );
 }

@@ -5,10 +5,12 @@ import PointIcon from "../../assets/images/point_icon.svg";
 import GoFeedBackIcon from "../../assets/images/gofeedback_icon.svg";
 import NoFrogIcon from "../../assets/images/no_ai_icon.svg";
 import { useFeedbackAI } from "../../hooks/useFeedbackAI";
+import { useUserInfo } from "../../hooks/useUserInfo"; 
 
 const FeedBackAI = ({ project_id }) => {
     const navigate = useNavigate();
-    const { feedbackList, error, isLoading } = useFeedbackAI(project_id); // 데이터와 상태를 가져옴
+    const { feedbackList, error, isLoading } = useFeedbackAI(project_id); // 피드백 데이터
+    const { userInfo, loading: userLoading, error: userError } = useUserInfo(); // 사용자 정보
 
     useEffect(() => {
         if (isLoading) {
@@ -22,7 +24,15 @@ const FeedBackAI = ({ project_id }) => {
         if (feedbackList && feedbackList.length > 0) {
             console.log("AI 피드백 데이터 성공적으로 불러옴:", feedbackList);
         }
-    }, [feedbackList, error, isLoading]);
+
+        if (userInfo) {
+            console.log("사용자 정보:", userInfo);
+        }
+
+        if (userError) {
+            console.error("사용자 정보를 가져오는 중 오류 발생:", userError);
+        }
+    }, [feedbackList, error, isLoading, userInfo, userError]);
 
     return (
         <S.Container>
@@ -31,7 +41,8 @@ const FeedBackAI = ({ project_id }) => {
                     <p id="title">AI 피드백 정리</p>
                     <S.MyPoint>
                         <img src={PointIcon} alt="Point Icon" />
-                        내 포인트 : N 개
+                        {/* 사용자 포인트 표시 */}
+                        내 포인트 : {userLoading ? "로딩 중..." : userInfo?.total_point ?? "N"} 개
                     </S.MyPoint>
                 </S.Row>
                 <p id="about">클릭 한 번으로 지금까지 받은 모든 피드백 내용들을 한 번에 정리할 수 있어요!</p>
@@ -70,6 +81,7 @@ const FeedBackAI = ({ project_id }) => {
                     ) : (
                         <S.NoSelectedFeedback>
                             <img src={NoFrogIcon} alt="No Feedback Icon" />
+                            <p>피드백 데이터가 없습니다.</p>
                         </S.NoSelectedFeedback>
                     )}
                 </S.SelectedFeedbackContainer>

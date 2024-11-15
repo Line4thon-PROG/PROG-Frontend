@@ -3,8 +3,7 @@ import * as S from "./mainBoxStyled";
 import ProjectInfoBox from "./projectInfoBox";
 import DiscussBox from '../../components/ProjectDetail/discussBox';
 
-const MainBox = () => {
-    const exampleProjectId = 3; // Example project_id
+const MainBox = ({ project_id }) => { // project_id를 props로 받음
     const [selectedTab, setSelectedTab] = useState("info"); // Track the selected tab
 
     return (
@@ -26,9 +25,9 @@ const MainBox = () => {
             </S.Selecter>
             {/* Conditionally render components based on selected tab */}
             {selectedTab === "info" ? (
-                <ProjectInfoBox project_id={exampleProjectId} />
+                <ProjectInfoBox project_id={project_id} />
             ) : (
-                <DiscussBox project_id={exampleProjectId} />
+                <DiscussBox project_id={project_id} />
             )}
         </S.Container>
     );
