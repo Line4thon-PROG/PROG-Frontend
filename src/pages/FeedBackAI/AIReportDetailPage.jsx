@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import AIHeader from '../../components/FeedbackAI/AIHeader';
 import AIReport from '../../components/FeedbackAI/AIReport';
 import Header from '../../components/Header/Header';
+import Footer from '../../components/Footer/Footer';
 import { useParams } from 'react-router-dom';
 
 const Container = styled.div`
@@ -18,6 +19,7 @@ function AIReportDetailPage() {
             <Header />
             <AIHeader />
             <AIReport project_id={project_id} ai_summary_id={ai_summary_id} />
+            <Footer />
         </Container>
     );
 }
