@@ -146,7 +146,6 @@ export const UpScrollImg = styled.img`
 
 function Search() {
   const LoginToken = localStorage.getItem("access") || null;
-  console.log(LoginToken);
   const navigate = useNavigate();
 
   // 상태 변수
@@ -400,7 +399,7 @@ function Search() {
 
   return (
     <div>
-      <Header />
+      <Header selectedNav="프로젝트" />
       <SearchContainer>
         <NameandWriteBtnWrapper>
           {LoginToken ? (
