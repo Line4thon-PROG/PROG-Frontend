@@ -87,7 +87,7 @@ function Header() {
 
   const handleNavClick = (navItem, path) => {
     setSelectedNav(navItem);
-    setTimeout(() => navigate(path), 0); // 약간의 딜레이 후 navigate
+    setTimeout(() => navigate(path), 0);
   };
 
   const handleLogin = () => {
