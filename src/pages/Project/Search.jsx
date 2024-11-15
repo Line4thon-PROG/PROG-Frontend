@@ -19,7 +19,7 @@ import { baseURL } from "../../api/baseURL";
 const SearchContainer = styled.div`
   margin-top: 30px;
   width: 100%;
-  padding-bottom: 30px;
+  padding-bottom: 70px;
   position: relative;
 `;
 
