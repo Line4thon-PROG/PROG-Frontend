@@ -5,8 +5,8 @@ import CommentReply from "./CommentReply";
 import { useProjectComment } from "../../hooks/useProjectComment";
 
 const CommunityBox = ({ project_id }) => {
-    const { comments, submitComment, error } = useProjectComment(project_id);
-    const [newComment, setNewComment] = useState(""); // 댓글 입력 값 상태
+    const { comments, submitComment, error, setComments } = useProjectComment(project_id); // setComments 추가
+    const [newComment, setNewComment] = useState(""); 
     const [activeCommentId, setActiveCommentId] = useState(null);
 
     if (error) {
@@ -16,7 +16,7 @@ const CommunityBox = ({ project_id }) => {
     // 댓글 등록 함수 호출
     const handlePostComment = () => {
         if (!newComment.trim()) {
-            console.log("댓글 내용이 비어있습니다."); // 댓글 내용이 없는 경우
+            console.log("댓글 내용이 비어있습니다.");
             return;
         }
 
@@ -28,9 +28,19 @@ const CommunityBox = ({ project_id }) => {
         setActiveCommentId(activeCommentId === commentId ? null : commentId);
     };
 
+    const handleReplySubmit = (newReply, commentId) => {
+        // 새 대댓글을 기존 comments 리스트에 추가
+        setComments(prevComments =>
+            prevComments.map(comment => 
+                comment.id === commentId
+                    ? { ...comment, in_comment: [...comment.in_comment, newReply] }
+                    : comment
+            )
+        );
+    };
+
     return (
         <S.Container>
-            {/* 댓글 입력 및 아이콘 클릭 시 handlePostComment 호출 */}
             <S.InputComment>
                 <S.CommentIcon src={PostComment} onClick={handlePostComment} />
                 <S.CommentInput
@@ -54,11 +64,20 @@ const CommunityBox = ({ project_id }) => {
                             <S.CommentReply key={reply.id}>
                                 <S.Comment_who>{reply.in_comment_writer}</S.Comment_who>
                                 <S.Comment_what>{reply.in_comment}</S.Comment_what>
-                                <S.Comment_when>{reply.upload_date}</S.Comment_when>
+                                <S.Comment_when>{reply.upload_date}
+                                    <S.GoReply onClick={() => handleReplyClick(comment.id)}>답글 쓰기</S.GoReply>
+
+                                </S.Comment_when>
                             </S.CommentReply>
                         ))}
 
-                        {activeCommentId === comment.id && <CommentReply parentCommentId={comment.id} />}
+                        {activeCommentId === comment.id && (
+                            <CommentReply
+                                project_id={project_id}
+                                comment_id={comment.id}
+                                onReplySubmit={(newReply) => handleReplySubmit(newReply, comment.id)}
+                            />
+                        )}
                     </S.CommentOrigin>
                 ))}
             </S.CommentBox>

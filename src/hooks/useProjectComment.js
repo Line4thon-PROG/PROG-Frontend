@@ -6,7 +6,6 @@ export const useProjectComment = (project_id) => {
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
 
-    // 댓글 목록 가져오기
     useEffect(() => {
         const fetchComments = async () => {
             try {
@@ -23,13 +22,12 @@ export const useProjectComment = (project_id) => {
         }
     }, [project_id]);
 
-    // 댓글 작성 함수
     const submitComment = async (commentText) => {
         setLoading(true);
         setError(null);
         try {
             const newComment = await postComment(project_id, commentText);
-            setComments((prevComments) => [newComment, ...prevComments]); // 새 댓글을 리스트의 맨 앞에 추가
+            setComments((prevComments) => [newComment, ...prevComments]); // 새로운 댓글을 리스트에 추가
             console.log("새 댓글 추가:", newComment);
         } catch (err) {
             setError("댓글 작성에 실패했습니다.");
@@ -39,5 +37,5 @@ export const useProjectComment = (project_id) => {
         }
     };
 
-    return { comments, submitComment, loading, error };
+    return { comments, submitComment, setComments, loading, error };
 };
