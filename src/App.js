@@ -16,6 +16,7 @@ import FeedbackList from './pages/Feedback/FeedbackList';
 import FeedbackDetail from './pages/Feedback/FeedbackDetail';
 import FeedbackWrite from './pages/Feedback/FeedbackWrite';
 import FeedbackComplete from './pages/Feedback/FeedbackComplete';
+import ProjectDetail from "./pages/ProjectDetail/projectDetailPage";
 
 function App() {
   return (
@@ -38,6 +39,12 @@ function App() {
           <Route path="/FeedbackDetail/:id" element={<FeedbackDetail />} />
           <Route path="/FeedbackWrite" element={<FeedbackWrite />} />
           <Route path="/FeedbackComplete" element={<FeedbackComplete />} />
+          <Route path="/FeedbackList/:project_id" element={<FeedbackList />} />
+          <Route
+            path="/FeedbackDetail/:project_id/:feedback_id"
+            element={<FeedbackDetail />}
+          />
+          <Route path="/DetailPage" element={<ProjectDetail />} />
         </Routes>
       </Router>
     </>

@@ -137,17 +137,19 @@ function FilterModal({
   closeModal,
   selectedTags,
   setSelectedTags,
+  selectedSkills,
+  setSelectedSkills,
   selectedUniv,
   setSelectedUniv,
   handleApplyBtn,
 }) {
   const [activeBtn, setActiveBtn] = useState("GenreBtn");
-  // const [selectedTags, setSelectedTags] = useState([]);
   const [querySkill, setQuerySkill] = useState("");
   const [searchedSkill, setSearchedSkill] = useState([]);
   const [queryUniv, setQueryUniv] = useState("");
   const [searchedUniv, setSearchedUniv] = useState([]);
   const [focusSearchBar, setFocusSearchBar] = useState(false);
+  const [genreList, setGenreList] = useState([]);
 
   // 어떤 필터를 적용할지 고르는 버튼 동작
   const handleBtnClick = (buttonName) => {
@@ -155,45 +157,35 @@ function FilterModal({
   };
 
   // 장르 버튼 관련
-  const genreList = [
-    "스포츠",
-    "엔터테인먼트",
-    "음식",
-    "음악",
-    "친구",
-    "가족",
-    "여행",
-    "교육",
-    "건강",
-    "패션",
-    "쇼핑",
-    "환경",
-    "부동산",
-    "비즈니스",
-    "자기계발",
-    "동물/펫",
-    "요리/베이킹",
-    "여가/취미",
-    "사회봉사",
-    "금융/투자",
-    "기타",
-  ];
+  const GetGenreList = async () => {
+    try {
+      const response = await axios.get(`${baseURL}/api/search/genre`);
+      setGenreList(response.data.genre);
+      console.log(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    GetGenreList();
+  }, []);
 
   const handleTagClick = (tag, type) => {
-    if (type === "university") {
-      if (selectedUniv === tag) {
-        setSelectedUniv("");
-      } else {
-        setSelectedUniv(tag);
-      }
-    } else {
-      setSelectedTags((prev) => {
-        if (prev.includes(tag)) {
-          return prev.filter((item) => item !== tag);
-        } else {
-          return [...prev, tag];
-        }
-      });
+    if (type === "genre") {
+      setSelectedTags((prev) =>
+        prev.includes(tag)
+          ? prev.filter((item) => item !== tag)
+          : [...prev, tag]
+      );
+    } else if (type === "skill") {
+      setSelectedSkills((prev) =>
+        prev.includes(tag)
+          ? prev.filter((item) => item !== tag)
+          : [...prev, tag]
+      );
+    } else if (type === "university") {
+      setSelectedUniv((prev) => (prev === tag ? null : tag));
     }
   };
 
@@ -351,7 +343,7 @@ function FilterModal({
                 ) : (
                   <DetailGenreBtn
                     key={skillstack}
-                    isSelected={selectedTags.includes(skillstack)}
+                    isSelected={selectedSkills.includes(skillstack)}
                     onClick={() => handleTagClick(skillstack, "skill")}
                   >
                     {skillstack}

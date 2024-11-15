@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import Header from "../../components/Header/Header";
 import styled from "styled-components";
 import Back from "../../assets/images/Back.svg";
@@ -11,6 +11,8 @@ import { UpScrollImg } from "../Project/Search";
 import FeedbackCheckIcon from "../../assets/images/FeedbackCheckIcon.svg";
 import FeedbackCheckModal from "../../components/Modal/FeedbackCheckModal";
 import CompleteCheckIcon from "../../assets/images/CompleteCheckIcon.svg";
+import axios from "axios";
+import { baseURL } from "../../api/baseURL";
 
 const BackImg = styled.img`
   width: 1.8vw;
@@ -132,79 +134,99 @@ const CompleteCheckBtn = styled.button`
 
 function FeedbackDetail() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const LoginToken = localStorage.getItem("access") || null;
+  const { project_id } = useParams();
+  const { feedback_id } = useParams();
+  // const { isUser } = location.state;
+  // console.log(isUser);
 
   // 상태관리변수
   const [clickFeedbackCheckBtn, setClickFeedbackCheckBtn] = useState(false);
   const [feedbackCheckModal, setFeedbackCheckModal] = useState(false);
-  const [checkComplete, setCheckComplete] = useState(false);
+  const [feedbackInfo, setFeedbackInfo] = useState({});
+  const [user, setUser] = useState(null); // 사용자 닉네임
+  const [projectUser, setProjectUser] = useState([]); // 프로젝트 기여자들 닉네임
 
-  // 임의 디테일 info
-  const isUser = true;
-  const detailinfo = {
-    id: 7,
-    feedback_writer: "민기1",
-    upload_date: "2024-11-12",
-    images: [
-      {
-        image: FeedbackDetailImg,
-      },
-    ],
-    discussion: [
-      {
-        id: 1,
-        discussion_writer: {
-          nickname: "민기1",
-          role: "BE",
-          university: "성신여자대학교",
+  // 닉네임 불러오기
+  const GetNickname = async () => {
+    if (!LoginToken) {
+      console.log("로그인 토큰이 없습니다.");
+      return;
+    }
+    try {
+      const response = await axios.get(`${baseURL}/api/mypage/accountinfo/me`, {
+        headers: {
+          Authorization: `Bearer ${LoginToken}`,
         },
-        title: "참 고민이 되는군요",
-        description: "정말 고민이 되네요..",
-        images: [
-          {
-            image: FeedbackDetailImg,
-          },
-          {
-            image: FeedbackDetailImg,
-          },
-          {
-            image: FeedbackDetailImg,
-          },
-          {
-            image: FeedbackDetailImg,
-          },
-          {
-            image: FeedbackDetailImg,
-          },
-          {
-            image: FeedbackDetailImg,
-          },
-          {
-            image: FeedbackDetailImg,
-          },
-        ],
-      },
-      {
-        id: 1,
-        discussion_writer: {
-          nickname: "민기1",
-          role: "BE",
-          university: "성신여자대학교",
-        },
-        title: "참 고민이 되는군요",
-        description: "정말 고민이 되네요..",
-        images: [
-          {
-            image: FeedbackDetailImg,
-          },
-        ],
-      },
-    ],
-
-    is_adopted: false,
-    can_update_and_delete: true,
-    is_collaborator: true,
-    feedback_description: "이건 정말 잘못된 것 같군요. 프로젝트를 접으십시오",
+      });
+      setUser(response.data.nickname);
+      console.log(response.data);
+    } catch (error) {
+      console.log(error);
+    }
   };
+
+  useEffect(() => {
+    GetNickname();
+  }, []);
+
+  // 프로젝트 기여자 불러오기
+  const GetProjectUsername = async () => {
+    if (!LoginToken) {
+      console.log("로그인 토큰이 없습니다.");
+      return;
+    }
+    try {
+      const response = await axios.get(
+        `${baseURL}/api/project_detail/${project_id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${LoginToken}`,
+          },
+        }
+      );
+      setProjectUser(response.data.collaborator);
+      console.log(response.data.collaborator);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    GetProjectUsername();
+  }, []);
+
+  // 게시자인지 관람자인지 구분하는 변수
+  const isUser =
+    projectUser && projectUser.length > 0 && projectUser[0].nickname === user;
+  console.log(isUser);
+
+  // 피드백 디테일 불러오기
+  const GetFeedbackInfo = async () => {
+    if (!LoginToken) {
+      console.log("로그인 토큰이 없습니다.");
+      return;
+    }
+    try {
+      const response = await axios.get(
+        `${baseURL}/api/project_detail/${project_id}/feedback/${feedback_id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${LoginToken}`,
+          },
+        }
+      );
+      setFeedbackInfo(response.data);
+      console.log(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    GetFeedbackInfo();
+  }, []);
 
   // 보상 모달 관련
   const handleFeedbackCheckBtn = () => {
@@ -221,8 +243,14 @@ function FeedbackDetail() {
 
   // 가로 스크롤 관련
   const [positions, setPositions] = useState(
-    detailinfo.discussion.map(() => 0)
+    (feedbackInfo &&
+    feedbackInfo.discussion &&
+    feedbackInfo.discussion.length > 0
+      ? feedbackInfo.discussion
+      : []
+    ).map(() => 0)
   );
+
   const scrollRefs = useRef([]);
 
   const handleScroll = (index) => {
@@ -264,10 +292,10 @@ function FeedbackDetail() {
       <Header />
       <BackImg src={Back} alt="Back" onClick={() => navigate(-1)} />
       <ProjectDetailContainer>
-        <NickName>{detailinfo.feedback_writer}</NickName>
-        <StringDate>{detailinfo.upload_date}</StringDate>
+        <NickName>{feedbackInfo && feedbackInfo.feedback_writer}</NickName>
+        <StringDate>{feedbackInfo && feedbackInfo.upload_date}</StringDate>
         {isUser &&
-          (checkComplete ? (
+          (feedbackInfo && feedbackInfo.is_adopted ? (
             <>
               <CompleteCheckBtn onClick={handleFeedbackCheckBtn}>
                 <img src={CompleteCheckIcon} alt="CompleteCheckIcon" />
@@ -284,32 +312,40 @@ function FeedbackDetail() {
               {feedbackCheckModal && (
                 <FeedbackCheckModal
                   CloseModal={FeedbackCheckModalClose}
-                  setCheckComplete={setCheckComplete}
+                  project_id={project_id}
+                  feedback_id={feedback_id}
                 />
               )}
             </>
           ))}
         <Problem>{`프로젝트 이슈(오류) 부분`}</Problem>
-        {detailinfo.discussion.map((item, index) => (
-          <IssueBox key={index}>
-            <Title>" {item.title} "</Title>
-            <Content>{item.description}</Content>
-            <FeedbackImgWrapper ref={(el) => (scrollRefs.current[index] = el)}>
-              {item.images &&
-                item.images.length > 0 &&
-                item.images.map((imageitem, imageindex) => (
-                  <img key={imageindex} src={imageitem.image} alt="image" />
-                ))}
-            </FeedbackImgWrapper>
-            <ProgressContainer>
-              <ProgressBar $position={positions[index]}></ProgressBar>
-            </ProgressContainer>
-          </IssueBox>
-        ))}
+        {feedbackInfo &&
+          feedbackInfo.discussion &&
+          feedbackInfo.discussion.length > 0 &&
+          feedbackInfo.discussion.map((item, index) => (
+            <IssueBox key={index}>
+              <Title>" {item.title} "</Title>
+              <Content>{item.description}</Content>
+              <FeedbackImgWrapper
+                ref={(el) => (scrollRefs.current[index] = el)}
+              >
+                {item.images &&
+                  item.images.length > 0 &&
+                  item.images.map((imageitem, imageindex) => (
+                    <img key={imageindex} src={imageitem.image} alt="image" />
+                  ))}
+              </FeedbackImgWrapper>
+              {item.images && item.images.length >= 5 && (
+                <ProgressContainer>
+                  <ProgressBar $position={positions[index]}></ProgressBar>
+                </ProgressContainer>
+              )}
+            </IssueBox>
+          ))}
         <NewCommentContainer>
           <Problem>새로운 의견 제시</Problem>
           <CommentBox>
-            <p>{detailinfo.feedback_description}</p>
+            <p>{feedbackInfo && feedbackInfo.feedback_description}</p>
           </CommentBox>
         </NewCommentContainer>
         <UpScrollImg
