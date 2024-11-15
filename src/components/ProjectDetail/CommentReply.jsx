@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import PostComment from "../../assets/images/postcomment_icon.svg";
-import { useReplyComment } from "../../hooks/useReplyComment"; // 대댓글 작성 훅 import
+import { useReplyComment } from "../../hooks/useReplyComment";
 
 const Wrapper = styled.div`
     width: 96%;
@@ -13,6 +13,7 @@ const Wrapper = styled.div`
     border: 1px solid #999999;
     border-radius: 0.5vw;
     margin-left: auto;
+    margin-top: 1vw;
 `;
 
 const InputField = styled.input`
@@ -31,11 +32,10 @@ const Icon = styled.img`
     cursor: pointer;
 `;
 
-const CommentReplyInput = ({ project_id, comment_id }) => {
+const CommentReplyInput = ({ project_id, comment_id, onReplySubmit }) => {
     const [replyText, setReplyText] = useState("");
     const { submitReply, loading, error } = useReplyComment();
 
-    // 대댓글 등록 함수 호출
     const handlePostReply = async () => {
         if (!replyText.trim()) {
             console.log("대댓글 내용이 없습니다. 대댓글을 입력하세요");
@@ -43,8 +43,9 @@ const CommentReplyInput = ({ project_id, comment_id }) => {
         }
 
         try {
-            await submitReply(project_id, comment_id, replyText);
+            const newReply = await submitReply(project_id, comment_id, replyText); 
             setReplyText(""); // 입력 필드 초기화
+            onReplySubmit(newReply); // 새 대댓글을 CommunityBox로 전달
         } catch (error) {
             console.error("대댓글을 등록하는 중 오류가 발생했습니다:", error);
         }
