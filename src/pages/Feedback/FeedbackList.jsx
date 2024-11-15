@@ -198,10 +198,10 @@ function FeedbackList() {
       return;
     }
     try {
-      // const apiUrl = isUser
-      //   ? `${baseURL}/api/project_detail/${project_id}/feedback`
-      //   : `${baseURL}/api/project_detail/${project_id}/feedback?is_adopted=true`;
-      const apiUrl = `${baseURL}/api/project_detail/${project_id}/feedback?is_adopted=true`;
+      const apiUrl = isUser
+        ? `${baseURL}/api/project_detail/${project_id}/feedback`
+        : `${baseURL}/api/project_detail/${project_id}/feedback?is_adopted=true`;
+      //const apiUrl = `${baseURL}/api/project_detail/${project_id}/feedback?is_adopted=true`;
       const response = await axios.get(apiUrl, {
         headers: {
           Authorization: `Bearer ${LoginToken}`,
@@ -231,19 +231,29 @@ function FeedbackList() {
               Ai 피드백 정리
             </AIFeedBackBtn>
           ) : (
-            <WriteFeedBackBtn>
+            <WriteFeedBackBtn onClick={() => navigate(`/FeedbackWrite`)}>
               <img src={WriteFeedbackIcon} alt="WriteFeedbackIcon" />
               피드백 작성하기
             </WriteFeedBackBtn>
           )}
         </TitlenBtnWrapper>
         <DetailComment>
-          채택된 피드백을 확인해 보고, 직접 피드백을 작성해 보세요
-          <br />
-          양질의 피드백일수록 채택될 가능성이 높아집니다!
+          {isUser ? (
+            <>
+              들어온 피드백을 확인해 보고, 직접 피드백을 채택해 보세요
+              <br />
+              양질의 피드백에는 포인트를 지급할 수 있습니다!
+            </>
+          ) : (
+            <>
+              채택된 피드백을 확인해 보고, 직접 피드백을 작성해 보세요
+              <br />
+              양질의 피드백일수록 채택될 가능성이 높아집니다!
+            </>
+          )}
         </DetailComment>
         <SelectedFeedbackContainer>
-          <p>채택된 피드백 목록</p>
+          {isUser ? <p>피드백 목록</p> : <p>채택된 피드백 목록</p>}
           {selectedFeedback && selectedFeedback.length > 0 ? (
             <SelectedFeedbackWrapper>
               {selectedFeedback.map((item) => (
@@ -270,7 +280,11 @@ function FeedbackList() {
           ) : (
             <NoSelectedFeedback>
               <img src={NoFeedbackFrog} alt="frog" />
-              <p>아직 채택된 피드백이 없습니다</p>
+              {isUser ? (
+                <p>아직 피드백이 없습니다</p>
+              ) : (
+                <p>아직 채택된 피드백이 없습니다</p>
+              )}
             </NoSelectedFeedback>
           )}
         </SelectedFeedbackContainer>
