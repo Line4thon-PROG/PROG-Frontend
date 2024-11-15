@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import Header from "../../components/Header/Header";
 import styled from "styled-components";
 import Back from "../../assets/images/Back.svg";
@@ -7,6 +7,8 @@ import WriteFeedbackIcon from "../../assets/images/WriteFeedbackIcon.svg";
 import AIFeedbackIcon from "../../assets/images/AIFeedbackIcon.svg";
 import NoFeedbackFrog from "../../assets/images/NoFeedbackFrog.svg";
 import SeeDetailIcon from "../../assets/images/SeeDetailIcon.svg";
+import { baseURL } from "../../api/baseURL";
+import axios from "axios";
 
 const FeedbackListContainer = styled.div`
   margin-top: 30px;
@@ -115,6 +117,7 @@ const SelectedFeedback = styled.div`
   border-radius: 8px;
   width: 50vw;
   height: 100px;
+  cursor: pointer;
 
   p {
     font-size: 12px;
@@ -154,18 +157,94 @@ const NickNamenDateWrapper = styled.div`
 `;
 
 function FeedbackList() {
+  const LoginToken = localStorage.getItem("access") || null;
   const navigate = useNavigate();
+  const { project_id } = useParams();
 
-  // 임의의 변수들
-  const username = "user1";
-  const projectuser = "user12";
-  const feedbackList = [
-    { nickname: "닉네임", date: "0000.00.00.", content: "이슈 내용 미리보기" },
-    { nickname: "닉네임", date: "0000.00.00.", content: "이슈 내용 미리보기" },
-    { nickname: "닉네임", date: "0000.00.00.", content: "이슈 내용 미리보기" },
-    { nickname: "닉네임", date: "0000.00.00.", content: "이슈 내용 미리보기" },
-    { nickname: "닉네임", date: "0000.00.00.", content: "이슈 내용 미리보기" },
-  ];
+  // 상태 변수들
+  const [user, setUser] = useState(null); // 사용자 닉네임
+  const [projectUser, setProjectUser] = useState([]); // 프로젝트 기여자들 닉네임
+  const [selectedFeedback, setSelectedFeedback] = useState([]);
+
+  // 닉네임 불러오기
+  const GetNickname = async () => {
+    if (!LoginToken) {
+      console.log("로그인 토큰이 없습니다.");
+      return;
+    }
+    try {
+      const response = await axios.get(`${baseURL}/api/mypage/accountinfo/me`, {
+        headers: {
+          Authorization: `Bearer ${LoginToken}`,
+        },
+      });
+      setUser(response.data.nickname);
+      console.log(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    GetNickname();
+  }, []);
+
+  // 프로젝트 기여자 불러오기
+  const GetProjectUsername = async () => {
+    if (!LoginToken) {
+      console.log("로그인 토큰이 없습니다.");
+      return;
+    }
+    try {
+      const response = await axios.get(
+        `${baseURL}/api/project_detail/${project_id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${LoginToken}`,
+          },
+        }
+      );
+      setProjectUser(response.data.collaborator);
+      console.log(response.data.collaborator);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    GetProjectUsername();
+  }, []);
+
+  // 게시자인지 관람자인지 구분하는 변수
+  const isUser =
+    projectUser && projectUser.length > 0 && projectUser[0].nickname === user;
+  console.log(isUser);
+
+  // 채택된 피드백 불러오기
+  const GetSelectedFeedback = async () => {
+    if (!LoginToken) {
+      console.log("로그인 토큰이 없습니다.");
+      return;
+    }
+    try {
+      const response = await axios.get(
+        `${baseURL}/api/project_detail/${project_id}/feedback?is_adopted=true`,
+        {
+          headers: {
+            Authorization: `Bearer ${LoginToken}`,
+          },
+        }
+      );
+      setSelectedFeedback(response.data);
+      console.log(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    GetSelectedFeedback();
+  }, []);
 
   return (
     <div>
@@ -174,7 +253,7 @@ function FeedbackList() {
       <FeedbackListContainer>
         <TitlenBtnWrapper>
           <p>피드백 목록</p>
-          {username === projectuser ? (
+          {isUser ? (
             <AIFeedBackBtn>
               <img src={AIFeedbackIcon} alt="AIFeedbackICon" />
               Ai 피드백 정리
@@ -193,21 +272,28 @@ function FeedbackList() {
         </DetailComment>
         <SelectedFeedbackContainer>
           <p>채택된 피드백 목록</p>
-          {feedbackList.length > 0 ? (
+          {selectedFeedback && selectedFeedback.length > 0 ? (
             <SelectedFeedbackWrapper>
-              {feedbackList.map((item, index) => (
-                <SelectedFeedback key={index}>
+              {selectedFeedback.map((item) => (
+                <SelectedFeedback
+                  key={item.id}
+                  onClick={() =>
+                    navigate(`/FeedbackDetail/${project_id}/${item.id}`, {
+                      state: { isUser: isUser },
+                    })
+                  }
+                >
                   <InfonDetailBtnWrapper>
                     <NickNamenDateWrapper>
-                      <h5>{item.nickname}</h5>
-                      <h6>{item.date}</h6>
+                      <h5>{item.feedback_writer}</h5>
+                      <h6>{item.upload_date}</h6>
                     </NickNamenDateWrapper>
                     <button>
                       상세보기
                       <img src={SeeDetailIcon} alt="SeeDetailIcon" />
                     </button>
                   </InfonDetailBtnWrapper>
-                  <p>{item.content}</p>
+                  <p>{item.feedback_description}</p>
                 </SelectedFeedback>
               ))}
             </SelectedFeedbackWrapper>
