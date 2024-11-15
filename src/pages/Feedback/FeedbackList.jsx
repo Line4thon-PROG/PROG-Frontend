@@ -162,34 +162,10 @@ function FeedbackList() {
   const { project_id } = useParams();
 
   // 상태 변수들
-  const [user, setUser] = useState(null); // 사용자 닉네임
-  const [projectUser, setProjectUser] = useState([]); // 프로젝트 기여자들 닉네임
+  const [isUser, setIsUser] = useState(false);
   const [selectedFeedback, setSelectedFeedback] = useState([]);
 
-  // 닉네임 불러오기
-  const GetNickname = async () => {
-    if (!LoginToken) {
-      console.log("로그인 토큰이 없습니다.");
-      return;
-    }
-    try {
-      const response = await axios.get(`${baseURL}/api/mypage/accountinfo/me`, {
-        headers: {
-          Authorization: `Bearer ${LoginToken}`,
-        },
-      });
-      setUser(response.data.nickname);
-      console.log(response.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  useEffect(() => {
-    GetNickname();
-  }, []);
-
-  // 프로젝트 기여자 불러오기
+  // 프로젝트 게시자인지
   const GetProjectUsername = async () => {
     if (!LoginToken) {
       console.log("로그인 토큰이 없습니다.");
@@ -204,8 +180,8 @@ function FeedbackList() {
           },
         }
       );
-      setProjectUser(response.data.collaborator);
-      console.log(response.data.collaborator);
+      setIsUser(response.data.can_update_and_delete);
+      console.log(response.data.can_update_and_delete);
     } catch (error) {
       console.log(error);
     }
@@ -214,11 +190,6 @@ function FeedbackList() {
   useEffect(() => {
     GetProjectUsername();
   }, []);
-
-  // 게시자인지 관람자인지 구분하는 변수
-  const isUser =
-    projectUser && projectUser.length > 0 && projectUser[0].nickname === user;
-  console.log(isUser);
 
   // 채택된 피드백 불러오기
   const GetSelectedFeedback = async () => {
@@ -278,9 +249,7 @@ function FeedbackList() {
                 <SelectedFeedback
                   key={item.id}
                   onClick={() =>
-                    navigate(`/FeedbackDetail/${project_id}/${item.id}`, {
-                      state: { isUser: isUser },
-                    })
+                    navigate(`/FeedbackDetail/${project_id}/${item.id}`)
                   }
                 >
                   <InfonDetailBtnWrapper>
