@@ -1,17 +1,17 @@
-import { React, useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
-import Header from "../../components/Header/Header";
-import styled from "styled-components";
-import ProjectThumbnail from "../../components/ProjectTumbnail/ProjectThumbnail";
-import MainPhrase from "../../assets/images/MainPhrase.svg";
-import WriteBtn from "../../assets/images/WriteBtn.svg";
-import FolderICon from "../../assets/images/FolderIcon.svg";
-import HomeFrogImg from "../../assets/images/HomeFrogImg.svg";
-import ProjectThumbnailImage from "../../assets/images/ProjectThumbnailImage.svg";
-import { ProgressBar } from "../Project/Search";
-import { ProgressContainer } from "../Project/Search";
-import axios from "axios";
-import { baseURL } from "../../api/baseURL";
+import { React, useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
+import Header from '../../components/Header/Header';
+import styled from 'styled-components';
+import ProjectThumbnail from '../../components/ProjectTumbnail/ProjectThumbnail';
+import MainPhrase from '../../assets/images/MainPhrase.svg';
+import WriteBtn from '../../assets/images/WriteBtn.svg';
+import FolderICon from '../../assets/images/FolderIcon.svg';
+import HomeFrogImg from '../../assets/images/HomeFrogImg.svg';
+import ProjectThumbnailImage from '../../assets/images/ProjectThumbnailImage.svg';
+import { ProgressBar } from '../Project/Search';
+import { ProgressContainer } from '../Project/Search';
+import axios from 'axios';
+import { baseURL } from '../../api/baseURL';
 
 export const HomeContainer = styled.div`
   margin-top: 65px;
@@ -104,7 +104,7 @@ const NewProjectWrapper = styled.div`
 `;
 
 function Home() {
-  const LoginToken = localStorage.getItem("access") || null;
+  const LoginToken = localStorage.getItem('access') || null;
   console.log(LoginToken);
   const navigate = useNavigate();
 
@@ -172,12 +172,12 @@ function Home() {
 
   useEffect(() => {
     const scrollElement = scrollRef.current;
-    scrollElement.addEventListener("scroll", handleScroll);
-    return () => scrollElement.removeEventListener("scroll", handleScroll);
+    scrollElement.addEventListener('scroll', handleScroll);
+    return () => scrollElement.removeEventListener('scroll', handleScroll);
   }, []);
   return (
     <div>
-      <Header />
+      <Header selectedNav="홈" />
       <HomeContainer>
         <PhraseContainer>
           <img src={MainPhrase} alt="MainPhrase" />

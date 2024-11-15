@@ -1,13 +1,13 @@
-import { React, useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
-import Header from "../../components/Header/Header";
-import styled from "styled-components";
-import { HomeContainer as PromotionContainer } from "../Home/Home";
-import { PhraseContainer } from "../Home/Home";
-import PromotionPhrase from "../../assets/images/PromotionPhrase.svg";
-import BannerAdvertisement from "../../assets/images/BannerAdvertisement.svg";
-import ModalAdvertisement from "../../assets/images/ModalAdvertisement.svg";
-import PayCompleteModal from "../../components/Modal/PayCompleteModal";
+import { React, useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
+import Header from '../../components/Header/Header';
+import styled from 'styled-components';
+import { HomeContainer as PromotionContainer } from '../Home/Home';
+import { PhraseContainer } from '../Home/Home';
+import PromotionPhrase from '../../assets/images/PromotionPhrase.svg';
+import BannerAdvertisement from '../../assets/images/BannerAdvertisement.svg';
+import ModalAdvertisement from '../../assets/images/ModalAdvertisement.svg';
+import PayCompleteModal from '../../components/Modal/PayCompleteModal';
 
 const AdvertisementWrapper = styled.div`
   margin-top: 55px;
@@ -19,11 +19,11 @@ const AdvertisementWrapper = styled.div`
 
 const AdvertisementBtn = styled.button`
   background-color: ${(props) =>
-    props.isSelected ? "rgba(0, 193, 58, 0.1)" : "rgba(63, 65, 66, 1)"};
+    props.isSelected ? 'rgba(0, 193, 58, 0.1)' : 'rgba(63, 65, 66, 1)'};
   border: ${(props) =>
     props.isSelected
-      ? "1px solid rgba(0, 193, 58, 1)"
-      : "1px solid rgba(118, 118, 118, 1)"};
+      ? '1px solid rgba(0, 193, 58, 1)'
+      : '1px solid rgba(118, 118, 118, 1)'};
   border-radius: 8px;
   width: 190px;
   height: 200px;
@@ -78,7 +78,7 @@ function Promotion() {
 
   return (
     <div>
-      <Header />
+      <Header selectedNav="프로모션" />
       <PromotionContainer>
         <PhraseContainer>
           <img src={PromotionPhrase} alt="PromotionPhrase" />
