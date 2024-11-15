@@ -73,7 +73,7 @@ const Circle = styled.div`
   line-height: 1.2vw;
   letter-spacing: -0.4px;
   border-radius: 5vw;
-  width: 3.5vw;
+  width: auto;
   height: 2.2vw;
   border: 1px solid #00c13a;
   background: #111;
@@ -136,7 +136,6 @@ const ColumnContainer = styled.div`
 function Mypage() {
   const [userInfo, setUserInfo] = useState(null);
   const [projectData, setProjectData] = useState([]);
-  const [selectedNav, setSelectedNav] = useState('홈');
 
   useEffect(() => {
     const fetchUserInfo = async () => {
@@ -160,7 +159,6 @@ function Mypage() {
     fetchUserInfo();
   }, []);
 
-  // 프로젝트 정보 조회
   useEffect(() => {
     const fetchProjectData = async () => {
       try {
@@ -173,7 +171,7 @@ function Mypage() {
             },
           }
         );
-        setProjectData(response.data.collaborator_projects || []); // 응답이 없으면 빈 배열 할당
+        setProjectData(response.data.collaborator_projects || []);
         console.log(response.data);
       } catch (error) {
         console.error('프로젝트 정보 불러오기 실패:', error);
@@ -200,7 +198,15 @@ function Mypage() {
         <Intro>자기소개</Intro>
         <IntroContent>{userInfo?.description || '자기소개 내용'}</IntroContent>
         <Genrep>선호하는 장르</Genrep>
-        <Circle>{userInfo?.favorite_genre || '장르1'}</Circle>
+        <RowContainer style={{ gap: '0.5vw', marginTop: '0.5vw' }}>
+          {userInfo?.favorite_genre?.length > 0 ? (
+            userInfo.favorite_genre.map((genre, index) => (
+              <Circle key={index}>{genre}</Circle>
+            ))
+          ) : (
+            <p style={{ color: '#999' }}>선호하는 장르 정보가 없습니다.</p>
+          )}
+        </RowContainer>
 
         <ProjectContainer>
           <ProjectExplain>내 프로젝트</ProjectExplain>

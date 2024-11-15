@@ -4,6 +4,7 @@ import back from '../../assets/images/Back.svg';
 import Plus from '../../assets/images/Picture.svg';
 import RoundPlus from '../../assets/images/RoundPlus.svg';
 import Export from '../../assets/images/Export.svg';
+import { useState } from 'react';
 
 const Container = styled.div`
   display: flex;
@@ -212,6 +213,7 @@ const CommentContainer = styled.textarea`
   line-height: 1.1vw;
   letter-spacing: -0.375px;
   padding: 1vw;
+  resize: none;
   outline: none;
 `;
 
@@ -247,7 +249,45 @@ const ExportImage = styled.img`
   margin-right: 0.4vw;
 `;
 
+const ImageContainer = styled.div`
+  display: flex;
+  gap: 1vw;
+  flex-wrap: wrap;
+`;
+
+const ImagePreview = styled.img`
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+`;
+
+const FileInput = styled.input`
+  display: none;
+`;
+
 function FeedbackWrite() {
+  const [errorSections, setErrorSections] = useState([{ id: 0, images: [] }]);
+
+  const addNewErrorSection = () => {
+    setErrorSections((prev) => [...prev, { id: prev.length, images: [] }]);
+  };
+
+  const [images, setImages] = useState([]);
+
+  const handleAddImage = (sectionId, e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const newImage = URL.createObjectURL(file);
+      setErrorSections((prev) =>
+        prev.map((section) =>
+          section.id === sectionId
+            ? { ...section, images: [...section.images, newImage] }
+            : section
+        )
+      );
+    }
+  };
+
   const feedbackItems = [
     { nickname: '참여자 닉네임 | 역할', title: '고민 제목 (최대 50자)' },
     { nickname: '참여자 닉네임 | 역할', title: '고민 제목 (최대 50자)' },
@@ -281,14 +321,35 @@ function FeedbackWrite() {
         </WideContainer>
 
         <Worry>프로젝트 이슈(오류) 부분</Worry>
-        <WideContainer style={{ marginBottom: '2vw' }}>
-          <InputContainer placeholder="이슈 부분 설명"></InputContainer>
-          <ImageBox>
-            <PlusImage src={Plus} />
-          </ImageBox>
-        </WideContainer>
+        {errorSections.map((section) => (
+          <WideContainer key={section.id} style={{ marginBottom: '2vw' }}>
+            <InputContainer placeholder="이슈 부분 설명" />
+            <ImageContainer>
+              {section.images.map((image, index) => (
+                <ImageBox key={index}>
+                  <ImagePreview src={image} alt={`Selected ${index + 1}`} />
+                </ImageBox>
+              ))}
+              <ImageBox>
+                <FileInput
+                  id={`fileInput-${section.id}`}
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => handleAddImage(section.id, e)}
+                />
+                <PlusImage
+                  src={Plus}
+                  alt="Add Image"
+                  onClick={() =>
+                    document.getElementById(`fileInput-${section.id}`).click()
+                  }
+                />
+              </ImageBox>
+            </ImageContainer>
+          </WideContainer>
+        ))}
 
-        <NewContainer>
+        <NewContainer onClick={addNewErrorSection}>
           <RowContainer style={{ justifyContent: 'center', gap: '0.4vw' }}>
             <Pluss src={RoundPlus} />
             <Add>새 오류 부분 추가</Add>
