@@ -8,8 +8,6 @@ import checkbox from '../../assets/images/Checkbox2.svg';
 import web from '../../assets/images/Web.svg';
 import android from '../../assets/images/Android.svg';
 import ios from '../../assets/images/IOS.svg';
-import genre from '../../assets/images/Genre.svg';
-import stack from '../../assets/images/Stack.svg';
 import close from '../../assets/images/Close.svg';
 import picture from '../../assets/images/Picture.svg';
 import active from '../../assets/images/ActiveCheck.svg';
@@ -21,8 +19,6 @@ import { useEffect } from 'react';
 import axios from 'axios';
 import { baseURL } from '../../api/baseURL';
 import { useNavigate } from 'react-router-dom';
-import Image1 from '../../assets/images/1.png';
-import Image2 from '../../assets/images/2.png';
 
 const Container = styled.div`
   display: flex;
@@ -261,13 +257,6 @@ const deploymentTypes = [
   { src: android, width: '5.3vw', height: '1.4vw', label: 'ANDROID' },
 ];
 
-const genreRows = [
-  ['스포츠', '엔터테인먼트', '음식', '음악', '친구'],
-  ['가족', '여행', '교육', '건강', '패션', '쇼핑'],
-  ['환경', '부동산', '비즈니스', '자기개발', '동물/펫'],
-  ['요리/베이킹', '여가/취미', '사회봉사', '금융/투자', '기타'],
-];
-
 const SelectedContainer = styled.div`
   display: flex;
   width: 100%;
@@ -495,24 +484,6 @@ const FileInput = styled.input`
   display: none;
 `;
 
-const SearchContainer = styled.input`
-  width: 21.8vw;
-  height: 2.8vw;
-  flex-shrink: 0;
-  border-radius: 0.4vw;
-  border: 1px solid #00c13a;
-  background: #111;
-  margin-top: 1vw;
-  color: var(--Font-01_White, #fff);
-  font-family: Pretendard;
-  font-size: 0.8vw;
-  font-style: normal;
-  font-weight: 400;
-  line-height: 1.2vw;
-  padding: 0.8vw;
-  letter-spacing: -0.4px;
-`;
-
 const ParticipantContainer = styled.div`
   display: flex;
   padding: 0.7vw 4.1vw 0.7vw 0.7vw;
@@ -616,9 +587,8 @@ function Write() {
   const navigate = useNavigate();
 
   const handleSubmit = async () => {
-    const token = localStorage.getItem('access'); // 토큰 가져오기
+    const token = localStorage.getItem('access');
 
-    // JSON 데이터 준비
     const jsonData = {
       collaborator: selectedParticipants.map((participant) => ({
         role: roles[participant.id] || '',
@@ -628,7 +598,7 @@ function Write() {
       })),
       project_platform: Object.keys(activeTypes)
         .filter((key) => activeTypes[key])
-        .map((platform) => (platform === 'WEB' ? 'Web' : platform)), // Web으로 변환
+        .map((platform) => (platform === 'WEB' ? 'Web' : platform)),
       project_stack: selectedStacks,
       project_genre: selectedGenres,
       project_university: ['대학교1'],
@@ -643,11 +613,9 @@ function Write() {
         : {}),
     };
 
-    // JSON 데이터 콘솔 출력
     console.log('JSON Request Body:', JSON.stringify(jsonData, null, 2));
 
     try {
-      // JSON 데이터 전송
       const jsonResponse = await axios.post(
         `${baseURL}/api/project/`,
         jsonData,
@@ -665,21 +633,19 @@ function Write() {
       return;
     }
 
-    // FormData 객체 생성 - 이미지 전송
     const formData = new FormData();
     if (imageSrc) {
-      formData.append('project_thumbnail', imageSrc); // 대표 이미지
+      formData.append('project_thumbnail', imageSrc);
     }
     imageSrcList.forEach((file, index) => {
-      formData.append('image', file); // 설명 이미지들
+      formData.append('image', file);
     });
 
-    // FormData 내용 콘솔 출력 (이미지 파일 미리보기 포함)
     for (const [key, value] of formData.entries()) {
       if (value instanceof File) {
         const reader = new FileReader();
         reader.onloadend = () => {
-          console.log(`FormData Entry: ${key}`, reader.result); // Base64로 이미지 출력
+          console.log(`FormData Entry: ${key}`, reader.result);
         };
         reader.readAsDataURL(value);
       } else {
@@ -761,10 +727,6 @@ function Write() {
     setImageSrcList((prevList) => [...newImageSrcList, ...prevList]);
   };
 
-  const removeImage = (index) => {
-    setImageSrcList((prevList) => prevList.filter((_, i) => i !== index));
-  };
-
   const toggleGenre = (genre) => {
     setSelectedGenres((prevSelectedGenres) =>
       prevSelectedGenres.includes(genre)
@@ -789,9 +751,6 @@ function Write() {
     }));
   };
 
-  const flattenedGenres = genreRows.flat();
-  const splitGenres = [flattenedGenres.slice(0, 12), flattenedGenres.slice(12)];
-
   const [imageSrc, setImageSrc] = useState(null);
 
   const handleImageChange = (e) => {
@@ -805,10 +764,6 @@ function Write() {
     setSelectedStacks((prevSelectedStacks) =>
       prevSelectedStacks.filter((s) => s !== stack)
     );
-  };
-
-  const toggleActiveTab = () => {
-    setIsGenreActive(!isGenreActive);
   };
 
   const toggleStack = (stack) => {

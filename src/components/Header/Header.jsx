@@ -1,13 +1,12 @@
-import React, { useState } from "react";
-import styled from "styled-components";
-import logo from "../../assets/images/Logo.svg";
-import search from "../../assets/images/Search.svg";
-import login from "../../assets/images/Login.svg";
-import { Navigate, useNavigate } from "react-router-dom";
-import { useEffect } from "react";
-import logout from "../../assets/images/logout.svg";
-import axios from "axios";
-import { baseURL } from "../../api/baseURL";
+import React, { useState, useEffect } from 'react';
+import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import logo from '../../assets/images/Logo.svg';
+import search from '../../assets/images/Search.svg';
+import login from '../../assets/images/Login.svg';
+import logout from '../../assets/images/logout.svg';
+import { baseURL } from '../../api/baseURL';
 
 const HeaderContainer = styled.div`
   padding-left: 4.2vw;
@@ -75,76 +74,73 @@ const Tool = styled.img`
 `;
 
 function Header() {
-  const [selectedNav, setSelectedNav] = useState("홈");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [selectedNav, setSelectedNav] = useState('홈');
   const navigate = useNavigate();
 
   useEffect(() => {
-    const token = localStorage.getItem("access");
+    const token = localStorage.getItem('access');
     if (token) {
       setIsLoggedIn(true);
     }
   }, []);
 
-  const handleNavClick = (navItem) => {
+  const handleNavClick = (navItem, path) => {
     setSelectedNav(navItem);
-    if (navItem === "마이페이지") {
-      navigate("/Mypage");
-    } else if (navItem === "홈") {
-      navigate("/");
-    }
+    setTimeout(() => navigate(path), 0); // 약간의 딜레이 후 navigate
   };
 
   const handleLogin = () => {
-    navigate("/login");
+    navigate('/login');
   };
 
   const handleLogout = async () => {
     try {
-      const response = await axios.get(`${baseURL}/api/accounts/logout/`, {
+      await axios.get(`${baseURL}/api/accounts/logout/`, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("access")}`,
+          Authorization: `Bearer ${localStorage.getItem('access')}`,
         },
       });
-      console.log(response.data);
-
-      localStorage.removeItem("access");
+      localStorage.removeItem('access');
       setIsLoggedIn(false);
-      alert("로그아웃이 완료되었습니다.");
-      navigate("/");
+      alert('로그아웃 되었습니다.');
+      navigate('/');
     } catch (error) {
-      console.error("로그아웃 실패:", error);
-      alert("로그아웃에 실패했습니다. 다시 시도해주세요.");
+      console.error('로그아웃 실패:', error);
+      alert('로그아웃에 실패했습니다. 다시 시도해주세요.');
     }
   };
 
   return (
-    <>
-      <HeaderContainer>
-        <Container>
-          <Logo src={logo} alt="logo" />
-          <NavContainer>
-            {["홈", "프로젝트", "프로모션", "마이페이지"].map((navItem) => (
-              <Nav
-                key={navItem}
-                isSelected={selectedNav === navItem}
-                onClick={() => handleNavClick(navItem)}
-              >
-                {navItem}
-              </Nav>
-            ))}
-          </NavContainer>
-          <ToolContainer>
-            <Tool src={search} alt="search" />
-            {isLoggedIn ? (
-              <Tool src={logout} alt="logout" onClick={handleLogout} />
-            ) : (
-              <Tool src={login} alt="login" onClick={handleLogin} />
-            )}
-          </ToolContainer>
-        </Container>
-      </HeaderContainer>
-    </>
+    <HeaderContainer>
+      <Container>
+        <Logo src={logo} alt="logo" onClick={() => handleNavClick('홈', '/')} />
+        <NavContainer>
+          {[
+            { name: '홈', path: '/' },
+            { name: '프로젝트', path: '/project' },
+            { name: '프로모션', path: '/promotion' },
+            { name: '마이페이지', path: '/Mypage' },
+          ].map(({ name, path }) => (
+            <Nav
+              key={name}
+              isSelected={selectedNav === name}
+              onClick={() => handleNavClick(name, path)}
+            >
+              {name}
+            </Nav>
+          ))}
+        </NavContainer>
+        <ToolContainer>
+          <Tool src={search} alt="search" />
+          {isLoggedIn ? (
+            <Tool src={logout} alt="logout" onClick={handleLogout} />
+          ) : (
+            <Tool src={login} alt="login" onClick={handleLogin} />
+          )}
+        </ToolContainer>
+      </Container>
+    </HeaderContainer>
   );
 }
 
