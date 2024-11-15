@@ -219,7 +219,7 @@ const RowContainer2 = styled.div`
 
 const SelectContainer = styled.div`
   width: 100%;
-  height: 11.3vw;
+  height: auto;
   flex-shrink: 0;
   border-radius: 0.4vw;
   border: 1px solid var(--Font-05_Gray_Disabled, #999);
@@ -800,7 +800,7 @@ function Write() {
         });
         const genres = response.data.genre;
         const rows = [];
-        const itemsPerRow = 6;
+        const itemsPerRow = 10;
         for (let i = 0; i < genres.length; i += itemsPerRow) {
           rows.push(genres.slice(i, i + itemsPerRow));
         }
@@ -819,7 +819,7 @@ function Write() {
         });
         const stacks = response.data.stack;
         const rows = [];
-        const itemsPerRow = 6;
+        const itemsPerRow = 8;
         for (let i = 0; i < stacks.length; i += itemsPerRow) {
           rows.push(stacks.slice(i, i + itemsPerRow));
         }
