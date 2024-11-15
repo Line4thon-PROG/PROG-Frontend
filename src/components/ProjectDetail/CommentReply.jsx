@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import axios from "axios"; // Import axios for the POST request
 import PostComment from "../../assets/images/postcomment_icon.svg";
+import { useReplyComment } from "../../hooks/useReplyComment"; // 대댓글 작성 훅 import
 
 const Wrapper = styled.div`
     width: 96%;
@@ -31,24 +31,20 @@ const Icon = styled.img`
     cursor: pointer;
 `;
 
-const CommentReplyInput = ({ parentCommentId }) => {
+const CommentReplyInput = ({ project_id, comment_id }) => {
     const [replyText, setReplyText] = useState("");
+    const { submitReply, loading, error } = useReplyComment();
 
-    // Function to handle posting the reply
-    const postReply = async () => {
+    // 대댓글 등록 함수 호출
+    const handlePostReply = async () => {
         if (!replyText.trim()) {
             console.log("대댓글 내용이 없습니다. 대댓글을 입력하세요");
             return;
         }
 
         try {
-            const response = await axios.post(`/api/project_detail/${parentCommentId}/in_comment`, {
-                in_comment: replyText,
-            });
-
-            console.log("Reply posted successfully:", response.data);
-            setReplyText(""); // Clear the input field after posting
-            // Optionally, you can update the parent component to show the new reply immediately
+            await submitReply(project_id, comment_id, replyText);
+            setReplyText(""); // 입력 필드 초기화
         } catch (error) {
             console.error("대댓글을 등록하는 중 오류가 발생했습니다:", error);
         }
@@ -56,12 +52,13 @@ const CommentReplyInput = ({ parentCommentId }) => {
 
     return (
         <Wrapper>
-            <Icon src={PostComment} onClick={postReply} />
+            <Icon src={PostComment} onClick={handlePostReply} disabled={loading} />
             <InputField
                 placeholder="대댓글을 입력하세요"
                 value={replyText}
                 onChange={(e) => setReplyText(e.target.value)}
             />
+            {error && <p style={{ color: "red" }}>{error}</p>}
         </Wrapper>
     );
 };
