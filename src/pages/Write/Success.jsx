@@ -61,8 +61,8 @@ const Button = styled.button`
 function Success() {
   const navigate = useNavigate();
 
-  const GoLogin = () => {
-    navigate('/login');
+  const GoSearch = () => {
+    navigate('/Search');
   };
 
   return (
@@ -72,7 +72,7 @@ function Success() {
         <Check src={check} />
         <Successs>프로젝트 등록이 완료되었습니다!</Successs>
         <Frog src={frog} />
-        <Button onClick={GoLogin}>등록된 프로젝트 보러가기</Button>
+        <Button onClick={GoSearch}>등록된 프로젝트 보러가기</Button>
       </Container>
     </>
   );

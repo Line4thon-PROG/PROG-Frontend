@@ -5,6 +5,9 @@ import Plus from '../../assets/images/Picture.svg';
 import RoundPlus from '../../assets/images/RoundPlus.svg';
 import Export from '../../assets/images/Export.svg';
 import { useState } from 'react';
+import { useEffect } from 'react';
+import axios from 'axios';
+import { baseURL } from '../../api/baseURL';
 
 const Container = styled.div`
   display: flex;
@@ -52,11 +55,12 @@ const Worry = styled.p`
 
 const WideContainer = styled.div`
   width: 100%;
-  height: 28.1vw;
+  height: auto;
   display: flex;
   padding: 1vw;
   flex-direction: column;
   align-items: flex-start;
+  justify-content: flex-start;
   gap: 1.2vw;
   align-self: stretch;
   border-radius: 0.6vw;
@@ -70,6 +74,9 @@ const SmallContainer = styled.div`
   border-radius: 0.6vw;
   background: #333;
   padding: 1vw;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
 `;
 
 const BoxContainer = styled.div`
@@ -82,7 +89,7 @@ const BoxContainer = styled.div`
 const RowContainer = styled.div`
   display: flex;
   flex-direction: row;
-  align-items: center;
+  align-items: flex-start;
 `;
 
 const ColumnContainer = styled.div`
@@ -150,6 +157,7 @@ const InputContainer = styled.textarea`
   line-height: 1.1vw;
   letter-spacing: -0.375px;
   resize: none;
+  color: white;
   outline: none;
 `;
 
@@ -267,6 +275,7 @@ const FileInput = styled.input`
 
 function FeedbackWrite() {
   const [errorSections, setErrorSections] = useState([{ id: 0, images: [] }]);
+  const [feedbackItems, setFeedbackItems] = useState([]);
 
   const addNewErrorSection = () => {
     setErrorSections((prev) => [...prev, { id: prev.length, images: [] }]);
@@ -288,10 +297,21 @@ function FeedbackWrite() {
     }
   };
 
-  const feedbackItems = [
-    { nickname: '참여자 닉네임 | 역할', title: '고민 제목 (최대 50자)' },
-    { nickname: '참여자 닉네임 | 역할', title: '고민 제목 (최대 50자)' },
-  ];
+  useEffect(() => {
+    const fetchFeedbackItems = async () => {
+      try {
+        const response = await axios.get(
+          `${baseURL}/api/project_detail/14/discussion`
+        );
+        console.log('Feedback Items:', response.data);
+        setFeedbackItems(response.data);
+      } catch (error) {
+        console.error('Error fetching feedback items:', error);
+      }
+    };
+
+    fetchFeedbackItems();
+  }, []);
 
   return (
     <>
@@ -311,9 +331,14 @@ function FeedbackWrite() {
               <RowContainer style={{ gap: '1.6vw' }}>
                 <BoxContainer />
                 <ColumnContainer>
-                  <Nickname>{item.nickname}</Nickname>
+                  <Nickname>
+                    {item.discussion_writer.nickname} |{' '}
+                    {item.discussion_writer.role}
+                  </Nickname>
                   <Title>{item.title}</Title>
-                  <InputArea placeholder="고민 내용" />
+                  <Title style={{ marginTop: '0.5vw' }}>
+                    {item.description}
+                  </Title>
                 </ColumnContainer>
               </RowContainer>
             </SmallContainer>

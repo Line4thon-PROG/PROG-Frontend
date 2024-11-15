@@ -6,6 +6,9 @@ import back from '../../assets/images/Back.svg';
 import arrowDown from '../../assets/images/Dropdown.svg';
 import pictureIcon from '../../assets/images/Picture.svg';
 import { useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
+import axios from 'axios';
+import { baseURL } from '../../api/baseURL';
 
 const Container = styled.div`
   display: flex;
@@ -136,6 +139,7 @@ const TitleInput = styled.input`
   font-family: Pretendard;
   font-size: 0.75vw;
   outline: none;
+  color: white;
 `;
 
 const CharCount = styled.span`
@@ -236,6 +240,9 @@ const PictureGrid = styled.div`
 `;
 
 const Worry = () => {
+  const location = useLocation();
+  const participants = location.state?.participants || [];
+  const projectId = location.state?.project_id;
   const [isOpen, setIsOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState('작성자 선택');
   const [title, setTitle] = useState('');
@@ -245,17 +252,72 @@ const Worry = () => {
   const [isSelected, setIsSelected] = useState(false);
   const [imageSrcs, setImageSrcs] = useState([null]);
 
-  const options = ['작성자1', '작성자2', '작성자3', '작성자4'];
-
   const navigate = useNavigate();
 
   const goNext = () => {
     navigate('/Success');
   };
 
+  const handleSubmit = async () => {
+    if (!projectId) {
+      alert('프로젝트 ID가 없습니다. 다시 시도해주세요.');
+      return;
+    }
+
+    const token = localStorage.getItem('access');
+
+    // 작성자를 선택했는지 확인
+    const selectedParticipant = participants.find(
+      (participant) => participant.nickname === selectedOption
+    );
+
+    if (!selectedParticipant) {
+      alert('작성자를 선택해주세요.');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('title', title);
+    formData.append('discussion_writer', selectedParticipant.id); // 선택된 작성자의 ID 추가
+    formData.append('description', content);
+
+    imageSrcs
+      .filter((src) => src)
+      .forEach((src, index) => {
+        formData.append('image', src);
+      });
+
+    for (const [key, value] of formData.entries()) {
+      if (value instanceof File) {
+        console.log(`FormData Entry [${key}]:`, value.name);
+      } else {
+        console.log(`FormData Entry [${key}]:`, value);
+      }
+    }
+
+    try {
+      const response = await axios.post(
+        `${baseURL}/api/project_detail/${projectId}/discussion`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      );
+
+      console.log('등록 성공:', response.data);
+      navigate('/Success');
+    } catch (error) {
+      console.error('등록 실패:', error);
+      alert('등록에 실패했습니다. 다시 시도해주세요.');
+    }
+  };
+
   const toggleDropdown = () => setIsOpen(!isOpen);
-  const selectOption = (option) => {
-    setSelectedOption(option);
+  const selectOption = (participant) => {
+    setSelectedOption(participant.nickname);
     setIsOpen(false);
     setIsSelected(true);
   };
@@ -294,9 +356,12 @@ const Worry = () => {
         </Writer>
         {isOpen && (
           <DropdownMenu>
-            {options.map((option, index) => (
-              <DropdownItem key={index} onClick={() => selectOption(option)}>
-                {option}
+            {participants.map((participant) => (
+              <DropdownItem
+                key={participant.id}
+                onClick={() => selectOption(participant)}
+              >
+                {participant.nickname}
               </DropdownItem>
             ))}
           </DropdownMenu>
@@ -351,7 +416,7 @@ const Worry = () => {
       </WholeContainer>
 
       <ButtonContainer>
-        <Button onClick={goNext}>프로젝트 등록</Button>
+        <Button onClick={handleSubmit}>프로젝트 등록</Button>
       </ButtonContainer>
     </Container>
   );
