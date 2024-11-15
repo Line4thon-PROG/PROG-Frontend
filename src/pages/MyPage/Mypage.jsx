@@ -8,7 +8,6 @@ import { baseURL } from '../../api/baseURL';
 const Container = styled.div`
   display: flex;
   flex-direction: column;
-  margin: 0 auto;
 `;
 
 const RowContainer = styled.div`
@@ -187,7 +186,7 @@ function Mypage() {
   return (
     <>
       <Container>
-        <Header />
+        <Header selectedNav="마이페이지" />
         <RowContainer
           style={{ marginTop: '3vw', justifyContent: 'space-between' }}
         >

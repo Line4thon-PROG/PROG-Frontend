@@ -28,6 +28,7 @@ const Container = styled.div`
 const Logo = styled.img`
   width: 10vw;
   height: 2.2vw;
+  cursor: pointer;
 `;
 
 const NavContainer = styled.div`
@@ -42,14 +43,15 @@ const Nav = styled.div`
   white-space: nowrap;
   cursor: pointer;
   font-size: 0.7vw;
+
   ${({ isSelected }) =>
     isSelected &&
     `
     display: flex;
-    padding: 0.5vw 0.8vw;
     justify-content: center;
     align-items: center;
-    gap: 0.5vw;
+    gap: 0.5vw
+    padding: 0.5vw 0.8vw;
     border-radius: 0.4vw;
     background: #262626;
     color: #00C13A;
@@ -71,11 +73,11 @@ const ToolContainer = styled.div`
 const Tool = styled.img`
   width: 1.2vw;
   height: 1.2vw;
+  cursor: pointer;
 `;
 
-function Header() {
+function Header({ selectedNav }) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [selectedNav, setSelectedNav] = useState('홈');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -84,11 +86,6 @@ function Header() {
       setIsLoggedIn(true);
     }
   }, []);
-
-  const handleNavClick = (navItem, path) => {
-    setSelectedNav(navItem);
-    setTimeout(() => navigate(path), 0);
-  };
 
   const handleLogin = () => {
     navigate('/login');
@@ -114,30 +111,39 @@ function Header() {
   return (
     <HeaderContainer>
       <Container>
-        <Logo src={logo} alt="logo" onClick={() => handleNavClick('홈', '/')} />
+        <Logo src={logo} alt="logo" onClick={() => navigate('/')} />
         <NavContainer>
-          {[
-            { name: '홈', path: '/' },
-            { name: '프로젝트', path: '/project' },
-            { name: '프로모션', path: '/promotion' },
-            { name: '마이페이지', path: '/Mypage' },
-          ].map(({ name, path }) => (
-            <Nav
-              key={name}
-              isSelected={selectedNav === name}
-              onClick={() => handleNavClick(name, path)}
-            >
-              {name}
-            </Nav>
-          ))}
+          <Nav isSelected={selectedNav === '홈'} onClick={() => navigate('/')}>
+            홈
+          </Nav>
+          <Nav
+            isSelected={selectedNav === '프로젝트'}
+            onClick={() => navigate('/project')}
+          >
+            프로젝트
+          </Nav>
+          <Nav
+            isSelected={selectedNav === '프로모션'}
+            onClick={() => navigate('/promotion')}
+          >
+            프로모션
+          </Nav>
+          <Nav
+            isSelected={selectedNav === '마이페이지'}
+            onClick={() => navigate('/Mypage')}
+          >
+            마이페이지
+          </Nav>
         </NavContainer>
         <ToolContainer>
           <Tool src={search} alt="search" />
-          {isLoggedIn ? (
-            <Tool src={logout} alt="logout" onClick={handleLogout} />
-          ) : (
-            <Tool src={login} alt="login" onClick={handleLogin} />
-          )}
+          <Tool
+            src={localStorage.getItem('access') ? logout : login}
+            alt={localStorage.getItem('access') ? 'logout' : 'login'}
+            onClick={
+              localStorage.getItem('access') ? handleLogout : handleLogin
+            }
+          />
         </ToolContainer>
       </Container>
     </HeaderContainer>
