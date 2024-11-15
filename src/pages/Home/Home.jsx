@@ -105,7 +105,6 @@ const NewProjectWrapper = styled.div`
 
 function Home() {
   const LoginToken = localStorage.getItem("access") || null;
-  console.log(LoginToken);
   const navigate = useNavigate();
 
   // 상태 변수

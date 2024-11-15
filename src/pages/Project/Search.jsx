@@ -146,7 +146,6 @@ export const UpScrollImg = styled.img`
 
 function Search() {
   const LoginToken = localStorage.getItem("access") || null;
-  console.log(LoginToken);
   const navigate = useNavigate();
 
   // 상태 변수
@@ -252,7 +251,7 @@ function Search() {
     GetGenreProject();
   }, [selectedTags]);
 
-  // 기술스택 필터링
+  // 스택 필터링
   const GetSkillProject = async () => {
     if (selectedSkills && selectedSkills.length > 0) {
       try {
@@ -400,7 +399,7 @@ function Search() {
 
   return (
     <div>
-      <Header />
+      <Header selectedNav="프로젝트" />
       <SearchContainer>
         <NameandWriteBtnWrapper>
           {LoginToken ? (
