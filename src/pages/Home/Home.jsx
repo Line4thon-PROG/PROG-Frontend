@@ -114,11 +114,7 @@ function Home() {
   // 최근 프로젝트 불러오기
   const GetNewProject = async () => {
     try {
-      const response = await axios.get(`${baseURL}/api/project/home`, {
-        headers: {
-          Authorization: `Bearer ${LoginToken}`,
-        },
-      });
+      const response = await axios.get(`${baseURL}/api/project/home`, {});
       setProject(response.data);
       console.log(response.data);
     } catch (error) {
@@ -145,6 +141,33 @@ function Home() {
 
       setPosition(currentPosition);
     }
+  };
+
+  // 마우스 스크롤
+  const [isDragging, setIsDragging] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [scrollLeft, setScrollLeft] = useState(0);
+
+  const handleMouseDown = (e) => {
+    setIsDragging(true);
+    setStartX(e.pageX - scrollRef.current.offsetLeft);
+    setScrollLeft(scrollRef.current.scrollLeft);
+  };
+
+  const handleMouseLeave = () => {
+    setIsDragging(false);
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  const handleMouseMove = (e) => {
+    if (!isDragging) return;
+    e.preventDefault();
+    const x = e.pageX - scrollRef.current.offsetLeft;
+    const walk = (x - startX) * 2; // 드래그 속도 조절
+    scrollRef.current.scrollLeft = scrollLeft - walk;
   };
 
   useEffect(() => {
@@ -180,7 +203,13 @@ function Home() {
         <NewProjectContainer>
           <h2>이번 주에 새로 올라온 프로젝트</h2>
         </NewProjectContainer>
-        <NewProjectWrapper ref={scrollRef}>
+        <NewProjectWrapper
+          ref={scrollRef}
+          onMouseDown={handleMouseDown}
+          onMouseLeave={handleMouseLeave}
+          onMouseUp={handleMouseUp}
+          onMouseMove={handleMouseMove}
+        >
           {project &&
             project.length > 0 &&
             project.map((item) => (

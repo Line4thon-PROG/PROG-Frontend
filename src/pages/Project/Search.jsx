@@ -378,6 +378,33 @@ function Search() {
     }
   };
 
+  // 마우스 스크롤
+  const [isDragging, setIsDragging] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [scrollLeft, setScrollLeft] = useState(0);
+
+  const handleMouseDown = (e) => {
+    setIsDragging(true);
+    setStartX(e.pageX - scrollRef.current.offsetLeft);
+    setScrollLeft(scrollRef.current.scrollLeft);
+  };
+
+  const handleMouseLeave = () => {
+    setIsDragging(false);
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  const handleMouseMove = (e) => {
+    if (!isDragging) return;
+    e.preventDefault();
+    const x = e.pageX - scrollRef.current.offsetLeft;
+    const walk = (x - startX) * 2; // 드래그 속도 조절
+    scrollRef.current.scrollLeft = scrollLeft - walk;
+  };
+
   useEffect(() => {
     const scrollElement = scrollRef.current;
     scrollElement.addEventListener("scroll", handleScroll);
@@ -404,7 +431,13 @@ function Search() {
             프로젝트 등록
           </button>
         </NameandWriteBtnWrapper>
-        <RecommendThumbnail ref={scrollRef}>
+        <RecommendThumbnail
+          ref={scrollRef}
+          onMouseDown={handleMouseDown}
+          onMouseLeave={handleMouseLeave}
+          onMouseUp={handleMouseUp}
+          onMouseMove={handleMouseMove}
+        >
           {!LoginToken ? (
             <>
               <LogoutThumbnail />
