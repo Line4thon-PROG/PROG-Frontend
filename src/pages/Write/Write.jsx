@@ -643,7 +643,10 @@ function Write() {
         }
       );
       console.log('프로젝트 JSON 데이터 전송 성공:', jsonResponse.data);
-      navigate('/worry');
+      const projectId = jsonResponse.data.project_id;
+      navigate('/worry', {
+        state: { participants: selectedParticipants, project_id: projectId },
+      });
     } catch (error) {
       console.error('프로젝트 JSON 데이터 전송 실패:', error);
       alert('프로젝트 등록에 실패했습니다. 다시 시도해 주세요.');
