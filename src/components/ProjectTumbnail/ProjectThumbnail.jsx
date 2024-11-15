@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
 const RecommendContainer = styled.div`
@@ -18,9 +19,16 @@ const GenrenSkill = styled.p`
   font-size: 10px;
 `;
 
-function ProjectThumbnail({ imagesrc, name, genrelist, skilllist }) {
+function ProjectThumbnail({
+  imagesrc,
+  name,
+  genrelist,
+  skilllist,
+  project_id,
+}) {
+  const navigate = useNavigate();
   return (
-    <RecommendContainer>
+    <RecommendContainer onClick={() => navigate(`/DetailPage/${project_id}`)}>
       <img src={imagesrc} alt="ProjectThumbnailImage" />
       <Title>{name}</Title>
       <GenrenSkill>

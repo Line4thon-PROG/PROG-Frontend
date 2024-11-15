@@ -437,6 +437,7 @@ function Search() {
                     name={item.project_name}
                     genrelist={item.project_genre}
                     skilllist={item.project_stack}
+                    project_id={item.id}
                   />
                 ))}
             </>
@@ -498,6 +499,7 @@ function Search() {
                   name={item.project_name}
                   genrelist={item.project_genre}
                   skilllist={item.project_stack}
+                  project_id={item.id}
                 />
               ))
             ) : (
@@ -512,6 +514,7 @@ function Search() {
                 name={item.project_name}
                 genrelist={item.project_genre}
                 skilllist={item.project_stack}
+                project_id={item.id}
               />
             ))
           ) : (
