@@ -8,8 +8,6 @@ import checkbox from '../../assets/images/Checkbox2.svg';
 import web from '../../assets/images/Web.svg';
 import android from '../../assets/images/Android.svg';
 import ios from '../../assets/images/IOS.svg';
-import genre from '../../assets/images/Genre.svg';
-import stack from '../../assets/images/Stack.svg';
 import close from '../../assets/images/Close.svg';
 import picture from '../../assets/images/Picture.svg';
 import active from '../../assets/images/ActiveCheck.svg';
@@ -21,8 +19,6 @@ import { useEffect } from 'react';
 import axios from 'axios';
 import { baseURL } from '../../api/baseURL';
 import { useNavigate } from 'react-router-dom';
-import Image1 from '../../assets/images/1.png';
-import Image2 from '../../assets/images/2.png';
 
 const Container = styled.div`
   display: flex;
@@ -223,7 +219,7 @@ const RowContainer2 = styled.div`
 
 const SelectContainer = styled.div`
   width: 100%;
-  height: 11.3vw;
+  height: auto;
   flex-shrink: 0;
   border-radius: 0.4vw;
   border: 1px solid var(--Font-05_Gray_Disabled, #999);
@@ -259,13 +255,6 @@ const deploymentTypes = [
   { src: web, width: '3.7vw', height: '1.4vw', label: 'WEB' },
   { src: ios, width: '3.25vw', height: '1.4vw', label: 'IOS' },
   { src: android, width: '5.3vw', height: '1.4vw', label: 'ANDROID' },
-];
-
-const genreRows = [
-  ['스포츠', '엔터테인먼트', '음식', '음악', '친구'],
-  ['가족', '여행', '교육', '건강', '패션', '쇼핑'],
-  ['환경', '부동산', '비즈니스', '자기개발', '동물/펫'],
-  ['요리/베이킹', '여가/취미', '사회봉사', '금융/투자', '기타'],
 ];
 
 const SelectedContainer = styled.div`
@@ -401,7 +390,8 @@ const Btn = styled.button`
   justify-content: center;
   align-items: center;
   border-radius: 0.4vw;
-  background: var(--Font-05_Gray_Disabled, #999);
+  background: ${({ allFieldsFilled }) =>
+    allFieldsFilled ? '#00C13A' : '#999'};
   color: var(--Font-01_White, #fff);
   font-family: Pretendard;
   font-size: 0.8vw;
@@ -409,6 +399,8 @@ const Btn = styled.button`
   font-weight: 600;
   line-height: 1.2vw;
   letter-spacing: -0.4px;
+  cursor: ${({ allFieldsFilled }) =>
+    allFieldsFilled ? 'pointer' : 'not-allowed'};
 `;
 
 const ImageBox = styled.div`
@@ -493,24 +485,6 @@ const GenreContainer = styled.div`
 
 const FileInput = styled.input`
   display: none;
-`;
-
-const SearchContainer = styled.input`
-  width: 21.8vw;
-  height: 2.8vw;
-  flex-shrink: 0;
-  border-radius: 0.4vw;
-  border: 1px solid #00c13a;
-  background: #111;
-  margin-top: 1vw;
-  color: var(--Font-01_White, #fff);
-  font-family: Pretendard;
-  font-size: 0.8vw;
-  font-style: normal;
-  font-weight: 400;
-  line-height: 1.2vw;
-  padding: 0.8vw;
-  letter-spacing: -0.4px;
 `;
 
 const ParticipantContainer = styled.div`
@@ -615,10 +589,22 @@ function Write() {
   const [roles, setRoles] = useState({});
   const navigate = useNavigate();
 
-  const handleSubmit = async () => {
-    const token = localStorage.getItem('access'); // 토큰 가져오기
+  const allFieldsFilled =
+    title.trim() &&
+    summary.trim() &&
+    period.trim() &&
+    content.trim() &&
+    selectedGenres.length > 0 &&
+    selectedStacks.length > 0 &&
+    selectedParticipants.length > 0;
 
-    // JSON 데이터 준비
+  const handleSubmit = async () => {
+    const token = localStorage.getItem('access');
+
+    const universities = Array.from(
+      new Set(selectedParticipants.map((participant) => participant.university))
+    );
+
     const jsonData = {
       collaborator: selectedParticipants.map((participant) => ({
         role: roles[participant.id] || '',
@@ -628,10 +614,10 @@ function Write() {
       })),
       project_platform: Object.keys(activeTypes)
         .filter((key) => activeTypes[key])
-        .map((platform) => (platform === 'WEB' ? 'Web' : platform)), // Web으로 변환
+        .map((platform) => (platform === 'WEB' ? 'Web' : platform)),
       project_stack: selectedStacks,
       project_genre: selectedGenres,
-      project_university: ['대학교1'],
+      project_university: universities,
       project_name: title,
       simple_description: summary,
       detail_description: content,
@@ -643,11 +629,9 @@ function Write() {
         : {}),
     };
 
-    // JSON 데이터 콘솔 출력
     console.log('JSON Request Body:', JSON.stringify(jsonData, null, 2));
 
     try {
-      // JSON 데이터 전송
       const jsonResponse = await axios.post(
         `${baseURL}/api/project/`,
         jsonData,
@@ -659,27 +643,26 @@ function Write() {
         }
       );
       console.log('프로젝트 JSON 데이터 전송 성공:', jsonResponse.data);
+      navigate('/worry');
     } catch (error) {
       console.error('프로젝트 JSON 데이터 전송 실패:', error);
       alert('프로젝트 등록에 실패했습니다. 다시 시도해 주세요.');
       return;
     }
 
-    // FormData 객체 생성 - 이미지 전송
     const formData = new FormData();
     if (imageSrc) {
-      formData.append('project_thumbnail', imageSrc); // 대표 이미지
+      formData.append('project_thumbnail', imageSrc);
     }
     imageSrcList.forEach((file, index) => {
-      formData.append('image', file); // 설명 이미지들
+      formData.append('image', file);
     });
 
-    // FormData 내용 콘솔 출력 (이미지 파일 미리보기 포함)
     for (const [key, value] of formData.entries()) {
       if (value instanceof File) {
         const reader = new FileReader();
         reader.onloadend = () => {
-          console.log(`FormData Entry: ${key}`, reader.result); // Base64로 이미지 출력
+          console.log(`FormData Entry: ${key}`, reader.result);
         };
         reader.readAsDataURL(value);
       } else {
@@ -761,10 +744,6 @@ function Write() {
     setImageSrcList((prevList) => [...newImageSrcList, ...prevList]);
   };
 
-  const removeImage = (index) => {
-    setImageSrcList((prevList) => prevList.filter((_, i) => i !== index));
-  };
-
   const toggleGenre = (genre) => {
     setSelectedGenres((prevSelectedGenres) =>
       prevSelectedGenres.includes(genre)
@@ -789,9 +768,6 @@ function Write() {
     }));
   };
 
-  const flattenedGenres = genreRows.flat();
-  const splitGenres = [flattenedGenres.slice(0, 12), flattenedGenres.slice(12)];
-
   const [imageSrc, setImageSrc] = useState(null);
 
   const handleImageChange = (e) => {
@@ -805,10 +781,6 @@ function Write() {
     setSelectedStacks((prevSelectedStacks) =>
       prevSelectedStacks.filter((s) => s !== stack)
     );
-  };
-
-  const toggleActiveTab = () => {
-    setIsGenreActive(!isGenreActive);
   };
 
   const toggleStack = (stack) => {
@@ -845,7 +817,7 @@ function Write() {
         });
         const genres = response.data.genre;
         const rows = [];
-        const itemsPerRow = 6;
+        const itemsPerRow = 10;
         for (let i = 0; i < genres.length; i += itemsPerRow) {
           rows.push(genres.slice(i, i + itemsPerRow));
         }
@@ -864,7 +836,7 @@ function Write() {
         });
         const stacks = response.data.stack;
         const rows = [];
-        const itemsPerRow = 6;
+        const itemsPerRow = 8;
         for (let i = 0; i < stacks.length; i += itemsPerRow) {
           rows.push(stacks.slice(i, i + itemsPerRow));
         }
@@ -1169,7 +1141,6 @@ function Write() {
             />
           ))}
 
-          {/* 이미지 업로드 버튼이 맨 아래에 위치 */}
           <ImageBox
             onClick={() => document.getElementById('multiFileInput').click()}
           >
@@ -1189,7 +1160,13 @@ function Write() {
         </ExplainImageContainer>
 
         <BtnContainer>
-          <Btn onClick={handleSubmit}>다음</Btn>
+          <Btn
+            allFieldsFilled={allFieldsFilled}
+            onClick={handleSubmit}
+            disabled={!allFieldsFilled}
+          >
+            다음
+          </Btn>
         </BtnContainer>
       </Container>
     </>

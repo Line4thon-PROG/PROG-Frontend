@@ -19,8 +19,16 @@ import { baseURL } from "../../api/baseURL";
 const SearchContainer = styled.div`
   margin-top: 30px;
   width: 100%;
-  padding-bottom: 30px;
+  padding-bottom: 70px;
   position: relative;
+  min-height: 100vh;
+
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+
+  ::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 const NameandWriteBtnWrapper = styled.div`
@@ -124,11 +132,12 @@ const SelectedTag = styled.span`
 const ProjectWrapper = styled.div`
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   width: 53.8vw;
   flex-wrap: wrap;
   position: relative;
   margin-top: 15px;
+  gap: 20px;
 
   p {
     font-size: 12px;
@@ -146,7 +155,6 @@ export const UpScrollImg = styled.img`
 
 function Search() {
   const LoginToken = localStorage.getItem("access") || null;
-  console.log(LoginToken);
   const navigate = useNavigate();
 
   // 상태 변수
@@ -216,11 +224,7 @@ function Search() {
   // 전체 프로젝트 불러오기
   const GetAllProject = async () => {
     try {
-      const response = await axios.get(`${baseURL}/api/project/`, {
-        headers: {
-          Authorization: `Bearer ${LoginToken}`,
-        },
-      });
+      const response = await axios.get(`${baseURL}/api/project/`);
       setAllProject(response.data);
       console.log(response.data);
     } catch (error) {
@@ -240,11 +244,6 @@ function Search() {
           `${baseURL}/api/project/filter_by_genre`,
           {
             genre: selectedTags,
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${LoginToken}`,
-            },
           }
         );
         setFilteredGenrePj(response.data);
@@ -261,7 +260,7 @@ function Search() {
     GetGenreProject();
   }, [selectedTags]);
 
-  // 기술스택 필터링
+  // 스택 필터링
   const GetSkillProject = async () => {
     if (selectedSkills && selectedSkills.length > 0) {
       try {
@@ -269,11 +268,6 @@ function Search() {
           `${baseURL}/api/project/filter_by_stack`,
           {
             stack: selectedSkills,
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${LoginToken}`,
-            },
           }
         );
         setFilteredSkillPj(response.data);
@@ -298,11 +292,6 @@ function Search() {
           `${baseURL}/api/project/filter_by_university`,
           {
             university: [selectedUniv],
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${LoginToken}`,
-            },
           }
         );
         setFilteredUnivPj(response.data);
@@ -359,6 +348,7 @@ function Search() {
     setSelectedSkills([...tempSelectedSkills]);
     setSelectedUniv(tempSelectedUniv);
     setIsApply(true);
+    closeFilterModal();
   };
 
   // 추천 프로젝트 가로 스크롤 관련
@@ -378,6 +368,33 @@ function Search() {
     }
   };
 
+  // 마우스 스크롤
+  const [isDragging, setIsDragging] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [scrollLeft, setScrollLeft] = useState(0);
+
+  const handleMouseDown = (e) => {
+    setIsDragging(true);
+    setStartX(e.pageX - scrollRef.current.offsetLeft);
+    setScrollLeft(scrollRef.current.scrollLeft);
+  };
+
+  const handleMouseLeave = () => {
+    setIsDragging(false);
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  const handleMouseMove = (e) => {
+    if (!isDragging) return;
+    e.preventDefault();
+    const x = e.pageX - scrollRef.current.offsetLeft;
+    const walk = (x - startX) * 2; // 드래그 속도 조절
+    scrollRef.current.scrollLeft = scrollLeft - walk;
+  };
+
   useEffect(() => {
     const scrollElement = scrollRef.current;
     scrollElement.addEventListener("scroll", handleScroll);
@@ -391,7 +408,7 @@ function Search() {
 
   return (
     <div>
-      <Header />
+      <Header selectedNav="프로젝트" />
       <SearchContainer>
         <NameandWriteBtnWrapper>
           {LoginToken ? (
@@ -404,7 +421,13 @@ function Search() {
             프로젝트 등록
           </button>
         </NameandWriteBtnWrapper>
-        <RecommendThumbnail ref={scrollRef}>
+        <RecommendThumbnail
+          ref={scrollRef}
+          onMouseDown={handleMouseDown}
+          onMouseLeave={handleMouseLeave}
+          onMouseUp={handleMouseUp}
+          onMouseMove={handleMouseMove}
+        >
           {!LoginToken ? (
             <>
               <LogoutThumbnail />
@@ -422,6 +445,7 @@ function Search() {
                     name={item.project_name}
                     genrelist={item.project_genre}
                     skilllist={item.project_stack}
+                    project_id={item.id}
                   />
                 ))}
             </>
@@ -483,6 +507,7 @@ function Search() {
                   name={item.project_name}
                   genrelist={item.project_genre}
                   skilllist={item.project_stack}
+                  project_id={item.id}
                 />
               ))
             ) : (
@@ -497,6 +522,7 @@ function Search() {
                 name={item.project_name}
                 genrelist={item.project_genre}
                 skilllist={item.project_stack}
+                project_id={item.id}
               />
             ))
           ) : (

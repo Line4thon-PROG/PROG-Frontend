@@ -162,34 +162,10 @@ function FeedbackList() {
   const { project_id } = useParams();
 
   // 상태 변수들
-  const [user, setUser] = useState(null); // 사용자 닉네임
-  const [projectUser, setProjectUser] = useState([]); // 프로젝트 기여자들 닉네임
+  const [isUser, setIsUser] = useState(null);
   const [selectedFeedback, setSelectedFeedback] = useState([]);
 
-  // 닉네임 불러오기
-  const GetNickname = async () => {
-    if (!LoginToken) {
-      console.log("로그인 토큰이 없습니다.");
-      return;
-    }
-    try {
-      const response = await axios.get(`${baseURL}/api/mypage/accountinfo/me`, {
-        headers: {
-          Authorization: `Bearer ${LoginToken}`,
-        },
-      });
-      setUser(response.data.nickname);
-      console.log(response.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  useEffect(() => {
-    GetNickname();
-  }, []);
-
-  // 프로젝트 기여자 불러오기
+  // 프로젝트 게시자인지
   const GetProjectUsername = async () => {
     if (!LoginToken) {
       console.log("로그인 토큰이 없습니다.");
@@ -204,8 +180,8 @@ function FeedbackList() {
           },
         }
       );
-      setProjectUser(response.data.collaborator);
-      console.log(response.data.collaborator);
+      setIsUser(response.data.can_update_and_delete);
+      console.log(response.data.can_update_and_delete);
     } catch (error) {
       console.log(error);
     }
@@ -215,11 +191,6 @@ function FeedbackList() {
     GetProjectUsername();
   }, []);
 
-  // 게시자인지 관람자인지 구분하는 변수
-  const isUser =
-    projectUser && projectUser.length > 0 && projectUser[0].nickname === user;
-  console.log(isUser);
-
   // 채택된 피드백 불러오기
   const GetSelectedFeedback = async () => {
     if (!LoginToken) {
@@ -227,14 +198,15 @@ function FeedbackList() {
       return;
     }
     try {
-      const response = await axios.get(
-        `${baseURL}/api/project_detail/${project_id}/feedback?is_adopted=true`,
-        {
-          headers: {
-            Authorization: `Bearer ${LoginToken}`,
-          },
-        }
-      );
+      const apiUrl = isUser
+        ? `${baseURL}/api/project_detail/${project_id}/feedback`
+        : `${baseURL}/api/project_detail/${project_id}/feedback?is_adopted=true`;
+      //const apiUrl = `${baseURL}/api/project_detail/${project_id}/feedback?is_adopted=true`;
+      const response = await axios.get(apiUrl, {
+        headers: {
+          Authorization: `Bearer ${LoginToken}`,
+        },
+      });
       setSelectedFeedback(response.data);
       console.log(response.data);
     } catch (error) {
@@ -244,7 +216,7 @@ function FeedbackList() {
 
   useEffect(() => {
     GetSelectedFeedback();
-  }, []);
+  }, [isUser]);
 
   return (
     <div>
@@ -259,28 +231,36 @@ function FeedbackList() {
               Ai 피드백 정리
             </AIFeedBackBtn>
           ) : (
-            <WriteFeedBackBtn>
+            <WriteFeedBackBtn onClick={() => navigate(`/FeedbackWrite`)}>
               <img src={WriteFeedbackIcon} alt="WriteFeedbackIcon" />
               피드백 작성하기
             </WriteFeedBackBtn>
           )}
         </TitlenBtnWrapper>
         <DetailComment>
-          채택된 피드백을 확인해 보고, 직접 피드백을 작성해 보세요
-          <br />
-          양질의 피드백일수록 채택될 가능성이 높아집니다!
+          {isUser ? (
+            <>
+              들어온 피드백을 확인해 보고, 직접 피드백을 채택해 보세요
+              <br />
+              양질의 피드백에는 포인트를 지급할 수 있습니다!
+            </>
+          ) : (
+            <>
+              채택된 피드백을 확인해 보고, 직접 피드백을 작성해 보세요
+              <br />
+              양질의 피드백일수록 채택될 가능성이 높아집니다!
+            </>
+          )}
         </DetailComment>
         <SelectedFeedbackContainer>
-          <p>채택된 피드백 목록</p>
+          {isUser ? <p>피드백 목록</p> : <p>채택된 피드백 목록</p>}
           {selectedFeedback && selectedFeedback.length > 0 ? (
             <SelectedFeedbackWrapper>
               {selectedFeedback.map((item) => (
                 <SelectedFeedback
                   key={item.id}
                   onClick={() =>
-                    navigate(`/FeedbackDetail/${project_id}/${item.id}`, {
-                      state: { isUser: isUser },
-                    })
+                    navigate(`/FeedbackDetail/${project_id}/${item.id}`)
                   }
                 >
                   <InfonDetailBtnWrapper>
@@ -300,7 +280,11 @@ function FeedbackList() {
           ) : (
             <NoSelectedFeedback>
               <img src={NoFeedbackFrog} alt="frog" />
-              <p>아직 채택된 피드백이 없습니다</p>
+              {isUser ? (
+                <p>아직 피드백이 없습니다</p>
+              ) : (
+                <p>아직 채택된 피드백이 없습니다</p>
+              )}
             </NoSelectedFeedback>
           )}
         </SelectedFeedbackContainer>

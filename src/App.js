@@ -14,6 +14,8 @@ import Search from "./pages/Project/Search";
 import Promotion from "./pages/Promotion/Promotion";
 import FeedbackList from "./pages/Feedback/FeedbackList";
 import FeedbackDetail from "./pages/Feedback/FeedbackDetail";
+import FeedbackWrite from "./pages/Feedback/FeedbackWrite";
+import FeedbackComplete from "./pages/Feedback/FeedbackComplete";
 import ProjectDetail from "./pages/ProjectDetail/projectDetailPage";
 import FeedbackAIPage from "./pages/FeedBackAI/FeedbackAIPage";
 
@@ -34,11 +36,16 @@ function App() {
           <Route path="/Mypage" element={<Mypage />} />
           <Route path="/Search" element={<Search />} />
           <Route path="/Promotion" element={<Promotion />} />
+          <Route path="/FeedbackList" element={<FeedbackList />} />
+          <Route path="/FeedbackDetail/:id" element={<FeedbackDetail />} />
+          <Route path="/FeedbackWrite" element={<FeedbackWrite />} />
+          <Route path="/FeedbackComplete" element={<FeedbackComplete />} />
           <Route path="/FeedbackList/:project_id" element={<FeedbackList />} />
           <Route
             path="/FeedbackDetail/:project_id/:feedback_id"
             element={<FeedbackDetail />}
           />
+          <Route path="/DetailPage/:project_id" element={<ProjectDetail />} />
           <Route path="/DetailPage" element={<ProjectDetail />} />
           <Route path="/FBAI" element= {<FeedbackAIPage />} />
         </Routes>

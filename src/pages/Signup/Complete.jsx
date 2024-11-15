@@ -4,6 +4,8 @@ import Third from '../../assets/images/Third.svg';
 import check from '../../assets/images/Check.svg';
 import frog from '../../assets/images/Frog.svg';
 import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
+import { useState } from 'react';
 
 const Container = styled.div`
   display: flex;
@@ -59,6 +61,14 @@ const Button = styled.button`
 
 function Complete() {
   const navigate = useNavigate();
+  const [nickname, setNickname] = useState('');
+
+  useEffect(() => {
+    const storedNickname = localStorage.getItem('nickname');
+    if (storedNickname) {
+      setNickname(storedNickname);
+    }
+  }, []);
 
   const GoLogin = () => {
     navigate('/login');
@@ -70,7 +80,7 @@ function Complete() {
         <SignupHeader step={Third} />
         <Check src={check} />
         <Success>
-          반갑습니다! 땡땡땡님,
+          반갑습니다! {nickname}님,
           <br />
           회원가입을 완료하셨습니다.{' '}
         </Success>
