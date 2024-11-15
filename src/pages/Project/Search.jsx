@@ -124,7 +124,7 @@ const SelectedTag = styled.span`
 const ProjectWrapper = styled.div`
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   width: 53.8vw;
   flex-wrap: wrap;
   position: relative;
@@ -216,11 +216,7 @@ function Search() {
   // 전체 프로젝트 불러오기
   const GetAllProject = async () => {
     try {
-      const response = await axios.get(`${baseURL}/api/project/`, {
-        headers: {
-          Authorization: `Bearer ${LoginToken}`,
-        },
-      });
+      const response = await axios.get(`${baseURL}/api/project/`);
       setAllProject(response.data);
       console.log(response.data);
     } catch (error) {
@@ -240,11 +236,6 @@ function Search() {
           `${baseURL}/api/project/filter_by_genre`,
           {
             genre: selectedTags,
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${LoginToken}`,
-            },
           }
         );
         setFilteredGenrePj(response.data);
@@ -269,11 +260,6 @@ function Search() {
           `${baseURL}/api/project/filter_by_stack`,
           {
             stack: selectedSkills,
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${LoginToken}`,
-            },
           }
         );
         setFilteredSkillPj(response.data);
@@ -298,11 +284,6 @@ function Search() {
           `${baseURL}/api/project/filter_by_university`,
           {
             university: [selectedUniv],
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${LoginToken}`,
-            },
           }
         );
         setFilteredUnivPj(response.data);
