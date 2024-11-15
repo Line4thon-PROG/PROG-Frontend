@@ -21,6 +21,14 @@ const SearchContainer = styled.div`
   width: 100%;
   padding-bottom: 70px;
   position: relative;
+  min-height: 100vh;
+
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+
+  ::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 const NameandWriteBtnWrapper = styled.div`
@@ -129,6 +137,7 @@ const ProjectWrapper = styled.div`
   flex-wrap: wrap;
   position: relative;
   margin-top: 15px;
+  gap: 20px;
 
   p {
     font-size: 12px;
