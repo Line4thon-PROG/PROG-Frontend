@@ -200,7 +200,7 @@ function FeedbackList() {
     try {
       const apiUrl = isUser
         ? `${baseURL}/api/project_detail/${project_id}/feedback`
-        : `${baseURL}/api/project_detail/${project_id}/feedback?is_adopted=true`;
+        : `${baseURL}/api/project_detail/${project_id}/adopt_feedback`;
       //const apiUrl = `${baseURL}/api/project_detail/${project_id}/feedback?is_adopted=true`;
       const response = await axios.get(apiUrl, {
         headers: {
