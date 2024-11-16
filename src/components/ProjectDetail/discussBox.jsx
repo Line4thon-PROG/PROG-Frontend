@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import * as S from "./discussBoxStyled";
 import ProjectInfoBox from "./projectInfoBox";
+import { useNavigate } from "react-router-dom"; // useNavigate 임포트
 import DefaultThumbnail from "../../assets/images/default_discussThumbnail.svg";
 import FeedbackIcon from "../../assets/images/feedback_icon.svg";
 import { useProjectDiscussion } from "../../hooks/useProjectDiscussion"; // Import the custom hook
@@ -10,6 +11,7 @@ import ArrowRight from "../../assets/images/arrow_right.svg";
 const DiscussBox = ({ project_id }) => {
     const { discussions, error } = useProjectDiscussion(project_id); // Fetch discussions
     const [currentImageIndex, setCurrentImageIndex] = useState(0); // Track current image index for slideshow
+    const navigate = useNavigate(); // useNavigate 초기화
 
     if (error) {
         console.log("discussion box error fetching data");
@@ -57,8 +59,8 @@ const DiscussBox = ({ project_id }) => {
 
             {/* Feedback Section */}
             <S.FeedbackBlock>
-                <S.GoFeedBack>
-                    <img src={FeedbackIcon} alt="Feedback Icon" />피드백 확인하기
+                <S.GoFeedBack onClick={() => navigate(`/FeedbackList/${project_id}`)}>
+                    <img src={FeedbackIcon} alt="Feedback Icon" /> 피드백 확인하기
                 </S.GoFeedBack>
                 피드백을 확인해보고 직접 남겨보며, 포인트도 얻어가세요!
             </S.FeedbackBlock>

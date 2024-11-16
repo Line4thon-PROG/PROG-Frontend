@@ -44,17 +44,17 @@ export const Summary_Title = styled.div`
 `;
 
 export const Summary_Summary = styled.div`
-    color: white;
-    font-size: 0.7vw;
+    color: #999999;
+    font-size: 0.8vw;
     padding: 0.2vw 0;
 
 `;
 
 export const Summary_Solution = styled.div`
-    color: white;
-    font-size: 0.7vw;
+    color: #999999;
+    font-size: 0.8vw;
     padding: 0.2vw 0;
-
+    line-height:1.5vw;
 `;
 
 export const ReportDownload = styled.div`
