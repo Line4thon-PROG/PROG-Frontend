@@ -226,7 +226,7 @@ function FeedbackList() {
         <TitlenBtnWrapper>
           <p>피드백 목록</p>
           {isUser ? (
-            <AIFeedBackBtn>
+            <AIFeedBackBtn onClick={() => navigate(`/FBAI/${project_id}`)}>
               <img src={AIFeedbackIcon} alt="AIFeedbackICon" />
               Ai 피드백 정리
             </AIFeedBackBtn>

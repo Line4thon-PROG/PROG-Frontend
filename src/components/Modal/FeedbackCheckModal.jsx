@@ -5,6 +5,7 @@ import TwoPoint from "../../assets/images/TwoPoint.svg";
 import ThreePoint from "../../assets/images/ThreePoint.svg";
 import CloseIcon from "../../assets/images/CloseIcon.svg";
 import axios from "axios";
+import { baseURL } from "../../api/baseURL";
 
 const FeedbackCheckContainer = styled.div`
   background-color: rgba(17, 17, 17, 0.8);
@@ -86,12 +87,13 @@ function FeedbackCheckModal({ CloseModal, project_id, feedback_id }) {
   };
 
   // 포인트 주기 함수 (추후 post 연동 필요)
-  const PostPoint = async (point) => {
+  const PostPoint = async (mypoint) => {
+    const stringpoint = mypoint.toString();
     try {
       const response = await axios.post(
-        `/api/project_detail/${project_id}/feedback/${feedback_id}/adopt`,
+        `${baseURL}/api/project_detail/${project_id}/feedback/${feedback_id}/adopt`,
         {
-          point: point,
+          point: stringpoint,
         },
         {
           headers: {
