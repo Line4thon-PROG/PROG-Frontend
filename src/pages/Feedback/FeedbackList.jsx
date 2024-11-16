@@ -116,12 +116,15 @@ const SelectedFeedback = styled.div`
   background-color: rgba(51, 51, 51, 1);
   border-radius: 8px;
   width: 50vw;
-  height: 100px;
+  height: auto;
   cursor: pointer;
 
   p {
     font-size: 12px;
     font-weight: 200;
+  }
+  #Text{
+    padding-bottom: 1vw;
   }
 `;
 
@@ -275,7 +278,7 @@ function FeedbackList() {
                       <img src={SeeDetailIcon} alt="SeeDetailIcon" />
                     </button>
                   </InfonDetailBtnWrapper>
-                  <p>{item.feedback_description}</p>
+                  <p id="Text">{item.feedback_description}</p>
                 </SelectedFeedback>
               ))}
             </SelectedFeedbackWrapper>
