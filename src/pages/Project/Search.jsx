@@ -56,7 +56,7 @@ const RecommendThumbnail = styled.div`
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  gap: 18px;
+  gap: 20px;
   width: 53.8vw;
   overflow-x: auto;
   scroll-snap-type: x mandatory;
