@@ -8,6 +8,9 @@ import { useState } from 'react';
 import { useEffect } from 'react';
 import axios from 'axios';
 import { baseURL } from '../../api/baseURL';
+import { useParams } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const Container = styled.div`
   display: flex;
@@ -274,19 +277,17 @@ const FileInput = styled.input`
 `;
 
 function FeedbackWrite() {
-  const [errorSections, setErrorSections] = useState([{ id: 0, images: [] }]);
+  const [errorSections, setErrorSections] = useState([
+    { id: 0, images: [], description: '', discussionId: '' },
+  ]);
   const [feedbackItems, setFeedbackItems] = useState([]);
-
-  const addNewErrorSection = () => {
-    setErrorSections((prev) => [...prev, { id: prev.length, images: [] }]);
-  };
-
-  const [images, setImages] = useState([]);
+  const { project_id } = useParams();
+  const navigate = useNavigate();
 
   const handleAddImage = (sectionId, e) => {
     const file = e.target.files[0];
     if (file) {
-      const newImage = URL.createObjectURL(file);
+      const newImage = { file, preview: URL.createObjectURL(file) };
       setErrorSections((prev) =>
         prev.map((section) =>
           section.id === sectionId
@@ -301,17 +302,74 @@ function FeedbackWrite() {
     const fetchFeedbackItems = async () => {
       try {
         const response = await axios.get(
-          `${baseURL}/api/project_detail/14/discussion`
+          `${baseURL}/api/project_detail/${project_id}/discussion`
         );
         console.log('Feedback Items:', response.data);
         setFeedbackItems(response.data);
+        console.log('Project ID:', project_id);
       } catch (error) {
         console.error('Error fetching feedback items:', error);
       }
     };
 
-    fetchFeedbackItems();
-  }, []);
+    if (project_id) fetchFeedbackItems();
+  }, [project_id]);
+
+  const handleDescriptionChange = (sectionId, value) => {
+    setErrorSections((prev) =>
+      prev.map((section) =>
+        section.id === sectionId ? { ...section, description: value } : section
+      )
+    );
+  };
+
+  const handleSubmit = async () => {
+    try {
+      const token = localStorage.getItem('access');
+      for (const section of errorSections) {
+        const formData = new FormData();
+        formData.append('feedback_description', section.description || '');
+        section.images.forEach((image) => {
+          formData.append('image', image.file); // 이미지 파일 추가
+        });
+
+        const discussionId = section.discussionId || feedbackItems[0]?.id;
+        if (!discussionId) {
+          alert('Discussion ID가 선택되지 않았습니다!');
+          return;
+        }
+        formData.append('discussion', discussionId);
+
+        for (let pair of formData.entries()) {
+          console.log(`${pair[0]}:`, pair[1]);
+        }
+
+        await axios.post(
+          `${baseURL}/api/project_detail/${project_id}/feedback`,
+          formData,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              'Content-Type': 'multipart/form-data',
+            },
+          }
+        );
+      }
+      alert('피드백이 성공적으로 전송되었습니다!');
+      navigate(`/FeedbackList/${project_id}`);
+    } catch (error) {
+      console.error('Error submitting feedback:', error);
+      alert('피드백 전송 중 오류가 발생했습니다.');
+    }
+  };
+
+  useEffect(() => {
+    return () => {
+      errorSections.forEach((section) => {
+        section.images.forEach((image) => URL.revokeObjectURL(image.preview));
+      });
+    };
+  }, [errorSections]);
 
   return (
     <>
@@ -329,7 +387,34 @@ function FeedbackWrite() {
           {feedbackItems.map((item, index) => (
             <SmallContainer key={index}>
               <RowContainer style={{ gap: '1.6vw' }}>
-                <BoxContainer />
+                <BoxContainer>
+                  {item.images && item.images.length > 0 ? (
+                    <img
+                      src={`${baseURL}${item.images[0]}`}
+                      alt="Discussion Thumbnail"
+                      onLoad={(e) => {
+                        e.target.style.opacity = 1;
+                      }}
+                      onError={(e) => {
+                        if (!e.target.dataset.errorHandled) {
+                          e.target.dataset.errorHandled = true;
+                          e.target.src = '/default-image.png';
+                        }
+                      }}
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover',
+                        borderRadius: '5px',
+                        transition: 'opacity 0.3s ease-in-out',
+                        opacity: 0,
+                      }}
+                    />
+                  ) : (
+                    <span style={{ color: '#999' }}>이미지 없음</span>
+                  )}
+                </BoxContainer>
+
                 <ColumnContainer>
                   <Nickname>
                     {item.discussion_writer.nickname} |{' '}
@@ -348,11 +433,20 @@ function FeedbackWrite() {
         <Worry>프로젝트 이슈(오류) 부분</Worry>
         {errorSections.map((section) => (
           <WideContainer key={section.id} style={{ marginBottom: '2vw' }}>
-            <InputContainer placeholder="이슈 부분 설명" />
+            <InputContainer
+              placeholder="이슈 부분 설명"
+              value={section.description || ''}
+              onChange={(e) =>
+                handleDescriptionChange(section.id, e.target.value)
+              }
+            />
             <ImageContainer>
               {section.images.map((image, index) => (
                 <ImageBox key={index}>
-                  <ImagePreview src={image} alt={`Selected ${index + 1}`} />
+                  <ImagePreview
+                    src={image.preview}
+                    alt={`Selected ${index + 1}`}
+                  />
                 </ImageBox>
               ))}
               <ImageBox>
@@ -374,18 +468,8 @@ function FeedbackWrite() {
           </WideContainer>
         ))}
 
-        <NewContainer onClick={addNewErrorSection}>
-          <RowContainer style={{ justifyContent: 'center', gap: '0.4vw' }}>
-            <Pluss src={RoundPlus} />
-            <Add>새 오류 부분 추가</Add>
-          </RowContainer>
-        </NewContainer>
-
-        <Worry>나만의 의견 제시</Worry>
-        <CommentContainer placeholder="프로젝트에 대한 나만의 의견을 작성해 주세요." />
-
         <ButtonContainer>
-          <SendBtn>
+          <SendBtn onClick={handleSubmit}>
             <ExportImage src={Export} />
             피드백 보내기
           </SendBtn>
