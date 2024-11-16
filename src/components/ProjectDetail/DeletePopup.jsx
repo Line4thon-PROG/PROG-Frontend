@@ -39,6 +39,8 @@ const CloseButton = styled.button`
 
     img {
         width: 0.7vw;
+        cursor: pointer;
+
     }
 `;
 
