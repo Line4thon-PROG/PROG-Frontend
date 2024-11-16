@@ -48,8 +48,8 @@ const AIReport = () => {
             {feedbackReportDetail.feedback_summary.map((summary, index) => (
                 <div key={index}>
                     <S.Summary_Title>{index + 1}. {summary.title}</S.Summary_Title>
-                    <S.Summary_Summary>"Summary": {summary.summary}</S.Summary_Summary>
-                    <S.Summary_Solution>"Solution": {summary.solution}</S.Summary_Solution>
+                    <S.Summary_Summary>{summary.summary}</S.Summary_Summary>
+                    <S.Summary_Solution>{summary.solution}</S.Summary_Solution>
                 </div>
             ))}
             <S.ReportDownload>

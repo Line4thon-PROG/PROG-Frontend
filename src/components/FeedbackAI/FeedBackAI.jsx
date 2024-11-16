@@ -74,7 +74,7 @@ const FeedBackAI = ({ project_id }) => {
                                 <S.SelectedFeedback
                                     key={item.id}
                                     onClick={() =>
-                                        navigate(`/FeedbackDetail/${project_id}/${item.id}`, {
+                                        navigate(`/AIDetail/${project_id}/${item.id}`, {
                                             state: { feedbackDetail: item },
                                         })
                                     }

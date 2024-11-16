@@ -66,16 +66,18 @@ const PreviewBox = () => {
                         }}
                     />
                     <S.ChoiceBox>
-                        <S.ChoiceLine>
-                            {projectDetail?.project_genre.map((genre, index) => (
-                                <S.GerneContainer key={index}>{genre}</S.GerneContainer>
+                        {([...projectDetail?.project_genre || [], ...projectDetail?.project_stack || []])
+                            .map((item, index) => (
+                                index % 3 === 0 ? (
+                                    <S.ChoiceLine key={`line-${index / 3}`}>
+                                        {([...projectDetail?.project_genre || [], ...projectDetail?.project_stack || []]
+                                            .slice(index, index + 3)
+                                            .map((subItem, subIndex) => (
+                                                <S.StackContainer key={`item-${index}-${subIndex}`}>{subItem}</S.StackContainer>
+                                            )))}
+                                    </S.ChoiceLine>
+                                ) : null
                             ))}
-                        </S.ChoiceLine>
-                        <S.ChoiceLine>
-                            {projectDetail?.project_stack.map((stack, index) => (
-                                <S.StackContainer key={index}>{stack}</S.StackContainer>
-                            ))}
-                        </S.ChoiceLine>
                     </S.ChoiceBox>
                 </S.LeftBox>
                 <S.RightBox>
@@ -92,17 +94,19 @@ const PreviewBox = () => {
                                         {index < chunk.length - 1 && <S.Divide>|</S.Divide>}
                                     </React.Fragment>
                                 ))}
+                                {/* ContributerDetail을 chunk.map 다음에 위치 */}
                                 <S.ContributerDetail onClick={() => setIsPopupOpen(true)}>
                                     상세 보기 &gt;
                                 </S.ContributerDetail>
-                                {isPopupOpen && (
-                                    <ContributerList
-                                        project_id={project_id}
-                                        onClose={() => setIsPopupOpen(false)} 
-                                    />
-                                )}
                             </S.CWrapper>
                         ))}
+                        {/* Popup 컨텐츠는 map 바깥에서 처리 */}
+                        {isPopupOpen && (
+                            <ContributerList
+                                project_id={project_id}
+                                onClose={() => setIsPopupOpen(false)} 
+                            />
+                        )}
                     </S.ContributeList>
                     <S.SortText>프로젝트 기간</S.SortText>
                     <S.ProjectLength>{projectDetail?.period}</S.ProjectLength>

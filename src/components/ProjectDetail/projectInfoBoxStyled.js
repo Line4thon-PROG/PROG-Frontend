@@ -18,7 +18,7 @@ export const OneLiner = styled.div`
     display: flex;
     justify-content: flex-start;
     align-items: center;
-    padding: 1.6vw 0.5vw;
+    padding: 1.6vw 1.2vw;
     background-color: #262626;
     border: 1px solid white;
     border-radius: 5px;
@@ -29,6 +29,8 @@ export const OneLiner = styled.div`
 export const Content = styled.div`
     color: white;
     width: 100%;
+    font-size: 0.8vw;
+    line-height: 1.5vw;
 `;
 
 export const Gallery = styled.div`

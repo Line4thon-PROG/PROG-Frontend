@@ -100,6 +100,23 @@ export const SelectedFeedbackContainer = styled.div`
         font-size: 24px;
         color: #fff;
     }
+    ::-webkit-scrollbar {
+        width: 0.4vw; /* 스크롤바 너비 */
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background-color: rgba(153, 153, 153, 0.6); /* 스크롤바 색상 */
+        border-radius: 4px; /* 스크롤바 둥근 모서리 */
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background-color: rgba(255, 255, 255, 0.8); /* 스크롤바 색상 (호버 시) */
+    }
+
+    ::-webkit-scrollbar-track {
+        background-color: rgba(38, 38, 38, 1); /* 스크롤 트랙 색상 */
+        border-radius: 4px; /* 스크롤 트랙 둥근 모서리 */
+    }
 `;
 
 export const NoSelectedFeedback = styled.div`
@@ -129,7 +146,27 @@ export const SelectedFeedbackWrapper = styled.div`
     gap: 15px;
     overflow-y: auto;
     max-height: 500px;
+
+    /* 스크롤바 스타일 */
+    ::-webkit-scrollbar {
+        width: 8px; /* 스크롤바 너비 */
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background-color: rgba(153, 153, 153, 0.6); /* 스크롤바 색상 */
+        border-radius: 4px; /* 스크롤바 둥근 모서리 */
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background-color: rgba(255, 255, 255, 0.8); /* 스크롤바 색상 (호버 시) */
+    }
+
+    ::-webkit-scrollbar-track {
+        background-color: rgba(38, 38, 38, 1); /* 스크롤 트랙 색상 */
+        border-radius: 4px; /* 스크롤 트랙 둥근 모서리 */
+    }
 `;
+
 
 export const SelectedFeedback = styled.div`
     background-color: rgba(51, 51, 51, 1);
