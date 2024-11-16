@@ -26,6 +26,7 @@ export const CommentIcon = styled.img`
     right: 1vw;
     width: 1.5vw;
     height: 1.5vw;
+    cursor: pointer;
 `;
 
 export const CommentInput = styled.input`

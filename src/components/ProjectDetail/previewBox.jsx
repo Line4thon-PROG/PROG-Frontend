@@ -32,13 +32,16 @@ const PreviewBox = () => {
 
     const availableLinks = [webLink, iosLink, androidLink].filter(link => link && link !== "");
 
+    // 수정된 openLink 함수
     const openLink = (link) => {
         if (link && link !== "") {
-            window.open(link, "_blank");
+            const formattedLink = link.startsWith("http://") || link.startsWith("https://") 
+                ? link 
+                : `https://${link}`;
+            window.open(formattedLink, "_blank");
         }
     };
 
-    // Helper function to split array into chunks of specified size
     const chunkArray = (array, size) => {
         const chunks = [];
         for (let i = 0; i < array.length; i += size) {
@@ -89,17 +92,17 @@ const PreviewBox = () => {
                                         {index < chunk.length - 1 && <S.Divide>|</S.Divide>}
                                     </React.Fragment>
                                 ))}
+                                <S.ContributerDetail onClick={() => setIsPopupOpen(true)}>
+                                    상세 보기 &gt;
+                                </S.ContributerDetail>
+                                {isPopupOpen && (
+                                    <ContributerList
+                                        project_id={project_id}
+                                        onClose={() => setIsPopupOpen(false)} 
+                                    />
+                                )}
                             </S.CWrapper>
                         ))}
-                        <S.ContributerDetail onClick={() => setIsPopupOpen(true)}>
-                            상세 보기 &gt;
-                        </S.ContributerDetail>
-                        {isPopupOpen && (
-                            <ContributerList
-                                project_id={project_id}
-                                onClose={() => setIsPopupOpen(false)} 
-                            />
-                        )}
                     </S.ContributeList>
                     <S.SortText>프로젝트 기간</S.SortText>
                     <S.ProjectLength>{projectDetail?.period}</S.ProjectLength>

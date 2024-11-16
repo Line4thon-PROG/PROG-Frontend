@@ -14,7 +14,6 @@ export const instance = axios.create({
 // 요청 인터셉터 설정
 instance.interceptors.request.use(
     (config) => {
-        // localStorage에서 access 토큰을 가져와 Authorization 헤더에 추가
         const token = localStorage.getItem("access");
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
@@ -32,7 +31,7 @@ instance.interceptors.request.use(
 
 // 응답 인터셉터 설정
 instance.interceptors.response.use(
-    (response) => response, // 성공적인 응답은 그대로 반환
+    (response) => response,
     (error) => {
         if (error.response) {
             console.error("API 응답 에러:", error.response.status, error.response.data);
@@ -46,6 +45,6 @@ instance.interceptors.response.use(
             console.error("요청 시간이 초과되었습니다.");
         }
 
-        return Promise.reject(error); // 에러를 호출한 코드로 전달
+        return Promise.reject(error);
     }
 );
