@@ -602,9 +602,6 @@ function Write() {
     const token = localStorage.getItem('access');
 
     // FormData 생성
-    const formData = new FormData();
-
-    // JSON 데이터 추가
     const jsonData = {
       collaborator: selectedParticipants.map((participant) => ({
         role: roles[participant.id] || '',
@@ -631,37 +628,65 @@ function Write() {
         : {}),
     };
 
-    formData.append('jsonData', JSON.stringify(jsonData)); // JSON 데이터를 문자열로 추가
-
-    // 이미지 데이터 추가
-    if (imageSrc) {
-      formData.append('project_thumbnail', imageSrc); // 썸네일 파일 추가
-    }
-    imageSrcList.forEach((file) => {
-      formData.append('images', file); // 다중 이미지 파일 추가
-    });
-
-    // FormData 확인
-    for (const [key, value] of formData.entries()) {
-      console.log(`${key}:`, value);
-    }
-
     try {
-      const response = await axios.post(`${baseURL}/api/project/`, formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'multipart/form-data',
-        },
+      // JSON 데이터 전송
+      const jsonResponse = await axios.post(
+        `${baseURL}/api/project/`,
+        jsonData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      console.log('프로젝트 JSON 데이터 전송 성공:', jsonResponse.data);
+
+      // 응답에서 project_id 가져오기
+      const projectId = jsonResponse.data.project_id;
+
+      // 이미지 전송
+      const formData = new FormData();
+      if (imageSrc) {
+        formData.append('project_thumbnail', imageSrc); // 썸네일 파일 추가
+      }
+      imageSrcList.forEach((file) => {
+        formData.append('images', file); // 다중 이미지 파일 추가
       });
 
-      console.log('프로젝트 전송 성공:', response.data);
+      // FormData 확인
+      for (const [key, value] of formData.entries()) {
+        console.log(`${key}:`, value);
+      }
 
-      // 성공 시 페이지 이동
-      navigate('/Success');
-    } catch (error) {
+      try {
+        const imageResponse = await axios.patch(
+          `${baseURL}/api/project_detail/${projectId}`,
+          formData,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              'Content-Type': 'multipart/form-data',
+            },
+          }
+        );
+
+        console.log('프로젝트 이미지 전송 성공:', imageResponse.data);
+
+        // 성공 시 페이지 이동
+        navigate('/Success');
+      } catch (imageError) {
+        console.error(
+          '프로젝트 이미지 전송 실패:',
+          imageError.response?.data || imageError.message
+        );
+        alert('프로젝트 이미지 등록에 실패했습니다. 다시 시도해 주세요.');
+      }
+    } catch (jsonError) {
       console.error(
-        '프로젝트 전송 실패:',
-        error.response?.data || error.message
+        '프로젝트 JSON 데이터 전송 실패:',
+        jsonError.response?.data || jsonError.message
       );
       alert('프로젝트 등록에 실패했습니다. 다시 시도해 주세요.');
     }
