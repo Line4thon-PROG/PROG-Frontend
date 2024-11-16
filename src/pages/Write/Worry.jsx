@@ -282,9 +282,9 @@ const Worry = () => {
     formData.append('description', content);
 
     imageSrcs
-      .filter((src) => src)
-      .forEach((src, index) => {
-        formData.append('image', src);
+      .filter((src) => src instanceof File) // File 객체만 필터링
+      .forEach((file) => {
+        formData.append('image', file);
       });
 
     for (const [key, value] of formData.entries()) {
@@ -326,7 +326,7 @@ const Worry = () => {
     const file = e.target.files[0];
     if (file) {
       const newImageSrcs = [...imageSrcs];
-      newImageSrcs[index] = URL.createObjectURL(file);
+      newImageSrcs[index] = file;
       setImageSrcs(newImageSrcs);
 
       if (newImageSrcs.length < 4 && !newImageSrcs.includes(null)) {
