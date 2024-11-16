@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { baseURL } from '../../api/baseURL';
+import { useEffect } from 'react';
 
 const Container = styled.div`
   display: flex;
@@ -335,6 +336,16 @@ const Worry = () => {
     }
   };
 
+  useEffect(() => {
+    return () => {
+      imageSrcs.forEach((src) => {
+        if (src instanceof File) {
+          URL.revokeObjectURL(URL.createObjectURL(src));
+        }
+      });
+    };
+  }, [imageSrcs]);
+
   return (
     <Container>
       <Header />
@@ -400,7 +411,18 @@ const Worry = () => {
               }
             >
               {src ? (
-                <Picimg src={src} isIcon={false} />
+                <Picimg
+                  src={
+                    src instanceof File
+                      ? URL.createObjectURL(src)
+                      : 'default_thumbnail.jpg'
+                  }
+                  alt={`Uploaded image ${index}`}
+                  isIcon={false}
+                  onError={(e) => {
+                    e.target.src = 'default_thumbnail.jpg'; // 기본 이미지로 대체
+                  }}
+                />
               ) : (
                 <Picimg src={pictureIcon} alt="placeholder" isIcon={true} />
               )}

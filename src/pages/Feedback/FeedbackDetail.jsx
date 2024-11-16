@@ -195,10 +195,8 @@ function FeedbackDetail() {
   };
 
   useEffect(() => {
-    if (isAdopted !== feedbackInfo.is_adopted) {
-      GetFeedbackInfo();
-    }
-  }, [isAdopted]);
+    GetFeedbackInfo();
+  }, []);
 
   // 보상 모달 관련
   const handleFeedbackCheckBtn = () => {
@@ -212,6 +210,8 @@ function FeedbackDetail() {
   const FeedbackCheckModalClose = () => {
     setFeedbackCheckModal(false);
   };
+
+  // 보상 주기 함수 및 새로고침
 
   // 가로 스크롤 관련
   const [positions, setPositions] = useState(

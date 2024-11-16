@@ -652,7 +652,7 @@ function Write() {
         formData.append('project_thumbnail', imageSrc); // 썸네일 파일 추가
       }
       imageSrcList.forEach((file) => {
-        formData.append('images', file); // 다중 이미지 파일 추가
+        formData.append('image', file); // 다중 이미지 파일 추가
       });
 
       // FormData 확인
@@ -807,6 +807,14 @@ function Write() {
       setSelectedParticipants([...selectedParticipants, participantList]);
     }
   };
+
+  useEffect(() => {
+    return () => {
+      if (imageSrc instanceof File) {
+        URL.revokeObjectURL(URL.createObjectURL(imageSrc));
+      }
+    };
+  }, [imageSrc]);
 
   // 장르 및 기술 스택 가져오기
   useEffect(() => {
@@ -1097,7 +1105,17 @@ function Write() {
         <Share>썸네일 최대 해상도 : 488 X 275</Share>
         <PlusImage onClick={() => document.getElementById('fileInput').click()}>
           {imageSrc ? (
-            <Picture src={imageSrc} alt="Project Thumbnail" />
+            <Picture
+              src={
+                imageSrc instanceof File
+                  ? URL.createObjectURL(imageSrc)
+                  : 'default_thumbnail.jpg'
+              }
+              alt="Project Thumbnail"
+              onError={(e) => {
+                e.target.src = 'default_thumbnail.jpg';
+              }}
+            />
           ) : (
             <Picture src={picture} alt="Placeholder" isIcon />
           )}
@@ -1137,11 +1155,18 @@ function Write() {
         <Title style={{ marginTop: '0vw' }}>프로젝트 설명 이미지 첨부</Title>
         <Share>이미지 최대 해상도 : 956 X 537</Share>
         <ExplainImageContainer>
-          {imageSrcList.map((src, index) => (
+          {imageSrcList.map((file, index) => (
             <ExplainImage
               key={index}
-              src={src}
+              src={
+                file instanceof File
+                  ? URL.createObjectURL(file)
+                  : 'default_thumbnail.jpg'
+              }
               alt={`Project Image ${index + 1}`}
+              onError={(e) => {
+                e.target.src = 'default_thumbnail.jpg';
+              }}
             />
           ))}
 
