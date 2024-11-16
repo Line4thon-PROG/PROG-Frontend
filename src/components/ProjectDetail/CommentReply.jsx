@@ -14,6 +14,12 @@ const Wrapper = styled.div`
     border-radius: 0.5vw;
     margin-left: auto;
     margin-top: 1vw;
+    #error_text {
+        width: fit-content;
+        padding-right: 3vw;
+        font-size: 0.8vw;
+        color: red;
+    }
 `;
 
 const InputField = styled.input`
@@ -27,6 +33,8 @@ const InputField = styled.input`
 `;
 
 const Icon = styled.img`
+    width: 1.5vw;
+    height: 1.5vw;
     position: absolute;
     right: 1vw;
     cursor: pointer;
@@ -34,19 +42,22 @@ const Icon = styled.img`
 
 const CommentReplyInput = ({ project_id, comment_id, onReplySubmit }) => {
     const [replyText, setReplyText] = useState("");
-    const { submitReply, loading, error } = useReplyComment();
-
+    const [customError, setCustomError] = useState(null); // 사용자 정의 에러 메시지
+    const { submitReply, loading } = useReplyComment();
+    const error_text ="empty_error"
     const handlePostReply = async () => {
         if (!replyText.trim()) {
-            console.log("대댓글 내용이 없습니다. 대댓글을 입력하세요");
+            setCustomError("내용을 입력하세요"); // 에러 메시지 설정
             return;
         }
 
         try {
             const newReply = await submitReply(project_id, comment_id, replyText); 
             setReplyText(""); // 입력 필드 초기화
-            onReplySubmit(newReply); // 새 대댓글을 CommunityBox로 전달
+            setCustomError(null); // 에러 메시지 초기화
+            onReplySubmit(newReply); // 새 대댓글을 상위 컴포넌트로 전달
         } catch (error) {
+            setCustomError("대댓글을 등록하는 중 오류가 발생했습니다."); // 에러 메시지 업데이트
             console.error("대댓글을 등록하는 중 오류가 발생했습니다:", error);
         }
     };
@@ -57,9 +68,16 @@ const CommentReplyInput = ({ project_id, comment_id, onReplySubmit }) => {
             <InputField
                 placeholder="대댓글을 입력하세요"
                 value={replyText}
-                onChange={(e) => setReplyText(e.target.value)}
+                onChange={(e) => {
+                    setReplyText(e.target.value);
+                    if (customError) setCustomError(null); // 입력 시 에러 메시지 제거
+                }}
             />
-            {error && <p style={{ color: "red" }}>{error}</p>}
+            {customError && (
+                <p id="error_text" >
+                    {error_text}
+                </p>
+            )}
         </Wrapper>
     );
 };

@@ -54,7 +54,9 @@ function App() {
             path="/AIDetail/:project_id/:ai_summary_id"
             element={<AIReportDetailPage />}
           />
-        </Routes>
+          <Route path="/AIDetail/:project_id" element={<FeedbackAIPage />} />        
+          <Route path="/AIDetail/:project_id/:ai_summary_id" element={<AIReportDetailPage />} />
+        </Routes>  
       </Router>
     </>
   );

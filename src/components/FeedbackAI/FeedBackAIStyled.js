@@ -47,6 +47,9 @@ export const FeedbackBlock = styled.div`
     font-size: 0.7vw;
     color: #999999;
     gap: 0.8vw;
+    img{
+        cursor: pointer;
+    }
 `;
 
 

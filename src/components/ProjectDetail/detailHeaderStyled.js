@@ -12,6 +12,7 @@ export const Container = styled.div`
 export const Icon = styled.img`
     width: 1.8vw;
     height: 1.8vw;
+    cursor: pointer;
 `;
 
 export const IconBox = styled.div`
