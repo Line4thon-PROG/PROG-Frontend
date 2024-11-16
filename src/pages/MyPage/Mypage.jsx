@@ -1,9 +1,9 @@
-import Header from '../../components/Header/Header';
-import styled from 'styled-components';
-import { useEffect } from 'react';
-import { useState } from 'react';
-import axios from 'axios';
-import { baseURL } from '../../api/baseURL';
+import Header from "../../components/Header/Header";
+import styled from "styled-components";
+import { useEffect } from "react";
+import { useState } from "react";
+import axios from "axios";
+import { baseURL } from "../../api/baseURL";
 
 const Container = styled.div`
   display: flex;
@@ -139,7 +139,7 @@ const ColumnContainer = styled.div`
 const RowContainer2 = styled.div`
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-between;
+  justify-content: flex-start;
   gap: 1vw;
 `;
 
@@ -150,7 +150,7 @@ function Mypage() {
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
-        const token = localStorage.getItem('access');
+        const token = localStorage.getItem("access");
         const response = await axios.get(
           `${baseURL}/api/mypage/accountinfo/me`,
           {
@@ -162,7 +162,7 @@ function Mypage() {
         setUserInfo(response.data);
         console.log(response.data);
       } catch (error) {
-        console.error('유저 정보 불러오기 실패:', error);
+        console.error("유저 정보 불러오기 실패:", error);
       }
     };
 
@@ -172,7 +172,7 @@ function Mypage() {
   useEffect(() => {
     const fetchProjectData = async () => {
       try {
-        const token = localStorage.getItem('access');
+        const token = localStorage.getItem("access");
         const response = await axios.get(
           `${baseURL}/api/mypage/collaborateproject`,
           {
@@ -184,7 +184,7 @@ function Mypage() {
         setProjectData(response.data.collaborator_projects || []);
         console.log(response.data);
       } catch (error) {
-        console.error('프로젝트 정보 불러오기 실패:', error);
+        console.error("프로젝트 정보 불러오기 실패:", error);
       }
     };
 
@@ -196,50 +196,50 @@ function Mypage() {
       <Container>
         <Header selectedNav="마이페이지" />
         <RowContainer
-          style={{ marginTop: '3vw', justifyContent: 'space-between' }}
+          style={{ marginTop: "3vw", justifyContent: "space-between" }}
         >
           <ProfileP>
             {userInfo
               ? `${userInfo.nickname} | ${userInfo.user_university} | ${userInfo.userid}`
-              : 'Loading...'}
+              : "Loading..."}
           </ProfileP>
         </RowContainer>
 
         <Intro>자기소개</Intro>
-        <IntroContent>{userInfo?.description || '자기소개 내용'}</IntroContent>
+        <IntroContent>{userInfo?.description || "자기소개 내용"}</IntroContent>
         <Genrep>선호하는 장르</Genrep>
-        <RowContainer style={{ gap: '0.5vw', marginTop: '0.5vw' }}>
+        <RowContainer style={{ gap: "0.5vw", marginTop: "0.5vw" }}>
           {userInfo?.favorite_genre?.length > 0 ? (
             userInfo.favorite_genre.map((genre, index) => (
               <Circle key={index}>{genre}</Circle>
             ))
           ) : (
-            <p style={{ color: '#999' }}>선호하는 장르 정보가 없습니다.</p>
+            <p style={{ color: "#999" }}>선호하는 장르 정보가 없습니다.</p>
           )}
         </RowContainer>
 
         <ProjectContainer>
           <ProjectExplain>내 프로젝트</ProjectExplain>
-          <RowContainer2 style={{ gap: '0.9vw' }}>
+          <RowContainer2 style={{ gap: "0.9vw" }}>
             {projectData.length > 0 ? (
               projectData.map((project, index) => (
                 <ColumnContainer key={index}>
                   <ThumbNail
                     as="img"
-                    src={project.project_thumbnail || 'default_thumbnail.jpg'}
+                    src={project.project_thumbnail || "default_thumbnail.jpg"}
                     alt={`${project.project_name} 썸네일`}
                   />
                   <ProjectName>{project.project_name}</ProjectName>
                   <ProjectDetail>
                     {[...project.project_genre, ...project.project_stack].join(
-                      ' | '
+                      " | "
                     )}
                   </ProjectDetail>
                   <IntroContent>{project.simple_description}</IntroContent>
                 </ColumnContainer>
               ))
             ) : (
-              <p style={{ color: '#999' }}>프로젝트가 없습니다.</p>
+              <p style={{ color: "#999" }}>프로젝트가 없습니다.</p>
             )}
           </RowContainer2>
         </ProjectContainer>
