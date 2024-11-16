@@ -19,6 +19,11 @@ export const Container = styled.div`
     }
 `;
 
+export const Wrapper = styled.div`
+    width: 100%;
+    height: auto;
+`;
+
 export const Row = styled.div`
     color: white;
     display: flex;
@@ -40,13 +45,13 @@ export const Report_When = styled.div`
 export const Summary_Title = styled.div`
     color: white;
     font-size: 1vw;
-    padding: 0.2vw 0;
+    padding: 1vw 0;
 `;
 
 export const Summary_Summary = styled.div`
     color: #999999;
     font-size: 0.8vw;
-    padding: 0.2vw 0;
+    padding: 1vw 0;
 
 `;
 

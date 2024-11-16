@@ -45,13 +45,16 @@ const AIReport = () => {
                 <S.Report_Title>{feedbackReportDetail.title}</S.Report_Title>
                 <S.Report_When>{feedbackReportDetail.upload_date}</S.Report_When>
             </S.Row>
-            {feedbackReportDetail.feedback_summary.map((summary, index) => (
-                <div key={index}>
-                    <S.Summary_Title>{index + 1}. {summary.title}</S.Summary_Title>
-                    <S.Summary_Summary>{summary.summary}</S.Summary_Summary>
-                    <S.Summary_Solution>{summary.solution}</S.Summary_Solution>
-                </div>
-            ))}
+            <S.Wrapper>
+                {feedbackReportDetail.feedback_summary.map((summary, index) => (
+                    <div key={index}>
+                        <S.Summary_Title>{index + 1}. {summary.title}</S.Summary_Title>
+                        <S.Summary_Summary>{summary.summary}</S.Summary_Summary>
+                        <S.Summary_Solution>{summary.solution}</S.Summary_Solution>
+                    </div>
+                ))}
+            </S.Wrapper>
+            
             <S.ReportDownload>
                 <img src={DownloadIcon} alt="Download Icon" />
             </S.ReportDownload>

@@ -86,6 +86,7 @@ export const MyPoint = styled.div`
 export const FeedbackListContainer = styled.div`
     padding-bottom: 50px;
     width: 100%;
+    height: auto;
 `;
 
 export const SelectedFeedbackContainer = styled.div`
@@ -172,7 +173,7 @@ export const SelectedFeedback = styled.div`
     background-color: rgba(51, 51, 51, 1);
     border-radius: 8px;
     width: 100%;
-    height: 5vw;
+    height: auto;
     cursor: pointer;
     padding: 0.6vw 1vw;
     &:hover {
@@ -183,6 +184,7 @@ export const SelectedFeedback = styled.div`
         font-size: 12px;
         font-weight: 200;
         color: #ccc;
+        padding-bottom: 0.5vw;
     }
 `;
 
@@ -200,7 +202,7 @@ export const InfonDetailBtnWrapper = styled.div`
         font-size: 11px;
         border: none;
         border-radius : 1vw;
-        padding: 5px 10px;
+        padding: 1px 10px;
         font-weight: 400;
         img {
             width: 12px;

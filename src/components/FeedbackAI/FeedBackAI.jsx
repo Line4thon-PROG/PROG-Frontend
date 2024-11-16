@@ -86,7 +86,7 @@ const FeedBackAI = ({ project_id }) => {
                                         </S.NickNamenDateWrapper>
                                         <button>상세보기 &gt;</button>
                                     </S.InfonDetailBtnWrapper>
-                                    <p>{item.feedback_summary[0]?.summary || "요약 내용이 없습니다."}</p>
+                                    <p id="Text">{item.feedback_summary[0]?.summary || "요약 내용이 없습니다."}</p>
                                 </S.SelectedFeedback>
                             ))}
                         </S.SelectedFeedbackWrapper>
