@@ -141,13 +141,20 @@ const Text2 = styled.p`
   cursor: pointer;
 `;
 
-function LoginInputField({ label, placeholder, value, onChange }) {
+function LoginInputField({
+  label,
+  placeholder,
+  value,
+  onChange,
+  type = 'text',
+}) {
   const [isFocused, setIsFocused] = useState(false);
 
   return (
     <InputBoxContainer>
       <TextP>{label}</TextP>
       <InputBox
+        type={type}
         placeholder={placeholder}
         value={value}
         isFocused={isFocused}
@@ -205,6 +212,7 @@ function Login() {
           placeholder="비밀번호를 입력해 주세요"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          type="password"
         />
 
         <Button onClick={handleLogin}>로그인</Button>
