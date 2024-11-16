@@ -131,6 +131,16 @@ const ProjectDetail = styled.p`
 const ColumnContainer = styled.div`
   display: flex;
   flex-direction: column;
+  flex-basis: calc(33.333% - 1vw);
+  max-width: calc(33.333% - 1vw);
+  margin-bottom: 2vw;
+`;
+
+const RowContainer2 = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 1vw;
 `;
 
 function Mypage() {
@@ -210,7 +220,7 @@ function Mypage() {
 
         <ProjectContainer>
           <ProjectExplain>내 프로젝트</ProjectExplain>
-          <RowContainer style={{ gap: '0.9vw' }}>
+          <RowContainer2 style={{ gap: '0.9vw' }}>
             {projectData.length > 0 ? (
               projectData.map((project, index) => (
                 <ColumnContainer key={index}>
@@ -231,7 +241,7 @@ function Mypage() {
             ) : (
               <p style={{ color: '#999' }}>프로젝트가 없습니다.</p>
             )}
-          </RowContainer>
+          </RowContainer2>
         </ProjectContainer>
       </Container>
     </>
