@@ -10,6 +10,23 @@ const Container = styled.div`
     border: 1px solid #999999;
     border-radius: 1vw;
     color: #999999;
+    ::-webkit-scrollbar {
+        width: 0.4vw; /* 스크롤바 너비 */
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background-color: rgba(153, 153, 153, 0.6); /* 스크롤바 색상 */
+        border-radius: 4px; /* 스크롤바 둥근 모서리 */
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background-color: rgba(255, 255, 255, 0.8); /* 스크롤바 색상 (호버 시) */
+    }
+
+    ::-webkit-scrollbar-track {
+        background-color: rgba(38, 38, 38, 1); /* 스크롤 트랙 색상 */
+        border-radius: 4px; /* 스크롤 트랙 둥근 모서리 */
+    }
 `;
 
 const Row = styled.div`
@@ -36,6 +53,23 @@ const CloseButton = styled.button`
 
 const ListBox = styled.div`
     margin-top: 20px;
+    ::-webkit-scrollbar {
+        width: 0.4vw; /* 스크롤바 너비 */
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background-color: rgba(153, 153, 153, 0.6); /* 스크롤바 색상 */
+        border-radius: 4px; /* 스크롤바 둥근 모서리 */
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background-color: rgba(255, 255, 255, 0.8); /* 스크롤바 색상 (호버 시) */
+    }
+
+    ::-webkit-scrollbar-track {
+        background-color: rgba(38, 38, 38, 1); /* 스크롤 트랙 색상 */
+        border-radius: 4px; /* 스크롤 트랙 둥근 모서리 */
+    }
 `;
 
 const ListWrapper = styled.div`
