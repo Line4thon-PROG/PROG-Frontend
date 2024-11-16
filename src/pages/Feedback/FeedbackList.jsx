@@ -231,7 +231,9 @@ function FeedbackList() {
               Ai 피드백 정리
             </AIFeedBackBtn>
           ) : (
-            <WriteFeedBackBtn onClick={() => navigate(`/FeedbackWrite`)}>
+            <WriteFeedBackBtn
+              onClick={() => navigate(`/FeedbackWrite/${project_id}`)}
+            >
               <img src={WriteFeedbackIcon} alt="WriteFeedbackIcon" />
               피드백 작성하기
             </WriteFeedBackBtn>

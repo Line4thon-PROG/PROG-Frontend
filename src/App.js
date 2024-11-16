@@ -38,8 +38,10 @@ function App() {
           <Route path="/Search" element={<Search />} />
           <Route path="/Promotion" element={<Promotion />} />
           <Route path="/FeedbackList" element={<FeedbackList />} />
-          <Route path="/FeedbackDetail/:id" element={<FeedbackDetail />} />
-          <Route path="/FeedbackWrite" element={<FeedbackWrite />} />
+          <Route
+            path="/FeedbackWrite/:project_id"
+            element={<FeedbackWrite />}
+          />
           <Route path="/FeedbackComplete" element={<FeedbackComplete />} />
           <Route path="/FeedbackList/:project_id" element={<FeedbackList />} />
           <Route
@@ -47,9 +49,12 @@ function App() {
             element={<FeedbackDetail />}
           />
           <Route path="/DetailPage/:project_id" element={<ProjectDetail />} />
-          <Route path="/FBAI/:project_id" element={<FeedbackAIPage />} />        
-          <Route path="/AIDetail/:project_id/:ai_summary_id" element={<AIReportDetailPage />} />
-        </Routes>  
+          <Route path="/FBAI/:project_id" element={<FeedbackAIPage />} />
+          <Route
+            path="/AIDetail/:project_id/:ai_summary_id"
+            element={<AIReportDetailPage />}
+          />
+        </Routes>
       </Router>
     </>
   );
