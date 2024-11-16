@@ -94,12 +94,12 @@ const PreviewBox = () => {
                                         {index < chunk.length - 1 && <S.Divide>|</S.Divide>}
                                     </React.Fragment>
                                 ))}
-                                {/* ContributerDetail을 chunk.map 다음에 위치 */}
-                                <S.ContributerDetail onClick={() => setIsPopupOpen(true)}>
-                                    상세 보기 &gt;
-                                </S.ContributerDetail>
                             </S.CWrapper>
                         ))}
+                        {/* ContributerDetail을 chunk.map 다음에 위치 */}
+                        <S.ContributerDetail onClick={() => setIsPopupOpen(true)}>
+                                    상세 보기 &gt;
+                                </S.ContributerDetail>
                         {/* Popup 컨텐츠는 map 바깥에서 처리 */}
                         {isPopupOpen && (
                             <ContributerList
