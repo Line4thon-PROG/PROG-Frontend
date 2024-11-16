@@ -106,6 +106,7 @@ export const Divide = styled.div`
 
 export const ContributerDetail = styled.div`
     color: #00C13A;
+    cursor: pointer;
 `;
 
 export const ProjectLength = styled.div`
