@@ -675,7 +675,7 @@ function Write() {
         console.log('프로젝트 이미지 전송 성공:', imageResponse.data);
 
         // 성공 시 페이지 이동
-        navigate('/Success');
+        navigate('/Worry');
       } catch (imageError) {
         console.error(
           '프로젝트 이미지 전송 실패:',
