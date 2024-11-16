@@ -47,7 +47,7 @@ function App() {
             element={<FeedbackDetail />}
           />
           <Route path="/DetailPage/:project_id" element={<ProjectDetail />} />
-          <Route path="/FBAI/:project_id" element={<FeedbackAIPage />} />        
+          <Route path="/AIDetail/:project_id" element={<FeedbackAIPage />} />        
           <Route path="/AIDetail/:project_id/:ai_summary_id" element={<AIReportDetailPage />} />
         </Routes>  
       </Router>
