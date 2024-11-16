@@ -5,6 +5,19 @@ import { useNavigate } from "react-router-dom";
 import DeleteIcon from "../../assets/images/delete_icon.svg";
 import CloseIcon from "../../assets/images/close_icon.svg";
 
+const Overlay = styled.div`
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+`;
+
 const Container = styled.div`
     background-color: #262626;
     width: 15vw;
@@ -40,7 +53,6 @@ const CloseButton = styled.button`
     img {
         width: 0.7vw;
         cursor: pointer;
-
     }
 `;
 
@@ -106,22 +118,30 @@ const DeletePopup = ({ project_id, onClose }) => {
         }
     };
 
+    const handleOverlayClick = (e) => {
+        if (e.target === e.currentTarget) {
+            onClose();
+        }
+    };
+
     return (
-        <Container>
-            <CloseButton onClick={onClose}>
-                <img src={CloseIcon} alt="Close" />
-            </CloseButton>
-            <DeleteImage>
-                <img src={DeleteIcon} alt="Delete Icon" />
-            </DeleteImage>
-            <p className="deleteMessage">프로젝트 삭제</p>
-            <p className="message">해당 프로젝트를 삭제하시겠습니까?</p>
-            <p className="message">삭제된 프로젝트는 복구할 수 없습니다.</p>
-            <Buttons>
-                <CancleButton onClick={onClose}>취소</CancleButton>
-                <DeleteButton onClick={handleDelete}>삭제</DeleteButton>
-            </Buttons>
-        </Container>
+        <Overlay onClick={handleOverlayClick}>
+            <Container>
+                <CloseButton onClick={onClose}>
+                    <img src={CloseIcon} alt="Close" />
+                </CloseButton>
+                <DeleteImage>
+                    <img src={DeleteIcon} alt="Delete Icon" />
+                </DeleteImage>
+                <p className="deleteMessage">프로젝트 삭제</p>
+                <p className="message">해당 프로젝트를 삭제하시겠습니까?</p>
+                <p className="message">삭제된 프로젝트는 복구할 수 없습니다.</p>
+                <Buttons>
+                    <CancleButton onClick={onClose}>취소</CancleButton>
+                    <DeleteButton onClick={handleDelete}>삭제</DeleteButton>
+                </Buttons>
+            </Container>
+        </Overlay>
     );
 };
 
