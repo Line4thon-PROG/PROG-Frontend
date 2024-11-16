@@ -18,7 +18,7 @@ function ProjectDetail() {
 
     return (
         <Container>
-            <Header project_id={project_id}/>
+            <Header selectedNav="프로젝트" project_id={project_id}/>
             <DetailHeader />
             <PreviewBox project_id={project_id} /> 
             <MainBox project_id={project_id} />

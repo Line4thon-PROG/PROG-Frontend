@@ -1,5 +1,6 @@
 import Header from "../../components/Header/Header";
 import styled from "styled-components";
+import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { useState } from "react";
 import axios from "axios";
@@ -146,6 +147,7 @@ const RowContainer2 = styled.div`
 function Mypage() {
   const [userInfo, setUserInfo] = useState(null);
   const [projectData, setProjectData] = useState([]);
+  const navigate = useNavigate(); // useNavigate 훅 추가
 
   useEffect(() => {
     const fetchUserInfo = async () => {
@@ -223,7 +225,11 @@ function Mypage() {
           <RowContainer2 style={{ gap: "0.9vw" }}>
             {projectData.length > 0 ? (
               projectData.map((project, index) => (
-                <ColumnContainer key={index}>
+                <ColumnContainer
+                  key={index}
+                  onClick={() => navigate(`/DetailPage/${project.id}`)} // 클릭 이벤트 추가
+                  style={{ cursor: "pointer" }} // 클릭 가능 표시
+                >
                   <ThumbNail
                     as="img"
                     src={project.project_thumbnail || "default_thumbnail.jpg"}
