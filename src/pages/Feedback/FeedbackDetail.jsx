@@ -143,6 +143,7 @@ function FeedbackDetail() {
   const [feedbackCheckModal, setFeedbackCheckModal] = useState(false);
   const [feedbackInfo, setFeedbackInfo] = useState({});
   const [isUser, setIsUser] = useState(false);
+  const [isAdopted, setIsAdopted] = useState(null);
 
   // 프로젝트 게시자인지
   const GetProjectUsername = async () => {
@@ -186,6 +187,7 @@ function FeedbackDetail() {
         }
       );
       setFeedbackInfo(response.data);
+      setIsAdopted(response.data.is_adopted);
       console.log(response.data);
     } catch (error) {
       console.log(error);
@@ -193,8 +195,10 @@ function FeedbackDetail() {
   };
 
   useEffect(() => {
-    GetFeedbackInfo();
-  }, []);
+    if (isAdopted !== feedbackInfo.is_adopted) {
+      GetFeedbackInfo();
+    }
+  }, [isAdopted]);
 
   // 보상 모달 관련
   const handleFeedbackCheckBtn = () => {
@@ -263,7 +267,7 @@ function FeedbackDetail() {
         <NickName>{feedbackInfo && feedbackInfo.feedback_writer}</NickName>
         <StringDate>{feedbackInfo && feedbackInfo.upload_date}</StringDate>
         {isUser &&
-          (feedbackInfo && feedbackInfo.is_adopted ? (
+          (isAdopted ? (
             <>
               <CompleteCheckBtn onClick={handleFeedbackCheckBtn}>
                 <img src={CompleteCheckIcon} alt="CompleteCheckIcon" />
