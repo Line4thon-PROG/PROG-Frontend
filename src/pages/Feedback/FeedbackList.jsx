@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import Header from "../../components/Header/Header";
-import styled from "styled-components";
-import Back from "../../assets/images/Back.svg";
-import WriteFeedbackIcon from "../../assets/images/WriteFeedbackIcon.svg";
-import AIFeedbackIcon from "../../assets/images/AIFeedbackIcon.svg";
-import NoFeedbackFrog from "../../assets/images/NoFeedbackFrog.svg";
-import SeeDetailIcon from "../../assets/images/SeeDetailIcon.svg";
-import { baseURL } from "../../api/baseURL";
-import axios from "axios";
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import Header from '../../components/Header/Header';
+import styled from 'styled-components';
+import Back from '../../assets/images/Back.svg';
+import WriteFeedbackIcon from '../../assets/images/WriteFeedbackIcon.svg';
+import AIFeedbackIcon from '../../assets/images/AIFeedbackIcon.svg';
+import NoFeedbackFrog from '../../assets/images/NoFeedbackFrog.svg';
+import SeeDetailIcon from '../../assets/images/SeeDetailIcon.svg';
+import { baseURL } from '../../api/baseURL';
+import axios from 'axios';
 
 const FeedbackListContainer = styled.div`
   margin-top: 30px;
@@ -157,7 +157,7 @@ const NickNamenDateWrapper = styled.div`
 `;
 
 function FeedbackList() {
-  const LoginToken = localStorage.getItem("access") || null;
+  const LoginToken = localStorage.getItem('access') || null;
   const navigate = useNavigate();
   const { project_id } = useParams();
 
@@ -168,7 +168,7 @@ function FeedbackList() {
   // 프로젝트 게시자인지
   const GetProjectUsername = async () => {
     if (!LoginToken) {
-      console.log("로그인 토큰이 없습니다.");
+      console.log('로그인 토큰이 없습니다.');
       return;
     }
     try {
@@ -194,7 +194,7 @@ function FeedbackList() {
   // 채택된 피드백 불러오기
   const GetSelectedFeedback = async () => {
     if (!LoginToken) {
-      console.log("로그인 토큰이 없습니다.");
+      console.log('로그인 토큰이 없습니다.');
       return;
     }
     try {

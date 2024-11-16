@@ -359,7 +359,7 @@ const Worry = () => {
         공유해보세요!
       </Share>
 
-      <Worryp>프로젝트 고민 부분 (선택)</Worryp>
+      <Worryp>프로젝트 고민 부분 (필수)</Worryp>
       <WholeContainer>
         <Writer onClick={toggleDropdown} isSelected={isSelected}>
           {selectedOption}
