@@ -8,7 +8,7 @@ export const instance = axios.create({
     headers: {
         "Content-Type": "application/json",
     },
-    timeout: 30000, // 요청 제한 시간 (10초)
+    timeout: 10000, // 요청 제한 시간 (10초)
 });
 
 // 요청 인터셉터 설정
