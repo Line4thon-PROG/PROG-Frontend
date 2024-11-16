@@ -601,10 +601,10 @@ function Write() {
   const handleSubmit = async () => {
     const token = localStorage.getItem('access');
 
-    const universities = Array.from(
-      new Set(selectedParticipants.map((participant) => participant.university))
-    );
+    // FormData 생성
+    const formData = new FormData();
 
+    // JSON 데이터 추가
     const jsonData = {
       collaborator: selectedParticipants.map((participant) => ({
         role: roles[participant.id] || '',
@@ -617,7 +617,9 @@ function Write() {
         .map((platform) => (platform === 'WEB' ? 'Web' : platform)),
       project_stack: selectedStacks,
       project_genre: selectedGenres,
-      project_university: universities,
+      project_university: Array.from(
+        new Set(selectedParticipants.map((p) => p.university))
+      ),
       project_name: title,
       simple_description: summary,
       detail_description: content,
@@ -629,68 +631,40 @@ function Write() {
         : {}),
     };
 
-    console.log('JSON Request Body:', JSON.stringify(jsonData, null, 2));
+    formData.append('jsonData', JSON.stringify(jsonData)); // JSON 데이터를 문자열로 추가
 
-    try {
-      const jsonResponse = await axios.post(
-        `${baseURL}/api/project/`,
-        jsonData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-        }
-      );
-      console.log('프로젝트 JSON 데이터 전송 성공:', jsonResponse.data);
-      const projectId = jsonResponse.data.project_id;
-      navigate('/worry', {
-        state: { participants: selectedParticipants, project_id: projectId },
-      });
-    } catch (error) {
-      console.error('프로젝트 JSON 데이터 전송 실패:', error);
-      alert('프로젝트 등록에 실패했습니다. 다시 시도해 주세요.');
-      return;
-    }
-
-    const formData = new FormData();
+    // 이미지 데이터 추가
     if (imageSrc) {
-      formData.append('project_thumbnail', imageSrc);
+      formData.append('project_thumbnail', imageSrc); // 썸네일 파일 추가
     }
-    imageSrcList.forEach((file, index) => {
-      formData.append('image', file);
+    imageSrcList.forEach((file) => {
+      formData.append('images', file); // 다중 이미지 파일 추가
     });
 
+    // FormData 확인
     for (const [key, value] of formData.entries()) {
-      if (value instanceof File) {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          console.log(`FormData Entry: ${key}`, reader.result);
-        };
-        reader.readAsDataURL(value);
-      } else {
-        console.log(`FormData Entry: ${key}:`, value);
-      }
+      console.log(`${key}:`, value);
     }
 
-    // try {
-    //   // 이미지 전송
-    //   const imageResponse = await axios.post(
-    //     `${baseURL}/api/project/`,
-    //     formData,
-    //     {
-    //       headers: {
-    //         Authorization: `Bearer ${token}`,
-    //         'Content-Type': 'multipart/form-data',
-    //       },
-    //     }
-    //   );
-    //   console.log('프로젝트 이미지 전송 성공:', imageResponse.data);
-    //   navigate('/Success');
-    // } catch (error) {
-    //   console.error('프로젝트 이미지 전송 실패:', error);
-    //   alert('프로젝트 이미지 등록에 실패했습니다. 다시 시도해 주세요.');
-    // }
+    try {
+      const response = await axios.post(`${baseURL}/api/project/`, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      console.log('프로젝트 전송 성공:', response.data);
+
+      // 성공 시 페이지 이동
+      navigate('/Success');
+    } catch (error) {
+      console.error(
+        '프로젝트 전송 실패:',
+        error.response?.data || error.message
+      );
+      alert('프로젝트 등록에 실패했습니다. 다시 시도해 주세요.');
+    }
   };
 
   //참여자 검색
@@ -743,8 +717,7 @@ function Write() {
 
   const handleMultipleImageChange = (e) => {
     const files = Array.from(e.target.files);
-    const newImageSrcList = files.map((file) => URL.createObjectURL(file));
-    setImageSrcList((prevList) => [...newImageSrcList, ...prevList]);
+    setImageSrcList((prevList) => [...prevList, ...files]); // 원본 File 객체 저장
   };
 
   const toggleGenre = (genre) => {
@@ -776,7 +749,9 @@ function Write() {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setImageSrc(URL.createObjectURL(file));
+      setImageSrc(file); // 원본 File 객체 저장
+    } else {
+      console.error('파일이 선택되지 않았습니다.');
     }
   };
 
