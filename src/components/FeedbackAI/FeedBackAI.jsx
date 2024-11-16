@@ -52,12 +52,17 @@ const FeedBackAI = ({ project_id }) => {
                     alt="Go Feedback Icon"
                     onClick={async () => {
                         try {
-                            const newFeedback = await generateFeedback();
-                            if (newFeedback?.id) {
-                                navigate(`/AIDetail/${project_id}/${newFeedback.id}`);
-                            }
+                            await generateFeedback(); // 요청 보내기
+                            console.log("AI 피드백 생성 요청 성공!"); // 성공 로그
+
+                            // 10초 뒤에 alert와 새로고침 실행
+                            setTimeout(() => {
+                                alert("AI 보고서 생성에 성공했습니다!");
+                                window.location.reload(); // 페이지 새로고침
+                            }, 1000); // 10초 대기
                         } catch (error) {
-                            console.error("AI 피드백 생성 중 오류:", error);
+                            console.error("AI 피드백 생성 중 오류:", error); // 오류 로그
+                            alert("AI 보고서 생성 중 문제가 발생했습니다. 다시 시도해주세요.");
                         }
                     }}
                 />
