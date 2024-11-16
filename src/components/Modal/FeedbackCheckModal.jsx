@@ -1,4 +1,5 @@
 import { React, useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import OnePoint from "../../assets/images/OnePoint.svg";
 import TwoPoint from "../../assets/images/TwoPoint.svg";
@@ -80,6 +81,8 @@ const GivePointBtn = styled.button`
 function FeedbackCheckModal({ CloseModal, project_id, feedback_id }) {
   const LoginToken = localStorage.getItem("access") || null;
   const [point, setPoint] = useState(null);
+  const navigate = useNavigate();
+  const location = useLocation();
 
   // 포인트 선택
   const SelectPoint = (int) => {
@@ -110,7 +113,8 @@ function FeedbackCheckModal({ CloseModal, project_id, feedback_id }) {
   const GivePoint = () => {
     if (point) {
       PostPoint(point);
-      CloseModal();
+      alert("피드백 채택이 완료되었습니다!");
+      window.location.reload();
     }
   };
 
