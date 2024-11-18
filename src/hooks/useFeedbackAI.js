@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { getAIFeedbackSummary, createAIFeedbackSummary } from "../api/feedbackAI";
 
 //피드백을 사용하는  API 캐치 훅입니다! 매우 유용합니다!
+//나는 바보입니다~!~!~!~!
 export const useFeedbackAI = (project_id) => {
     const [feedbackList, setFeedbackList] = useState([]);
     const [error, setError] = useState(null);
