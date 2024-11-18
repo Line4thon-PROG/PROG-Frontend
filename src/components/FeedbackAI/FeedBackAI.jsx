@@ -59,7 +59,7 @@ const FeedBackAI = ({ project_id }) => {
                             setTimeout(() => {
                                 alert("AI 보고서 생성에 성공했습니다!");
                                 window.location.reload(); // 페이지 새로고침
-                            }, 1000); // 10초 대기
+                            }, 500); // 10초 대기
                         } catch (error) {
                             console.error("AI 피드백 생성 중 오류:", error); // 오류 로그
                             alert("AI 보고서 생성 중 문제가 발생했습니다. 다시 시도해주세요.");
