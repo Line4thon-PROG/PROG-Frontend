@@ -1,18 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useNavigate, useParams, useLocation } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Header from "../../components/Header/Header";
 import styled from "styled-components";
-import Back from "../../assets/images/Back.svg";
-import FeedbackDetailImg from "../../assets/images/FeedbackDetailImg.svg";
-import { ProgressBar } from "../Project/Search";
-import { ProgressContainer } from "../Project/Search";
-import UpScroll from "../../assets/images/UpScroll.svg";
-import { UpScrollImg } from "../Project/Search";
-import FeedbackCheckIcon from "../../assets/images/FeedbackCheckIcon.svg";
-import FeedbackCheckModal from "../../components/Modal/FeedbackCheckModal";
-import CompleteCheckIcon from "../../assets/images/CompleteCheckIcon.svg";
 import axios from "axios";
 import { baseURL } from "../../api/baseURL";
+import BackIcon from "../../assets/images/Back.svg";
 
 const BackImg = styled.img`
   width: 1.8vw;
@@ -38,11 +30,13 @@ const NickName = styled.p`
   color: white;
   font-size: 14px;
 `;
+
 const StringDate = styled.p`
   margin-top: 5px;
   color: rgba(153, 153, 153, 1);
   font-size: 14px;
 `;
+
 const Problem = styled.p`
   margin-top: 25px;
   font-size: 15px;
@@ -60,6 +54,7 @@ const IssueBox = styled.div`
 const Title = styled.p`
   font-size: 14px;
 `;
+
 const Content = styled.p`
   margin-top: 20px;
   font-size: 12px;
@@ -87,143 +82,43 @@ const FeedbackImgWrapper = styled.div`
   }
 `;
 
-const NewCommentContainer = styled.div`
-  margin-top: 50px;
-`;
-const CommentBox = styled.div`
-  background-color: rgba(51, 51, 51, 1);
-  border: none;
-  border-radius: 8px;
-  padding: 20px 30px;
-
-  p {
-    font-size: 12px;
-  }
+const ProgressContainer = styled.div`
+  height: 4px;
+  background-color: rgba(153, 153, 153, 0.5);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-top: 5px;
 `;
 
-const FeedbackCheckBtn = styled.button`
-  display: flex;
-  align-items: center;
-  justify-content: center;
+const ProgressBar = styled.div`
+  height: 100%;
   background-color: rgba(0, 193, 58, 1);
-  font-weight: bolder;
-  gap: 5px;
-  position: absolute;
-  padding: 5px 8px;
-  font-size: 11px;
-  border-radius: 8px;
-  top: 20px;
-  right: 30px;
-`;
-const CompleteCheckBtn = styled.button`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bolder;
-  gap: 5px;
-  position: absolute;
-  padding: 5px 8px;
-  font-size: 11px;
-  border-radius: 8px;
-  top: 20px;
-  right: 30px;
-  background-color: rgba(202, 202, 202, 1);
-  border: none;
-  color: rgba(118, 118, 118, 1);
+  border-radius: 2px;
+  transition: width 0.3s ease-in-out;
+  width: ${({ $position }) => `${$position}%`};
 `;
 
 function FeedbackDetail() {
   const navigate = useNavigate();
+  const { project_id, feedback_id } = useParams();
   const LoginToken = localStorage.getItem("access") || null;
-  const { project_id } = useParams();
-  const { feedback_id } = useParams();
 
-  // 상태관리변수
-  const [clickFeedbackCheckBtn, setClickFeedbackCheckBtn] = useState(false);
-  const [feedbackCheckModal, setFeedbackCheckModal] = useState(false);
   const [feedbackInfo, setFeedbackInfo] = useState({});
-  const [isUser, setIsUser] = useState(false);
-  const [isAdopted, setIsAdopted] = useState(null);
-
-  // 프로젝트 게시자인지
-  const GetProjectUsername = async () => {
-    if (!LoginToken) {
-      console.log("로그인 토큰이 없습니다.");
-      return;
-    }
-    try {
-      const response = await axios.get(
-        `${baseURL}/api/project_detail/${project_id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${LoginToken}`,
-          },
-        }
-      );
-      setIsUser(response.data.can_update_and_delete);
-      console.log(response.data.can_update_and_delete);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  useEffect(() => {
-    GetProjectUsername();
-  }, []);
-
-  // 피드백 디테일 불러오기
-  const GetFeedbackInfo = async () => {
-    if (!LoginToken) {
-      console.log("로그인 토큰이 없습니다.");
-      return;
-    }
-    try {
-      const response = await axios.get(
-        `${baseURL}/api/project_detail/${project_id}/feedback/${feedback_id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${LoginToken}`,
-          },
-        }
-      );
-      setFeedbackInfo(response.data);
-      setIsAdopted(response.data.is_adopted);
-      console.log(response.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  useEffect(() => {
-    GetFeedbackInfo();
-  }, []);
-
-  // 보상 모달 관련
-  const handleFeedbackCheckBtn = () => {
-    setClickFeedbackCheckBtn(true);
-    FeedbackCheckModalOpen();
-  };
-
-  const FeedbackCheckModalOpen = () => {
-    setFeedbackCheckModal(true);
-  };
-  const FeedbackCheckModalClose = () => {
-    setFeedbackCheckModal(false);
-  };
-
-  // 보상 주기 함수 및 새로고침
-
-  // 가로 스크롤 관련
-  const [positions, setPositions] = useState(
-    (feedbackInfo &&
-    feedbackInfo.discussion &&
-    feedbackInfo.discussion.length > 0
-      ? feedbackInfo.discussion
-      : []
-    ).map(() => 0)
-  );
+  const [loadingImages, setLoadingImages] = useState({});
+  const [positions, setPositions] = useState([]);
 
   const scrollRefs = useRef([]);
+
+  const validateImageURL = (url) => {
+    return url && typeof url === "string" ? url : "default_image.jpg";
+  };
+
+  const handleImageLoad = (index, imageIndex) => {
+    setLoadingImages((prev) => ({
+      ...prev,
+      [`${index}-${imageIndex}`]: true,
+    }));
+  };
 
   const handleScroll = (index) => {
     const scrollElement = scrollRefs.current[index];
@@ -241,6 +136,31 @@ function FeedbackDetail() {
     }
   };
 
+  const GetFeedbackInfo = async () => {
+    if (!LoginToken) {
+      console.log("로그인 토큰이 없습니다.");
+      return;
+    }
+    try {
+      const response = await axios.get(
+        `${baseURL}/api/project_detail/${project_id}/feedback/${feedback_id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${LoginToken}`,
+          },
+        }
+      );
+      setFeedbackInfo(response.data);
+      console.log(response.data);
+    } catch (error) {
+      console.log("피드백 정보 로드 중 오류:", error);
+    }
+  };
+
+  useEffect(() => {
+    GetFeedbackInfo();
+  }, []);
+
   useEffect(() => {
     scrollRefs.current.forEach((scrollElement, index) => {
       if (scrollElement) {
@@ -254,43 +174,15 @@ function FeedbackDetail() {
     });
   }, []);
 
-  // 위로 올라가는 스크롤
-  const MoveToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
   return (
     <Container>
       <Header />
-      <BackImg src={Back} alt="Back" onClick={() => navigate(-1)} />
+      <BackImg src={BackIcon} alt="Back" onClick={() => navigate(-1)} />
       <ProjectDetailContainer>
         <NickName>{feedbackInfo && feedbackInfo.feedback_writer}</NickName>
         <StringDate>{feedbackInfo && feedbackInfo.upload_date}</StringDate>
-        {isUser &&
-          (isAdopted ? (
-            <>
-              <CompleteCheckBtn onClick={handleFeedbackCheckBtn}>
-                <img src={CompleteCheckIcon} alt="CompleteCheckIcon" />
-                피드백 채택완료
-              </CompleteCheckBtn>
-            </>
-          ) : (
-            <>
-              <FeedbackCheckBtn onClick={handleFeedbackCheckBtn}>
-                <img src={FeedbackCheckIcon} alt="FeedbackCheckIcon" />
-                피드백 채택하기
-              </FeedbackCheckBtn>
-
-              {feedbackCheckModal && (
-                <FeedbackCheckModal
-                  CloseModal={FeedbackCheckModalClose}
-                  project_id={project_id}
-                  feedback_id={feedback_id}
-                />
-              )}
-            </>
-          ))}
         <Problem>{`프로젝트 이슈(오류) 부분`}</Problem>
+
         {feedbackInfo &&
           feedbackInfo.discussion &&
           feedbackInfo.discussion.length > 0 &&
@@ -303,9 +195,27 @@ function FeedbackDetail() {
               >
                 {item.images &&
                   item.images.length > 0 &&
-                  item.images.map((imageitem, imageindex) => (
-                    <img key={imageindex} src={imageitem.image} alt="image" />
-                  ))}
+                  item.images.map((imageitem, imageindex) => {
+                    const imageUrl = imageitem.image && imageitem.image.trim() !== ""
+                      ? imageitem.image
+                      : "https://via.placeholder.com/150"; // 디폴트 이미지 URL
+
+                    // 디버깅: 이미지 URL을 콘솔에 출력
+                    console.log(`Rendering image ${imageindex}:`, imageUrl);
+
+                    return (
+                      <img
+                        key={imageindex}
+                        src={imageUrl}
+                        alt={`image-${imageindex}`}
+                        onError={(e) => {
+                          e.target.src = "https://via.placeholder.com/150"; // 로딩 실패 시 디폴트 이미지 표시
+                          console.error(`Image failed to load: ${imageUrl}`);
+                        }}
+                        style={{ maxWidth: "100%", maxHeight: "200px", objectFit: "cover" }}
+                      />
+                    );
+                  })}
               </FeedbackImgWrapper>
               {item.images && item.images.length >= 5 && (
                 <ProgressContainer>
@@ -313,18 +223,9 @@ function FeedbackDetail() {
                 </ProgressContainer>
               )}
             </IssueBox>
+
+
           ))}
-        <NewCommentContainer>
-          <Problem>새로운 의견 제시</Problem>
-          <CommentBox>
-            <p>{feedbackInfo && feedbackInfo.feedback_description}</p>
-          </CommentBox>
-        </NewCommentContainer>
-        <UpScrollImg
-          src={UpScroll}
-          alt="UpScroll"
-          onClick={() => MoveToTop()}
-        />
       </ProjectDetailContainer>
     </Container>
   );
